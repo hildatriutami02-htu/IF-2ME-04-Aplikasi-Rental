@@ -3,107 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - LensCamp</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
 
-<body class="bg-slate-100 min-h-screen flex items-center justify-center px-4">
+    <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
 
-    <div class="w-full max-w-md">
-
-        <!-- CARD -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-
-            <!-- HEADER DALAM CARD (INI YANG BIRU) -->
-            <div class="bg-gradient-to-r from-blue-500 to-blue-700 py-5 text-center">
-                <h1 class="text-2xl font-bold text-white tracking-wide">
-                    LOGIN
-                </h1>
+        <div class="hidden lg:flex bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white p-12 flex-col justify-between">
+            <div>
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur text-white flex items-center justify-center text-xl font-extrabold shadow">
+                        L
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">LensCamp</h1>
+                        <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
+                    </div>
+                </a>
             </div>
 
-            <!-- ISI FORM -->
-            <div class="p-6">
-
-                <h2 class="text-center text-lg font-semibold text-slate-800 mb-6">
-                    Login ke akun Anda
+            <div class="max-w-xl">
+                <p class="text-sm font-semibold text-blue-100">Selamat datang kembali</p>
+                <h2 class="mt-3 text-4xl font-extrabold leading-tight">
+                    Login untuk mulai menyewa lebih cepat dan praktis.
                 </h2>
+                <p class="mt-5 text-base text-blue-50 leading-7">
+                    Akses produk, atur jadwal sewa, lihat pembayaran, dan pantau pesanan kamu dalam satu aplikasi.
+                </p>
 
-                <form action="{{ route('login.proses') }}" method="POST" class="space-y-4">
-                    @csrf
-
-                    <!-- Pilih User -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Pilih User
-                        </label>
-                        <select
-                            name="user_type"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            required
-                        >
-                            <option value="">Pilih jenis user</option>
-                            <option value="admin">Admin</option>
-                            <option value="pelanggan">Pelanggan</option>
-                        </select>
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+                        <p class="text-sm text-blue-100">Produk</p>
+                        <p class="mt-2 text-2xl font-bold">50+</p>
                     </div>
-
-                    <!-- Username -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Nama Pengguna / Email
-                        </label>
-                        <input
-                            type="text"
-                            name="email"
-                            placeholder="masukkan username / email"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            required
-                        >
+                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+                        <p class="text-sm text-blue-100">Pelanggan</p>
+                        <p class="mt-2 text-2xl font-bold">100+</p>
                     </div>
-
-                    <!-- Password -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="••••••••"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            required
-                        >
+                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+                        <p class="text-sm text-blue-100">Transaksi</p>
+                        <p class="mt-2 text-2xl font-bold">300+</p>
                     </div>
-
-                    <!-- Lupa password -->
-                    <div>
-                        <a href="#" class="text-blue-600 text-sm hover:underline">
-                            Lupa sandi?
-                        </a>
-                    </div>
-
-                    <!-- Button -->
-                    <button
-                        type="submit"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl shadow-md transition"
-                    >
-                        Verifikasi
-                    </button>
-
-                    <!-- Register -->
-                    <p class="text-center text-xs text-slate-500">
-                        Belum punya akun?
-                        <a href="{{ route('daftar') }}" class="text-blue-600 font-semibold hover:underline">
-                            Daftar di sin
-                        </a>
-                    </p>
-
-                </form>
+                </div>
             </div>
 
+            <div class="text-sm text-blue-100">
+                © 2026 LensCamp. All rights reserved.
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center px-4 py-10 sm:px-6">
+            <div class="w-full max-w-md">
+                <div class="mb-8 lg:hidden">
+                    <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg font-extrabold shadow">
+                            L
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold tracking-tight">LensCamp</h1>
+                            <p class="text-xs text-slate-500">Aplikasi Rental Outdoor</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-slate-800">Masuk</h2>
+                        <p class="mt-2 text-sm text-slate-500">
+                            Login untuk melanjutkan ke aplikasi LensCamp.
+                        </p>
+                    </div>
+
+                    @if($errors->any())
+                        <div class="mb-5 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                            <ul class="space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('login.proses') }}" method="POST" class="space-y-5">
+                        @csrf
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Masuk Sebagai</label>
+                            <select name="user_type"
+                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">Pilih role</option>
+                                <option value="pelanggan" {{ old('user_type') == 'pelanggan' ? 'selected' : '' }}>Pelanggan</option>
+                                <option value="admin" {{ old('user_type') == 'admin' ? 'selected' : '' }}>Admin</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                            <input type="email" name="email" value="{{ old('email') }}"
+                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Masukkan email">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                            <input type="password" name="password"
+                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Masukkan password">
+                        </div>
+
+                        <button type="submit"
+                            class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                            Masuk Sekarang
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center text-sm text-slate-500">
+                        Belum punya akun?
+                        <a href="{{ route('daftar') }}" class="font-semibold text-blue-600 hover:text-blue-700">
+                            Daftar di sini
+                        </a>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
+                            ← Kembali ke Beranda
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
-
 </body>
 </html>
