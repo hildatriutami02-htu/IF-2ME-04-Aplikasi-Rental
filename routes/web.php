@@ -116,7 +116,11 @@ Route::get('/home', function () {
         $pickupReminder = $customerRentals->first();
     }
 
+<<<<<<< HEAD
     return view('pages.home', compact(
+=======
+    return view('home', compact(
+>>>>>>> c3a32b40132647278bfca8926508023228b8aa63
         'products',
         'isLoggedIn',
         'isPelanggan',
@@ -126,10 +130,17 @@ Route::get('/home', function () {
     ));
 })->name('home');
 
+<<<<<<< HEAD
 Route::get('/about', fn () => view('pages.about'))->name('about');
 Route::get('/contact', fn () => view('pages.contact'))->name('contact');
 Route::get('/products', fn () => view('pages.products'))->name('products');
 Route::get('/products/detail', fn () => view('pages.products.detail'))->name('products.detail');
+=======
+Route::get('/about', fn () => view('about'))->name('about');
+Route::get('/contact', fn () => view('contact'))->name('contact');
+Route::get('/products', fn () => view('products'))->name('products');
+Route::get('/products/detail', fn () => view('products.detail'))->name('products.detail');
+>>>>>>> c3a32b40132647278bfca8926508023228b8aa63
 
 /*
 |--------------------------------------------------------------------------
@@ -138,7 +149,11 @@ Route::get('/products/detail', fn () => view('pages.products.detail'))->name('pr
 */
 
 Route::get('/login', function () {
+<<<<<<< HEAD
     return view('pages.login');
+=======
+    return view('login');
+>>>>>>> c3a32b40132647278bfca8926508023228b8aa63
 })->name('login');
 
 Route::post('/login', function (Request $request) {
@@ -159,7 +174,11 @@ Route::post('/login', function (Request $request) {
 })->name('login.proses');
 
 Route::get('/daftar', function () {
+<<<<<<< HEAD
     return view('pages.daftar');
+=======
+    return view('daftar');
+>>>>>>> c3a32b40132647278bfca8926508023228b8aa63
 })->name('daftar');
 
 Route::post('/daftar', function (Request $request) {
@@ -252,7 +271,11 @@ Route::get('/dashboard-admin', function () {
         })
         ->all();
 
+<<<<<<< HEAD
     return view('pages.admin.dashboard', compact(
+=======
+    return view('admin.dashboard', compact(
+>>>>>>> c3a32b40132647278bfca8926508023228b8aa63
         'totalPendapatan',
         'totalRental',
         'totalUser',
