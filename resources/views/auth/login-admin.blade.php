@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - LensCamp</title>
+    <title>Login Admin - LensCamp</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 
@@ -19,16 +17,27 @@
     $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
     $labelClass = 'block text-sm font-medium text-slate-700 mb-2';
 
-    $features = [
-        ['small'=>'Cepat','big'=>'Praktis'],
-        ['small'=>'Sewa','big'=>'Online'],
-        ['small'=>'Pantau','big'=>'Pesanan'],
+    $stats = [
+        ['label'=>'Produk','value'=>'50+'],
+        ['label'=>'Pelanggan','value'=>'100+'],
+        ['label'=>'Transaksi','value'=>'300+'],
     ];
 
     $formFields = [
-        ['label'=>'Nama Lengkap','type'=>'text','name'=>'name','value'=>old('name'),'placeholder'=>'Masukkan nama lengkap'],
-        ['label'=>'Email','type'=>'email','name'=>'email','value'=>old('email'),'placeholder'=>'Masukkan email'],
-        ['label'=>'Password','type'=>'password','name'=>'password','value'=>'','placeholder'=>'Masukkan password'],
+        [
+            'label'=>'Email Admin',
+            'type'=>'email',
+            'name'=>'email',
+            'value'=>old('email'),
+            'placeholder'=>'Masukkan email admin'
+        ],
+        [
+            'label'=>'Password',
+            'type'=>'password',
+            'name'=>'password',
+            'value'=>'',
+            'placeholder'=>'Masukkan password'
+        ],
     ];
 @endphp
 
@@ -41,32 +50,32 @@
 
         <div>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-xl font-extrabold">
+                <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-xl font-extrabold shadow">
                     L
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold">LensCamp</h1>
+                    <h1 class="text-2xl font-bold tracking-tight">LensCamp</h1>
                     <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
                 </div>
             </a>
         </div>
 
         <div class="max-w-xl">
-            <p class="text-sm font-semibold text-blue-100">Buat akun baru</p>
+            <p class="text-sm font-semibold text-blue-100">Akses administrator</p>
 
             <h2 class="mt-3 text-4xl font-extrabold leading-tight">
-                Daftar dan mulai gunakan LensCamp dengan mudah.
+                Login admin untuk mengelola data dan transaksi LensCamp.
             </h2>
 
             <p class="mt-5 text-base text-blue-50 leading-7">
-                Setelah mendaftar, kamu bisa langsung memilih produk, menentukan jadwal sewa, dan memantau pembayaran dalam satu aplikasi.
+                Kelola produk, pelanggan, penyewaan, pembayaran, dan laporan dalam satu dashboard admin yang terintegrasi.
             </p>
 
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach($features as $item)
+                @foreach($stats as $item)
                     <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
-                        <p class="text-sm text-blue-100">{{ $item['small'] }}</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $item['big'] }}</p>
+                        <p class="text-sm text-blue-100">{{ $item['label'] }}</p>
+                        <p class="mt-2 text-2xl font-bold">{{ $item['value'] }}</p>
                     </div>
                 @endforeach
             </div>
@@ -89,7 +98,7 @@
                         L
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold">LensCamp</h1>
+                        <h1 class="text-xl font-bold tracking-tight">LensCamp</h1>
                         <p class="text-xs text-slate-500">Aplikasi Rental Outdoor</p>
                     </div>
                 </a>
@@ -99,13 +108,12 @@
             <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
 
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold text-slate-800">Daftar</h2>
+                    <h2 class="text-3xl font-bold text-slate-800">Masuk Admin</h2>
                     <p class="mt-2 text-sm text-slate-500">
-                        Buat akun baru untuk mulai menggunakan LensCamp.
+                        Login untuk melanjutkan ke dashboard administrator LensCamp.
                     </p>
                 </div>
 
-                <!-- ERROR -->
                 @if($errors->any())
                     <div class="mb-5 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
                         <ul class="space-y-1">
@@ -116,8 +124,7 @@
                     </div>
                 @endif
 
-                <!-- FORM -->
-                <form action="{{ route('daftar.proses') }}" method="POST" class="space-y-5">
+                <form action="{{ route('login.admin.proses') }}" method="POST" class="space-y-5">
                     @csrf
 
                     @foreach($formFields as $field)
@@ -133,21 +140,14 @@
                     @endforeach
 
                     <button type="submit"
-                        class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
-                        Daftar Sekarang
+                        class="w-full rounded-2xl bg-blue-800 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-900 transition inline-flex items-center justify-center">
+                        Masuk Admin
                     </button>
                 </form>
 
-                <div class="mt-6 text-center text-sm text-slate-500">
-                    Sudah punya akun?
-                    <a href="{{ route('login.pelanggan') }}" class="font-semibold text-blue-600 hover:text-blue-700">
-                        Masuk di sini
-                    </a>
-                </div>
-
                 <div class="mt-4 text-center">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
-                        ← Kembali ke Beranda
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
+                        ← Kembali pilih login
                     </a>
                 </div>
 
@@ -156,6 +156,5 @@
     </div>
 
 </div>
-
 </body>
 </html>

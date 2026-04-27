@@ -6,17 +6,17 @@
 
 @section('content')
 @php
-    $namaLengkap = $user['nama_lengkap'] ?? $user['nama'] ?? '-';
-    $kodeUser = $user['kode_user'] ?? '-';
-    $noKtp = $user['no_ktp'] ?? '-';
-    $noTelp = $user['no_telp'] ?? '-';
-    $noWa = $user['no_wa'] ?? '-';
-    $tempatLahir = $user['tempat_lahir'] ?? '-';
-    $tanggalLahir = $user['tanggal_lahir'] ?? '-';
-    $jenisKelamin = $user['jenis_kelamin'] ?? '-';
-    $alamat = $user['alamat'] ?? '-';
-    $fotoKtp = $user['foto_ktp'] ?? null;
-    $rentals = $user['rentals'] ?? [];
+    $namaLengkap = $user->nama_lengkap ?? '-';
+    $kodeUser = $user->kode_user ?? '-';
+    $noKtp = $user->no_ktp ?? '-';
+    $noTelp = $user->no_telp ?? '-';
+    $noWa = $user->no_wa ?? '-';
+    $tempatLahir = $user->tempat_lahir ?? '-';
+    $tanggalLahir = $user->tanggal_lahir ?? '-';
+    $jenisKelamin = $user->jenis_kelamin ?? '-';
+    $alamat = $user->alamat ?? '-';
+    $fotoKtp = $user->foto_ktp ?? null;
+    $rentals = $user->rentals ?? collect();
 @endphp
 
 <div class="max-w-7xl mx-auto py-8 px-4 animate-fade-up">
@@ -26,7 +26,7 @@
             <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Detail User</h1>
             <p class="text-sm text-slate-500 mt-1">Profil pengguna dan riwayat sewa LensCamp</p>
         </div>
-        <a href="{{ route('admin.users') }}"
+        <a href="{{ route('admin.users.index') }}"
            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
             Kembali
         </a>
@@ -93,20 +93,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="rounded-xl bg-slate-50 border border-slate-200 p-5">
                             <p class="text-sm text-slate-500">Total Transaksi</p>
-                            <h4 class="text-2xl font-bold mt-2">{{ count($rentals) }}</h4>
+                            <h4 class="text-2xl font-bold mt-2">{{ $rentals->count() }}</h4>
                         </div>
 
                         <div class="rounded-xl bg-slate-50 border border-slate-200 p-5">
                             <p class="text-sm text-slate-500">Sudah Bayar</p>
                             <h4 class="text-2xl font-bold mt-2">
-                                {{ collect($rentals)->where('status_pembayaran', 'Sudah Bayar')->count() }}
+                                {{ $rentals->where('status_pembayaran', 'Sudah Bayar')->count() }}
                             </h4>
                         </div>
 
                         <div class="rounded-xl bg-slate-50 border border-slate-200 p-5">
                             <p class="text-sm text-slate-500">Sudah Dikembalikan</p>
                             <h4 class="text-2xl font-bold mt-2">
-                                {{ collect($rentals)->where('status_transaksi', 'Sudah Dikembalikan')->count() }}
+                                {{ $rentals->where('status_transaksi', 'Sudah Dikembalikan')->count() }}
                             </h4>
                         </div>
                     </div>
@@ -131,17 +131,17 @@
                                 @forelse($rentals as $index => $rental)
                                     <tr class="border-b border-slate-200 hover:bg-slate-50">
                                         <td class="px-4 py-3">{{ $index + 1 }}</td>
-                                        <td class="px-4 py-3 font-medium">{{ $rental['produk'] ?? '-' }}</td>
-                                        <td class="px-4 py-3">{{ $rental['tanggal_sewa'] ?? '-' }}</td>
-                                        <td class="px-4 py-3">{{ $rental['tanggal_kembali'] ?? '-' }}</td>
+                                        <td class="px-4 py-3 font-medium">{{ $rental->produk ?? '-' }}</td>
+                                        <td class="px-4 py-3">{{ $rental->tanggal_sewa ?? '-' }}</td>
+                                        <td class="px-4 py-3">{{ $rental->tanggal_kembali ?? '-' }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                                {{ $rental['status_pembayaran'] ?? '-' }}
+                                                {{ $rental->status_pembayaran ?? '-' }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3">
                                             <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-                                                {{ $rental['status_transaksi'] ?? '-' }}
+                                                {{ $rental->status_transaksi ?? '-' }}
                                             </span>
                                         </td>
                                     </tr>
@@ -168,7 +168,7 @@
 
                         <div class="rounded-xl border border-slate-200 p-4">
                             <p class="font-semibold">Edit Data User</p>
-                            <p class="text-sm text-slate-500">Arahkan ke halaman edit</p>
+                            <p class="text-sm text-slate-500">Edit dilakukan dari halaman tabel user</p>
                         </div>
                     </div>
                 </div>

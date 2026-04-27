@@ -4,6 +4,59 @@
     $title = 'Bantuan - LensCamp';
     $headerTitle = 'Bantuan';
     $headerDesc = 'Butuh bantuan? Silakan hubungi admin kami';
+
+    $infoCards = [
+        [
+            'label' => 'Email',
+            'value' => 'admin@lenscamp.com',
+        ],
+        [
+            'label' => 'WhatsApp',
+            'value' => '081234567890',
+        ],
+        [
+            'label' => 'Jam Operasional',
+            'value' => '08:00 - 20:00 WIB',
+        ],
+    ];
+
+    $inputClass = 'w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500';
+    $labelClass = 'mb-2 block text-sm font-medium text-slate-700';
+
+    $formFields = [
+        [
+            'label' => 'Nama',
+            'name' => 'nama',
+            'type' => 'text',
+            'value' => session('user') ?? '',
+            'placeholder' => '',
+            'tag' => 'input',
+        ],
+        [
+            'label' => 'Email',
+            'name' => 'email',
+            'type' => 'email',
+            'value' => session('user') ?? '',
+            'placeholder' => '',
+            'tag' => 'input',
+        ],
+        [
+            'label' => 'Subjek',
+            'name' => 'subjek',
+            'type' => 'text',
+            'value' => '',
+            'placeholder' => 'Contoh: Kendala Pembayaran',
+            'tag' => 'input',
+        ],
+        [
+            'label' => 'Pesan',
+            'name' => 'pesan',
+            'value' => '',
+            'placeholder' => 'Tulis pesan kamu di sini...',
+            'rows' => 6,
+            'tag' => 'textarea',
+        ],
+    ];
 @endphp
 
 @section('content')
@@ -13,20 +66,12 @@
             <h3 class="text-xl font-bold text-slate-800">Informasi Admin</h3>
 
             <div class="mt-6 space-y-4">
-                <div class="rounded-2xl bg-slate-50 p-5">
-                    <p class="text-sm text-slate-500">Email</p>
-                    <p class="mt-2 text-base font-bold text-slate-800">admin@lenscamp.com</p>
-                </div>
-
-                <div class="rounded-2xl bg-slate-50 p-5">
-                    <p class="text-sm text-slate-500">WhatsApp</p>
-                    <p class="mt-2 text-base font-bold text-slate-800">081234567890</p>
-                </div>
-
-                <div class="rounded-2xl bg-slate-50 p-5">
-                    <p class="text-sm text-slate-500">Jam Operasional</p>
-                    <p class="mt-2 text-base font-bold text-slate-800">08:00 - 20:00 WIB</p>
-                </div>
+                @foreach ($infoCards as $card)
+                    <div class="rounded-2xl bg-slate-50 p-5">
+                        <p class="text-sm text-slate-500">{{ $card['label'] }}</p>
+                        <p class="mt-2 text-base font-bold text-slate-800">{{ $card['value'] }}</p>
+                    </div>
+                @endforeach
             </div>
 
             <a href="https://wa.me/6281234567890"
@@ -47,29 +92,28 @@
             <form action="{{ route('pelanggan.hubungi-admin.kirim') }}" method="POST" class="mt-6 space-y-5">
                 @csrf
 
-                <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Nama</label>
-                    <input type="text" name="nama" value="{{ session('user') ?? '' }}"
-                        class="w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
+                @foreach ($formFields as $field)
+                    <div>
+                        <label class="{{ $labelClass }}">{{ $field['label'] }}</label>
 
-                <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Email</label>
-                    <input type="email" name="email" value="{{ session('user') ?? '' }}"
-                        class="w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Subjek</label>
-                    <input type="text" name="subjek" placeholder="Contoh: Kendala Pembayaran"
-                        class="w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">Pesan</label>
-                    <textarea name="pesan" rows="6" placeholder="Tulis pesan kamu di sini..."
-                        class="w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                </div>
+                        @if ($field['tag'] === 'textarea')
+                            <textarea
+                                name="{{ $field['name'] }}"
+                                rows="{{ $field['rows'] }}"
+                                placeholder="{{ $field['placeholder'] }}"
+                                class="{{ $inputClass }}"
+                            ></textarea>
+                        @else
+                            <input
+                                type="{{ $field['type'] }}"
+                                name="{{ $field['name'] }}"
+                                value="{{ $field['value'] }}"
+                                placeholder="{{ $field['placeholder'] }}"
+                                class="{{ $inputClass }}"
+                            >
+                        @endif
+                    </div>
+                @endforeach
 
                 <button type="submit"
                     class="rounded-2xl bg-blue-600 px-6 py-4 text-sm font-semibold text-white hover:bg-blue-700 transition">

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class DataUser extends Model
 {
@@ -18,5 +18,9 @@ class DataUser extends Model
         'no_telp',
         'no_wa',
         'jenis_kelamin',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat',
+        'foto_ktp',
     ];
 }

@@ -1,3 +1,19 @@
+@php
+    $customerMenu = [
+        ['route' => 'pelanggan.dashboard', 'label' => 'Dashboard'],
+        ['route' => 'pelanggan.produk', 'label' => 'Produk'],
+        ['route' => 'pelanggan.sewa', 'label' => 'Sewa Saya'],
+        ['route' => 'pelanggan.pembayaran', 'label' => 'Pembayaran'],
+        ['route' => 'pelanggan.riwayat', 'label' => 'Riwayat Sewa'],
+        ['route' => 'pelanggan.profil', 'label' => 'Profil Saya'],
+        ['route' => 'pelanggan.hubungi-admin', 'label' => 'Hubungi Admin'],
+    ];
+
+    $menuClass = 'block rounded-2xl px-5 py-4 text-base font-semibold transition';
+    $activeClass = 'bg-blue-600 text-white shadow-sm';
+    $inactiveClass = 'text-slate-200 hover:bg-slate-800';
+@endphp
+
 <aside class="fixed inset-y-0 left-0 z-30 hidden w-80 lg:flex flex-col bg-slate-900 text-white border-r border-slate-800 shadow-xl">
     <div class="px-6 py-7 border-b border-slate-800">
         <div class="flex items-center gap-4">
@@ -19,50 +35,28 @@
     </div>
 
     <nav class="flex-1 px-5 py-6 space-y-3">
-        <a href="{{ route('pelanggan.dashboard') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.dashboard') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Dashboard
-        </a>
-
-        <a href="{{ route('pelanggan.produk') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.produk') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Produk
-        </a>
-
-        <a href="{{ route('pelanggan.sewa') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.sewa') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Sewa Saya
-        </a>
-
-        <a href="{{ route('pelanggan.pembayaran') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.pembayaran') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Pembayaran
-        </a>
-
-        <a href="{{ route('pelanggan.riwayat') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.riwayat') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Riwayat Sewa
-        </a>
-
-        <a href="{{ route('pelanggan.profil') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.profil') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Profil Saya
-        </a>
-
-        <a href="{{ route('pelanggan.hubungi-admin') }}"
-           class="block rounded-2xl px-5 py-4 text-base font-semibold transition {{ request()->routeIs('pelanggan.hubungi-admin') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-200 hover:bg-slate-800' }}">
-            Hubungi Admin
-        </a>
+        @foreach ($customerMenu as $item)
+            <a
+                href="{{ route($item['route']) }}"
+                class="{{ $menuClass }} {{ request()->routeIs($item['route']) ? $activeClass : $inactiveClass }}"
+            >
+                {{ $item['label'] }}
+            </a>
+        @endforeach
     </nav>
 
     <div class="px-5 py-5 border-t border-slate-800 space-y-3">
-        <a href="{{ route('home') }}"
-           class="block w-full rounded-2xl bg-slate-800 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-700">
+        <a
+            href="{{ route('home') }}"
+            class="block w-full rounded-2xl bg-slate-800 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-700"
+        >
             ← Kembali ke Home
         </a>
 
-        <a href="{{ route('logout') }}"
-           class="block w-full rounded-2xl bg-red-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-red-700">
+        <a
+            href="{{ route('logout') }}"
+            class="block w-full rounded-2xl bg-red-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-red-700"
+        >
             Keluar
         </a>
     </div>

@@ -5,47 +5,156 @@
 @section('page_desc', 'Pantau jadwal booking, sewa aktif, dan pengembalian barang')
 
 @section('content')
+@php
+    $summaryCardClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg';
+    $panelClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:shadow-md';
+    $calendarDayClass = 'h-24 rounded-2xl bg-white border border-slate-200 p-2';
+    $calendarMutedDayClass = 'h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400';
+    $badgeBaseClass = 'inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium';
+    $miniBadgeClass = 'mt-2 text-[10px] px-2 py-1 rounded-full w-fit';
+    $agendaItemClass = 'rounded-xl border border-slate-200 p-4 bg-slate-50';
+
+    $summaryCards = [
+        [
+            'title' => 'Booking Hari Ini',
+            'value' => '8',
+            'badgeText' => 'Jadwal masuk',
+            'badgeClass' => 'bg-yellow-100 text-yellow-700',
+        ],
+        [
+            'title' => 'Sedang Disewa',
+            'value' => '14',
+            'badgeText' => 'Rental aktif',
+            'badgeClass' => 'bg-blue-100 text-blue-700',
+        ],
+        [
+            'title' => 'Jatuh Tempo Kembali',
+            'value' => '5',
+            'badgeText' => 'Perlu dipantau',
+            'badgeClass' => 'bg-red-100 text-red-700',
+        ],
+        [
+            'title' => 'Selesai Hari Ini',
+            'value' => '3',
+            'badgeText' => 'Dikembalikan',
+            'badgeClass' => 'bg-green-100 text-green-700',
+        ],
+    ];
+
+    $calendarDays = [
+        ['day' => '30', 'type' => 'muted'],
+        ['day' => '31', 'type' => 'muted'],
+        ['day' => '1', 'type' => 'normal'],
+        [
+            'day' => '2',
+            'type' => 'normal',
+            'badges' => [
+                ['text' => '1 Booking', 'class' => 'bg-yellow-100 text-yellow-700'],
+            ],
+        ],
+        ['day' => '3', 'type' => 'normal'],
+        [
+            'day' => '4',
+            'type' => 'normal',
+            'badges' => [
+                ['text' => '2 Aktif', 'class' => 'bg-blue-100 text-blue-700'],
+            ],
+        ],
+        ['day' => '5', 'type' => 'normal'],
+        ['day' => '6', 'type' => 'normal'],
+        [
+            'day' => '7',
+            'type' => 'normal',
+            'badges' => [
+                ['text' => 'Return', 'class' => 'bg-red-100 text-red-700'],
+            ],
+        ],
+        ['day' => '8', 'type' => 'normal'],
+        ['day' => '9', 'type' => 'normal'],
+        [
+            'day' => '10',
+            'type' => 'active',
+            'badges' => [
+                ['text' => '2 Booking', 'class' => 'bg-yellow-100 text-yellow-700'],
+                ['text' => '1 Aktif', 'class' => 'bg-blue-100 text-blue-700', 'extraClass' => 'mt-1'],
+            ],
+        ],
+        ['day' => '11', 'type' => 'normal'],
+        ['day' => '12', 'type' => 'normal'],
+        ['day' => '13', 'type' => 'normal'],
+        [
+            'day' => '14',
+            'type' => 'normal',
+            'badges' => [
+                ['text' => 'Selesai', 'class' => 'bg-green-100 text-green-700'],
+            ],
+        ],
+        ['day' => '15', 'type' => 'normal'],
+        ['day' => '16', 'type' => 'normal'],
+        ['day' => '17', 'type' => 'normal'],
+        ['day' => '18', 'type' => 'normal'],
+        ['day' => '19', 'type' => 'normal'],
+        ['day' => '20', 'type' => 'normal'],
+        ['day' => '21', 'type' => 'normal'],
+        ['day' => '22', 'type' => 'normal'],
+        ['day' => '23', 'type' => 'normal'],
+        ['day' => '24', 'type' => 'normal'],
+        ['day' => '25', 'type' => 'normal'],
+        ['day' => '26', 'type' => 'normal'],
+        ['day' => '27', 'type' => 'normal'],
+        ['day' => '28', 'type' => 'normal'],
+        ['day' => '29', 'type' => 'normal'],
+        ['day' => '30', 'type' => 'normal'],
+        ['day' => '1', 'type' => 'muted'],
+        ['day' => '2', 'type' => 'muted'],
+        ['day' => '3', 'type' => 'muted'],
+    ];
+
+    $legendItems = [
+        ['color' => 'bg-yellow-400', 'label' => 'Booking'],
+        ['color' => 'bg-blue-500', 'label' => 'Sedang Disewa'],
+        ['color' => 'bg-green-500', 'label' => 'Sudah Dikembalikan'],
+        ['color' => 'bg-red-500', 'label' => 'Jatuh Tempo Return'],
+    ];
+
+    $agendaItems = [
+        [
+            'title' => 'Canon EOS 80D',
+            'desc' => 'Booking oleh Ahmad Nasrulloh',
+            'badgeText' => 'Booking',
+            'badgeClass' => 'bg-yellow-100 text-yellow-700',
+        ],
+        [
+            'title' => 'Tenda 4 Orang',
+            'desc' => 'Masih dalam masa sewa',
+            'badgeText' => 'Sedang Disewa',
+            'badgeClass' => 'bg-blue-100 text-blue-700',
+        ],
+        [
+            'title' => 'Tripod Kamera',
+            'desc' => 'Jadwal pengembalian hari ini',
+            'badgeText' => 'Return',
+            'badgeClass' => 'bg-red-100 text-red-700',
+        ],
+    ];
+@endphp
+
 <div class="max-w-7xl mx-auto space-y-5 animate-fade-up">
 
-    <!-- RINGKASAN -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <p class="text-sm text-slate-500">Booking Hari Ini</p>
-            <h3 class="text-2xl font-bold text-slate-800 mt-2">8</h3>
-            <span class="inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium bg-yellow-100 text-yellow-700">
-                Jadwal masuk
-            </span>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <p class="text-sm text-slate-500">Sedang Disewa</p>
-            <h3 class="text-2xl font-bold text-slate-800 mt-2">14</h3>
-            <span class="inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium bg-blue-100 text-blue-700">
-                Rental aktif
-            </span>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <p class="text-sm text-slate-500">Jatuh Tempo Kembali</p>
-            <h3 class="text-2xl font-bold text-slate-800 mt-2">5</h3>
-            <span class="inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium bg-red-100 text-red-700">
-                Perlu dipantau
-            </span>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <p class="text-sm text-slate-500">Selesai Hari Ini</p>
-            <h3 class="text-2xl font-bold text-slate-800 mt-2">3</h3>
-            <span class="inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-100 text-green-700">
-                Dikembalikan
-            </span>
-        </div>
+        @foreach ($summaryCards as $card)
+            <div class="{{ $summaryCardClass }}">
+                <p class="text-sm text-slate-500">{{ $card['title'] }}</p>
+                <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $card['value'] }}</h3>
+                <span class="{{ $badgeBaseClass }} {{ $card['badgeClass'] }}">
+                    {{ $card['badgeText'] }}
+                </span>
+            </div>
+        @endforeach
     </div>
 
-    <!-- KALENDER + SIDEPANEL -->
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-        <!-- KALENDER -->
         <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
             <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
                 <div>
@@ -75,158 +184,63 @@
                 </div>
 
                 <div class="grid grid-cols-7 gap-3">
-                    <div class="h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400">30</div>
-                    <div class="h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400">31</div>
+                    @foreach ($calendarDays as $day)
+                        @php
+                            $dayClass = $calendarDayClass;
+                            $textClass = 'text-sm font-semibold text-slate-700';
 
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">1</div>
-                    </div>
+                            if ($day['type'] === 'muted') {
+                                $dayClass = $calendarMutedDayClass;
+                                $textClass = '';
+                            } elseif ($day['type'] === 'active') {
+                                $dayClass = 'h-24 rounded-2xl bg-blue-50 border border-blue-200 p-2 shadow-sm';
+                                $textClass = 'text-sm font-semibold text-blue-700';
+                            }
+                        @endphp
 
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">2</div>
-                        <div class="mt-2 text-[10px] px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 w-fit">
-                            1 Booking
+                        <div class="{{ $dayClass }}">
+                            <div class="{{ $textClass }}">{{ $day['day'] }}</div>
+
+                            @if (!empty($day['badges']))
+                                @foreach ($day['badges'] as $badge)
+                                    <div class="{{ $miniBadgeClass }} {{ $badge['class'] }} {{ $badge['extraClass'] ?? '' }}">
+                                        {{ $badge['text'] }}
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">3</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">4</div>
-                        <div class="mt-2 text-[10px] px-2 py-1 rounded-full bg-blue-100 text-blue-700 w-fit">
-                            2 Aktif
-                        </div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">5</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">6</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">7</div>
-                        <div class="mt-2 text-[10px] px-2 py-1 rounded-full bg-red-100 text-red-700 w-fit">
-                            Return
-                        </div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">8</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">9</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-blue-50 border border-blue-200 p-2 shadow-sm">
-                        <div class="text-sm font-semibold text-blue-700">10</div>
-                        <div class="mt-2 text-[10px] px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 w-fit">
-                            2 Booking
-                        </div>
-                        <div class="mt-1 text-[10px] px-2 py-1 rounded-full bg-blue-100 text-blue-700 w-fit">
-                            1 Aktif
-                        </div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">11</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">12</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">13</div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2">
-                        <div class="text-sm font-semibold text-slate-700">14</div>
-                        <div class="mt-2 text-[10px] px-2 py-1 rounded-full bg-green-100 text-green-700 w-fit">
-                            Selesai
-                        </div>
-                    </div>
-
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">15</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">16</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">17</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">18</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">19</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">20</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">21</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">22</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">23</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">24</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">25</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">26</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">27</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">28</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">29</div></div>
-                    <div class="h-24 rounded-2xl bg-white border border-slate-200 p-2"><div class="text-sm font-semibold text-slate-700">30</div></div>
-                    <div class="h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400">1</div>
-                    <div class="h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400">2</div>
-                    <div class="h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400">3</div>
+                    @endforeach
                 </div>
             </div>
         </div>
 
-        <!-- SIDEPANEL -->
         <div class="space-y-5">
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:shadow-md">
+            <div class="{{ $panelClass }}">
                 <h3 class="text-lg font-bold text-slate-800 mb-4">Legenda</h3>
                 <div class="space-y-3">
-                    <div class="flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-                        <span class="text-sm text-slate-600">Booking</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                        <span class="text-sm text-slate-600">Sedang Disewa</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                        <span class="text-sm text-slate-600">Sudah Dikembalikan</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                        <span class="text-sm text-slate-600">Jatuh Tempo Return</span>
-                    </div>
+                    @foreach ($legendItems as $legend)
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full {{ $legend['color'] }}"></span>
+                            <span class="text-sm text-slate-600">{{ $legend['label'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:shadow-md">
+            <div class="{{ $panelClass }}">
                 <h3 class="text-lg font-bold text-slate-800 mb-4">Agenda Hari Ini</h3>
 
                 <div class="space-y-4">
-                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                        <p class="font-semibold text-slate-800">Canon EOS 80D</p>
-                        <p class="text-sm text-slate-500 mt-1">Booking oleh Ahmad Nasrulloh</p>
-                        <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium bg-yellow-100 text-yellow-700">
-                            Booking
-                        </span>
-                    </div>
-
-                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                        <p class="font-semibold text-slate-800">Tenda 4 Orang</p>
-                        <p class="text-sm text-slate-500 mt-1">Masih dalam masa sewa</p>
-                        <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium bg-blue-100 text-blue-700">
-                            Sedang Disewa
-                        </span>
-                    </div>
-
-                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                        <p class="font-semibold text-slate-800">Tripod Kamera</p>
-                        <p class="text-sm text-slate-500 mt-1">Jadwal pengembalian hari ini</p>
-                        <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium bg-red-100 text-red-700">
-                            Return
-                        </span>
-                    </div>
+                    @foreach ($agendaItems as $agenda)
+                        <div class="{{ $agendaItemClass }}">
+                            <p class="font-semibold text-slate-800">{{ $agenda['title'] }}</p>
+                            <p class="text-sm text-slate-500 mt-1">{{ $agenda['desc'] }}</p>
+                            <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $agenda['badgeClass'] }}">
+                                {{ $agenda['badgeText'] }}
+                            </span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 

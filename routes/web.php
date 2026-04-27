@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -116,11 +117,7 @@ Route::get('/home', function () {
         $pickupReminder = $customerRentals->first();
     }
 
-<<<<<<< HEAD
-    return view('pages.home', compact(
-=======
     return view('home', compact(
->>>>>>> c3a32b40132647278bfca8926508023228b8aa63
         'products',
         'isLoggedIn',
         'isPelanggan',
@@ -130,17 +127,10 @@ Route::get('/home', function () {
     ));
 })->name('home');
 
-<<<<<<< HEAD
-Route::get('/about', fn () => view('pages.about'))->name('about');
-Route::get('/contact', fn () => view('pages.contact'))->name('contact');
-Route::get('/products', fn () => view('pages.products'))->name('products');
-Route::get('/products/detail', fn () => view('pages.products.detail'))->name('products.detail');
-=======
 Route::get('/about', fn () => view('about'))->name('about');
 Route::get('/contact', fn () => view('contact'))->name('contact');
 Route::get('/products', fn () => view('products'))->name('products');
 Route::get('/products/detail', fn () => view('products.detail'))->name('products.detail');
->>>>>>> c3a32b40132647278bfca8926508023228b8aa63
 
 /*
 |--------------------------------------------------------------------------
@@ -149,36 +139,47 @@ Route::get('/products/detail', fn () => view('products.detail'))->name('products
 */
 
 Route::get('/login', function () {
-<<<<<<< HEAD
-    return view('pages.login');
-=======
-    return view('login');
->>>>>>> c3a32b40132647278bfca8926508023228b8aa63
+    return view('auth.login-pilih');
 })->name('login');
 
-Route::post('/login', function (Request $request) {
+Route::get('/login/admin', function () {
+    return view('auth.login-admin');
+})->name('login.admin');
+
+Route::post('/login/admin', function (Request $request) {
     $request->validate([
-        'user_type' => 'required|in:admin,pelanggan',
         'email' => 'required',
         'password' => 'required',
     ]);
 
     session([
         'user' => $request->email,
-        'role' => $request->user_type,
+        'role' => 'admin',
     ]);
 
-    return $request->user_type === 'admin'
-        ? redirect()->route('dashboard.admin')
-        : redirect()->route('home');
-})->name('login.proses');
+    return redirect()->route('dashboard.admin');
+})->name('login.admin.proses');
+
+Route::get('/login/pelanggan', function () {
+    return view('auth.login-pelanggan');
+})->name('login.pelanggan');
+
+Route::post('/login/pelanggan', function (Request $request) {
+    $request->validate([
+        'email' => 'required',
+        'password' => 'required',
+    ]);
+
+    session([
+        'user' => $request->email,
+        'role' => 'pelanggan',
+    ]);
+
+    return redirect()->route('home');
+})->name('login.pelanggan.proses');
 
 Route::get('/daftar', function () {
-<<<<<<< HEAD
-    return view('pages.daftar');
-=======
     return view('daftar');
->>>>>>> c3a32b40132647278bfca8926508023228b8aa63
 })->name('daftar');
 
 Route::post('/daftar', function (Request $request) {
@@ -271,11 +272,7 @@ Route::get('/dashboard-admin', function () {
         })
         ->all();
 
-<<<<<<< HEAD
-    return view('pages.admin.dashboard', compact(
-=======
     return view('admin.dashboard', compact(
->>>>>>> c3a32b40132647278bfca8926508023228b8aa63
         'totalPendapatan',
         'totalRental',
         'totalUser',
@@ -298,164 +295,9 @@ Route::get('/dashboard-admin', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/admin/users', function () {
-    ensureAdmin();
-
-    if (!session()->has('admin_users')) {
-        session([
-            'admin_users' => [
-                [
-                    'id' => 1,
-                    'kode_user' => 'USR001',
-                    'nama_lengkap' => 'Ahmad Nasrulloh',
-                    'email' => 'ahmad@example.com',
-                    'no_ktp' => '3174010101010001',
-                    'no_telp' => '081234567890',
-                    'no_wa' => '081234567890',
-                    'tempat_lahir' => 'Medan',
-                    'tanggal_lahir' => '2000-01-10',
-                    'jenis_kelamin' => 'Laki-laki',
-                    'alamat' => 'Jl. Mawar No. 1, Medan',
-                    'foto_ktp' => null,
-                    'rentals' => [],
-                ],
-                [
-                    'id' => 2,
-                    'kode_user' => 'USR002',
-                    'nama_lengkap' => 'Putri Audry',
-                    'email' => 'putri@example.com',
-                    'no_ktp' => '3174010101010002',
-                    'no_telp' => '082222222222',
-                    'no_wa' => '082222222222',
-                    'tempat_lahir' => 'Bandung',
-                    'tanggal_lahir' => '2001-05-15',
-                    'jenis_kelamin' => 'Perempuan',
-                    'alamat' => 'Jl. Melati No. 2, Bandung',
-                    'foto_ktp' => null,
-                    'rentals' => [],
-                ],
-                [
-                    'id' => 3,
-                    'kode_user' => 'USR003',
-                    'nama_lengkap' => 'Budi Santoso',
-                    'email' => 'budi@example.com',
-                    'no_ktp' => '3174010101010003',
-                    'no_telp' => '083333333333',
-                    'no_wa' => '083333333333',
-                    'tempat_lahir' => 'Jakarta',
-                    'tanggal_lahir' => '1999-09-21',
-                    'jenis_kelamin' => 'Laki-laki',
-                    'alamat' => 'Jl. Kenanga No. 3, Jakarta',
-                    'foto_ktp' => null,
-                    'rentals' => [],
-                ],
-            ]
-        ]);
-    }
-
-    $users = session('admin_users', []);
-
-    return view('admin.users', compact('users'));
-})->name('admin.users');
-
-Route::post('/admin/users/store', function (Request $request) {
-    ensureAdmin();
-
-    $request->validate([
-        'kode_user' => 'required',
-        'nama_lengkap' => 'required',
-        'no_ktp' => 'required',
-        'no_telp' => 'nullable',
-        'no_wa' => 'nullable',
-        'tempat_lahir' => 'nullable',
-        'tanggal_lahir' => 'nullable',
-        'jenis_kelamin' => 'nullable',
-        'alamat' => 'nullable',
-    ]);
-
-    $users = session('admin_users', []);
-    $nextId = count($users) > 0 ? max(array_column($users, 'id')) + 1 : 1;
-
-    $users[] = [
-        'id' => $nextId,
-        'kode_user' => $request->kode_user,
-        'nama_lengkap' => $request->nama_lengkap,
-        'email' => $request->email ?? null,
-        'no_ktp' => $request->no_ktp,
-        'no_telp' => $request->no_telp,
-        'no_wa' => $request->no_wa,
-        'tempat_lahir' => $request->tempat_lahir,
-        'tanggal_lahir' => $request->tanggal_lahir,
-        'jenis_kelamin' => $request->jenis_kelamin,
-        'alamat' => $request->alamat,
-        'foto_ktp' => null,
-        'rentals' => [],
-    ];
-
-    session(['admin_users' => $users]);
-
-    return redirect()->route('admin.users')->with('success', 'Data user berhasil ditambahkan.');
-})->name('admin.users.store');
-
-Route::get('/admin/users/{id}', function ($id) {
-    ensureAdmin();
-
-    $users = session('admin_users', []);
-    $user = collect($users)->firstWhere('id', (int) $id);
-
-    if (!$user) {
-        abort(404);
-    }
-
-    return view('admin.user-detail', compact('user'));
-})->name('admin.users.show');
-
-Route::put('/admin/users/{id}', function (Request $request, $id) {
-    ensureAdmin();
-
-    $request->validate([
-        'nama_lengkap' => 'required',
-        'no_ktp' => 'required',
-        'no_telp' => 'nullable',
-        'no_wa' => 'nullable',
-        'tempat_lahir' => 'nullable',
-        'tanggal_lahir' => 'nullable',
-        'jenis_kelamin' => 'nullable',
-        'alamat' => 'nullable',
-    ]);
-
-    $users = session('admin_users', []);
-
-    foreach ($users as &$user) {
-        if ($user['id'] == $id) {
-            $user['nama_lengkap'] = $request->nama_lengkap;
-            $user['email'] = $request->email ?? ($user['email'] ?? null);
-            $user['no_ktp'] = $request->no_ktp;
-            $user['no_telp'] = $request->no_telp;
-            $user['no_wa'] = $request->no_wa;
-            $user['tempat_lahir'] = $request->tempat_lahir;
-            $user['tanggal_lahir'] = $request->tanggal_lahir;
-            $user['jenis_kelamin'] = $request->jenis_kelamin;
-            $user['alamat'] = $request->alamat;
-        }
-    }
-    unset($user);
-
-    session(['admin_users' => $users]);
-
-    return redirect()->route('admin.users')->with('success', 'Data user berhasil diupdate.');
-})->name('admin.users.update');
-
-Route::delete('/admin/users/{id}', function ($id) {
-    ensureAdmin();
-
-    $users = session('admin_users', []);
-    $users = array_values(array_filter($users, fn ($user) => $user['id'] != $id));
-
-    session(['admin_users' => $users]);
-
-    return redirect()->route('admin.users')->with('success', 'Data user berhasil dihapus.');
-})->name('admin.users.destroy');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class)->except(['create', 'edit']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -691,8 +533,11 @@ Route::get('/admin/rentals', function (Request $request) {
                     'tanggal_kembali' => '13-04-2026',
                     'tanggal_pinjam_raw' => '2026-04-11',
                     'tanggal_kembali_raw' => '2026-04-13',
+                    'tanggal_kembali_real' => null,
                     'harga_per_hari' => 12000,
                     'total_harga' => 24000,
+                    'denda_per_hari' => 10000,
+                    'total_denda' => 0,
                     'status_pembayaran' => 'Lunas',
                     'status_transaksi' => 'Booking',
                     'catatan' => '',
@@ -710,8 +555,11 @@ Route::get('/admin/rentals', function (Request $request) {
                     'tanggal_kembali' => '12-04-2026',
                     'tanggal_pinjam_raw' => '2026-04-10',
                     'tanggal_kembali_raw' => '2026-04-12',
+                    'tanggal_kembali_real' => null,
                     'harga_per_hari' => 100000,
                     'total_harga' => 200000,
+                    'denda_per_hari' => 10000,
+                    'total_denda' => 0,
                     'status_pembayaran' => 'DP',
                     'status_transaksi' => 'Booking',
                     'catatan' => '',
@@ -729,8 +577,11 @@ Route::get('/admin/rentals', function (Request $request) {
                     'tanggal_kembali' => '09-04-2026',
                     'tanggal_pinjam_raw' => '2026-04-08',
                     'tanggal_kembali_raw' => '2026-04-09',
+                    'tanggal_kembali_real' => '09-04-2026',
                     'harga_per_hari' => 55000,
                     'total_harga' => 55000,
+                    'denda_per_hari' => 10000,
+                    'total_denda' => 0,
                     'status_pembayaran' => 'Lunas',
                     'status_transaksi' => 'Dikembalikan',
                     'catatan' => '',
@@ -752,6 +603,86 @@ Route::get('/admin/rentals', function (Request $request) {
 
     return view('admin.rentals', compact('rentals', 'users', 'products'));
 })->name('admin.rentals');
+
+Route::get('/admin/rentals/{id}/detail', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+    $rental = collect($rentals)->firstWhere('id', (int) $id);
+
+    if (!$rental) {
+        abort(404);
+    }
+
+    return view('admin.rental-detail', compact('rental'));
+})->name('admin.rentals.show');
+
+Route::get('/admin/rentals/{id}/edit', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+    $users = session('admin_users', []);
+    $products = Product::all()->toArray();
+
+    $rental = collect($rentals)->firstWhere('id', (int) $id);
+
+    if (!$rental) {
+        abort(404);
+    }
+
+    return view('admin.rental-edit', compact('rental', 'users', 'products'));
+})->name('admin.rentals.edit');
+
+Route::get('/admin/rentals/{id}/extend', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+    $rental = collect($rentals)->firstWhere('id', (int) $id);
+
+    if (!$rental) {
+        abort(404);
+    }
+
+    return view('admin.rental-extend', compact('rental'));
+})->name('admin.rentals.extend');
+
+Route::post('/admin/rentals/{id}/extend', function (Request $request, $id) {
+    ensureAdmin();
+
+    $request->validate([
+        'tanggal_kembali' => 'required|date',
+    ]);
+
+    $rentals = session('admin_rentals', []);
+
+    foreach ($rentals as &$rental) {
+        if ($rental['id'] == $id) {
+            $start = Carbon::parse($rental['tanggal_pinjam_raw']);
+            $end = Carbon::parse($request->tanggal_kembali);
+
+            if ($end->lt($start)) {
+                return redirect()->back()->withErrors([
+                    'Tanggal kembali baru tidak boleh lebih kecil dari tanggal pinjam.'
+                ]);
+            }
+
+            $days = max($start->diffInDays($end), 1);
+            $total = $days * (int) ($rental['harga_per_hari'] ?? 0) * (int) ($rental['qty'] ?? 1);
+
+            $rental['tanggal_kembali_raw'] = $request->tanggal_kembali;
+            $rental['tanggal_kembali'] = $end->format('d-m-Y');
+            $rental['total_harga'] = $total;
+
+            break;
+        }
+    }
+    unset($rental);
+
+    session(['admin_rentals' => $rentals]);
+
+    return redirect()->route('admin.rentals')
+        ->with('success', 'Sewa berhasil diperpanjang.');
+})->name('admin.rentals.extend.proses');
 
 Route::post('/admin/rentals/store', function (Request $request) {
     ensureAdmin();
@@ -803,8 +734,11 @@ Route::post('/admin/rentals/store', function (Request $request) {
         'tanggal_kembali' => $end->format('d-m-Y'),
         'tanggal_pinjam_raw' => $request->tanggal_pinjam,
         'tanggal_kembali_raw' => $request->tanggal_kembali,
+        'tanggal_kembali_real' => null,
         'harga_per_hari' => $hargaPerHari,
         'total_harga' => $total,
+        'denda_per_hari' => 10000,
+        'total_denda' => 0,
         'status_pembayaran' => $request->status_pembayaran,
         'status_transaksi' => $request->status_transaksi,
         'catatan' => $request->catatan,
@@ -923,6 +857,52 @@ Route::put('/admin/rentals/{id}', function (Request $request, $id) {
 
     return redirect()->route('admin.rentals')->with('success', 'Transaksi berhasil diupdate.');
 })->name('admin.rentals.update');
+
+Route::post('/admin/rentals/{id}/return', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+    $products = Product::all()->toArray();
+    $totalDenda = 0;
+
+    foreach ($rentals as &$rental) {
+        if ($rental['id'] == $id) {
+            $today = Carbon::now();
+            $due = Carbon::parse($rental['tanggal_kembali_raw']);
+
+            $lateDays = $today->gt($due) ? $due->diffInDays($today) : 0;
+            $dendaPerHari = (int) ($rental['denda_per_hari'] ?? 10000);
+            $totalDenda = $lateDays * $dendaPerHari;
+
+            $rental['tanggal_kembali_real'] = $today->format('d-m-Y');
+            $rental['total_denda'] = $totalDenda;
+            $rental['status_transaksi'] = 'Dikembalikan';
+
+            try {
+                $updatedProducts = syncRentalStock($products, $rental, null);
+
+                foreach ($updatedProducts as $updatedProduct) {
+                    Product::where('id', $updatedProduct['id'])->update([
+                        'unit' => $updatedProduct['unit'],
+                        'status' => $updatedProduct['status'],
+                    ]);
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('admin.rentals')->withErrors([$e->getMessage()]);
+            }
+
+            break;
+        }
+    }
+    unset($rental);
+
+    session(['admin_rentals' => $rentals]);
+
+    return redirect()->route('admin.rentals')->with(
+        'success',
+        'Barang berhasil dikembalikan. Denda: Rp ' . number_format($totalDenda, 0, ',', '.')
+    );
+})->name('admin.rentals.return');
 
 Route::delete('/admin/rentals/{id}', function ($id) {
     ensureAdmin();
@@ -1068,9 +1048,13 @@ Route::get('/pelanggan/sewa', function () {
             'produk' => $item['nama_barang'] ?? '-',
             'tanggal_pinjam' => $item['tanggal_pinjam'] ?? '-',
             'tanggal_kembali' => $item['tanggal_kembali'] ?? '-',
+            'tanggal_pinjam_raw' => $item['tanggal_pinjam_raw'] ?? null,
+            'tanggal_kembali_raw' => $item['tanggal_kembali_raw'] ?? null,
+            'tanggal_kembali_real' => $item['tanggal_kembali_real'] ?? null,
             'qty' => $item['qty'] ?? 1,
             'harga_per_hari' => $item['harga_per_hari'] ?? 0,
             'harga' => $item['total_harga'] ?? 0,
+            'denda' => $item['total_denda'] ?? 0,
             'status_pembayaran' => $item['status_pembayaran'] ?? 'Belum Bayar',
             'status' => $item['status_transaksi'] ?? 'Booking',
             'warna' => match ($item['status_transaksi'] ?? '') {
@@ -1083,6 +1067,84 @@ Route::get('/pelanggan/sewa', function () {
 
     return view('pelanggan.sewa', compact('rentals'));
 })->name('pelanggan.sewa');
+
+Route::get('/pelanggan/sewa/{id}/extend', function ($id) {
+    ensurePelanggan();
+
+    $rentals = collect(session('admin_rentals', []));
+    $customer = session('user');
+
+    $rental = $rentals->first(function ($item) use ($id, $customer) {
+        return ($item['id'] ?? 0) == $id
+            && (
+                (($item['email'] ?? '') === $customer) ||
+                (($item['nama_pelanggan'] ?? '') === $customer)
+            );
+    });
+
+    if (!$rental) {
+        abort(404);
+    }
+
+    if (($rental['status_transaksi'] ?? '') !== 'Booking') {
+        return redirect()->route('pelanggan.sewa')->withErrors([
+            'Hanya transaksi booking yang bisa diperpanjang.'
+        ]);
+    }
+
+    return view('pelanggan.sewa-extend', compact('rental'));
+})->name('pelanggan.sewa.extend');
+
+Route::post('/pelanggan/sewa/{id}/extend', function (Request $request, $id) {
+    ensurePelanggan();
+
+    $request->validate([
+        'tanggal_kembali' => 'required|date',
+    ]);
+
+    $rentals = session('admin_rentals', []);
+    $customer = session('user');
+
+    foreach ($rentals as &$rental) {
+        if (
+            ($rental['id'] ?? 0) == $id &&
+            (
+                (($rental['email'] ?? '') === $customer) ||
+                (($rental['nama_pelanggan'] ?? '') === $customer)
+            )
+        ) {
+            if (($rental['status_transaksi'] ?? '') !== 'Booking') {
+                return redirect()->back()->withErrors([
+                    'Hanya transaksi booking yang bisa diperpanjang.'
+                ]);
+            }
+
+            $start = Carbon::parse($rental['tanggal_pinjam_raw']);
+            $oldEnd = Carbon::parse($rental['tanggal_kembali_raw']);
+            $newEnd = Carbon::parse($request->tanggal_kembali);
+
+            if ($newEnd->lte($oldEnd)) {
+                return redirect()->back()->withErrors([
+                    'Tanggal baru harus lebih besar dari tanggal kembali lama.'
+                ]);
+            }
+
+            $days = max($start->diffInDays($newEnd), 1);
+            $total = $days * (int) ($rental['harga_per_hari'] ?? 0) * (int) ($rental['qty'] ?? 1);
+
+            $rental['tanggal_kembali_raw'] = $request->tanggal_kembali;
+            $rental['tanggal_kembali'] = $newEnd->format('d-m-Y');
+            $rental['total_harga'] = $total;
+
+            break;
+        }
+    }
+    unset($rental);
+
+    session(['admin_rentals' => $rentals]);
+
+    return redirect()->route('pelanggan.sewa')->with('success', 'Perpanjangan sewa berhasil disimpan.');
+})->name('pelanggan.sewa.extend.proses');
 
 Route::get('/pelanggan/produk/{id}/sewa', function ($id) {
     ensurePelanggan();
@@ -1151,8 +1213,11 @@ Route::post('/pelanggan/produk/{id}/sewa', function (Request $request, $id) {
         'tanggal_kembali' => $end->format('d M Y'),
         'tanggal_pinjam_raw' => $request->tanggal_pinjam,
         'tanggal_kembali_raw' => $request->tanggal_kembali,
+        'tanggal_kembali_real' => null,
         'harga_per_hari' => $hargaPerHari,
         'total_harga' => $total,
+        'denda_per_hari' => 10000,
+        'total_denda' => 0,
         'status_pembayaran' => 'Belum Bayar',
         'status_transaksi' => 'Booking',
         'catatan' => $request->catatan,
@@ -1274,3 +1339,7 @@ Route::post('/pelanggan/hubungi-admin', function (Request $request) {
 
     return redirect()->route('pelanggan.hubungi-admin');
 })->name('pelanggan.hubungi-admin.kirim');
+
+Route::get('/gambar1deh', function () {
+    return view('gambar1deh');
+});

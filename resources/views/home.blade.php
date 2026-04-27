@@ -12,11 +12,43 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
         html {
             scroll-behavior: smooth;
         }
     </style>
 </head>
+
+@php
+    $publicNav = [
+        ['href' => '#beranda', 'label' => 'Beranda'],
+        ['href' => '#tentang', 'label' => 'Tentang'],
+        ['href' => '#produk', 'label' => 'Produk'],
+        ['href' => '#hubungi-kami', 'label' => 'Hubungi Kami'],
+    ];
+
+    $customerActions = [
+        ['route' => 'pelanggan.produk', 'label' => 'Produk'],
+        ['route' => 'pelanggan.sewa', 'label' => 'Sewa Saya'],
+        ['route' => 'pelanggan.pembayaran', 'label' => 'Pembayaran'],
+    ];
+
+    $aboutStats = [
+        ['label' => 'Produk Tersedia', 'value' => '50+'],
+        ['label' => 'Pelanggan', 'value' => '100+'],
+        ['label' => 'Transaksi', 'value' => '300+'],
+        ['label' => 'Layanan', 'value' => 'Cepat'],
+    ];
+
+    $contactItems = [
+        ['label' => 'Email', 'value' => 'admin@lenscamp.com'],
+        ['label' => 'WhatsApp', 'value' => '081234567890'],
+        ['label' => 'Jam Operasional', 'value' => '08:00 - 20:00 WIB'],
+    ];
+
+    $productInputClass = 'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500';
+@endphp
+
 <body class="bg-slate-50 text-slate-800">
 
     <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -35,20 +67,12 @@
 
             @if($isPelanggan)
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('pelanggan.produk') }}"
-                       class="hidden sm:inline-flex rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
-                        Produk
-                    </a>
-
-                    <a href="{{ route('pelanggan.sewa') }}"
-                       class="hidden sm:inline-flex rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
-                        Sewa Saya
-                    </a>
-
-                    <a href="{{ route('pelanggan.pembayaran') }}"
-                       class="hidden sm:inline-flex rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
-                        Pembayaran
-                    </a>
+                    @foreach($customerActions as $action)
+                        <a href="{{ route($action['route']) }}"
+                           class="hidden sm:inline-flex rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+                            {{ $action['label'] }}
+                        </a>
+                    @endforeach
 
                     <a href="{{ route('logout') }}"
                        class="inline-flex rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition">
@@ -57,10 +81,11 @@
                 </div>
             @else
                 <nav class="hidden md:flex items-center gap-6">
-                    <a href="#beranda" class="text-sm font-medium text-slate-700 hover:text-blue-600 transition">Beranda</a>
-                    <a href="#tentang" class="text-sm font-medium text-slate-700 hover:text-blue-600 transition">Tentang</a>
-                    <a href="#produk" class="text-sm font-medium text-slate-700 hover:text-blue-600 transition">Produk</a>
-                    <a href="#hubungi-kami" class="text-sm font-medium text-slate-700 hover:text-blue-600 transition">Hubungi Kami</a>
+                    @foreach($publicNav as $item)
+                        <a href="{{ $item['href'] }}" class="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
                 </nav>
 
                 <div class="flex items-center gap-3">
@@ -199,22 +224,12 @@
 
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="rounded-2xl bg-slate-50 p-5">
-                            <p class="text-sm text-slate-500">Produk Tersedia</p>
-                            <p class="mt-2 text-2xl font-bold text-slate-800">50+</p>
-                        </div>
-                        <div class="rounded-2xl bg-slate-50 p-5">
-                            <p class="text-sm text-slate-500">Pelanggan</p>
-                            <p class="mt-2 text-2xl font-bold text-slate-800">100+</p>
-                        </div>
-                        <div class="rounded-2xl bg-slate-50 p-5">
-                            <p class="text-sm text-slate-500">Transaksi</p>
-                            <p class="mt-2 text-2xl font-bold text-slate-800">300+</p>
-                        </div>
-                        <div class="rounded-2xl bg-slate-50 p-5">
-                            <p class="text-sm text-slate-500">Layanan</p>
-                            <p class="mt-2 text-2xl font-bold text-slate-800">Cepat</p>
-                        </div>
+                        @foreach($aboutStats as $stat)
+                            <div class="rounded-2xl bg-slate-50 p-5">
+                                <p class="text-sm text-slate-500">{{ $stat['label'] }}</p>
+                                <p class="mt-2 text-2xl font-bold text-slate-800">{{ $stat['value'] }}</p>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </section>
@@ -264,28 +279,24 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-medium text-slate-600 mb-1">Tanggal Pinjam</label>
-                                        <input type="date" name="tanggal_pinjam"
-                                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <input type="date" name="tanggal_pinjam" class="{{ $productInputClass }}">
                                     </div>
 
                                     <div>
                                         <label class="block text-xs font-medium text-slate-600 mb-1">Tanggal Kembali</label>
-                                        <input type="date" name="tanggal_kembali"
-                                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <input type="date" name="tanggal_kembali" class="{{ $productInputClass }}">
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
                                     <div>
                                         <label class="block text-xs font-medium text-slate-600 mb-1">Qty</label>
-                                        <input type="number" name="qty" min="1" max="{{ $item['unit'] }}" value="1"
-                                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <input type="number" name="qty" min="1" max="{{ $item['unit'] }}" value="1" class="{{ $productInputClass }}">
                                     </div>
 
                                     <div>
                                         <label class="block text-xs font-medium text-slate-600 mb-1">Catatan</label>
-                                        <input type="text" name="catatan" placeholder="Opsional"
-                                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <input type="text" name="catatan" placeholder="Opsional" class="{{ $productInputClass }}">
                                     </div>
                                 </div>
 
@@ -333,20 +344,12 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
-                            <p class="text-sm text-slate-500">Email</p>
-                            <p class="mt-1 font-semibold text-slate-800">admin@lenscamp.com</p>
-                        </div>
-
-                        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
-                            <p class="text-sm text-slate-500">WhatsApp</p>
-                            <p class="mt-1 font-semibold text-slate-800">081234567890</p>
-                        </div>
-
-                        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
-                            <p class="text-sm text-slate-500">Jam Operasional</p>
-                            <p class="mt-1 font-semibold text-slate-800">08:00 - 20:00 WIB</p>
-                        </div>
+                        @foreach($contactItems as $contact)
+                            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                                <p class="text-sm text-slate-500">{{ $contact['label'] }}</p>
+                                <p class="mt-1 font-semibold text-slate-800">{{ $contact['value'] }}</p>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </section>
