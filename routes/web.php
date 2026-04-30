@@ -12,42 +12,45 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-if (!function_exists('dummyProducts')) {
-    function dummyProducts()
-    {
-        return collect([
-            [
-                'id' => 1,
-                'nama_barang' => 'Tenda 4 Orang',
-                'jenis_barang' => 'Tenda',
-                'harga' => 100000,
-                'unit' => 5,
-                'status' => 'Ready',
-                'deskripsi' => 'Tenda untuk 4 orang',
-                'gambar' => null,
-            ],
-            [
-                'id' => 2,
-                'nama_barang' => 'Tas Gunung 60L',
-                'jenis_barang' => 'Tas',
-                'harga' => 50000,
-                'unit' => 3,
-                'status' => 'Ready',
-                'deskripsi' => 'Tas hiking kapasitas besar',
-                'gambar' => null,
-            ],
-            [
-                'id' => 3,
-                'nama_barang' => 'Kompor Portable',
-                'jenis_barang' => 'Alat masak',
-                'harga' => 30000,
-                'unit' => 4,
-                'status' => 'Ready',
-                'deskripsi' => 'Kompor kecil untuk camping',
-                'gambar' => null,
-            ],
-        ]);
-    }
+function dummyProducts()
+{
+    return collect([
+
+        // KATEGORI KAMERA 
+        ['id'=>1,'nama_barang'=>'Canon EOS 80D','jenis_barang'=>'Kamera','harga'=>150000,'unit'=>5,'status'=>'Ready','deskripsi'=>'Kamera DSLR Canon 80D','gambar'=>null],
+        ['id'=>2,'nama_barang'=>'Nikon D7500','jenis_barang'=>'Kamera','harga'=>160000,'unit'=>4,'status'=>'Ready','deskripsi'=>'Kamera DSLR Nikon','gambar'=>null],
+        ['id'=>3,'nama_barang'=>'Sony A6000','jenis_barang'=>'Kamera','harga'=>140000,'unit'=>3,'status'=>'Ready','deskripsi'=>'Mirrorless Sony','gambar'=>null],
+        ['id'=>4,'nama_barang'=>'Canon EOS M50','jenis_barang'=>'Kamera','harga'=>170000,'unit'=>2,'status'=>'Ready','deskripsi'=>'Mirrorless Canon','gambar'=>null],
+        ['id'=>5,'nama_barang'=>'Sony A7 III','jenis_barang'=>'Kamera','harga'=>250000,'unit'=>2,'status'=>'Ready','deskripsi'=>'Full Frame Sony','gambar'=>null],
+        ['id'=>6,'nama_barang'=>'GoPro Hero 9','jenis_barang'=>'Kamera','harga'=>120000,'unit'=>6,'status'=>'Ready','deskripsi'=>'Action cam GoPro','gambar'=>null],
+        ['id'=>7,'nama_barang'=>'DJI Osmo Pocket','jenis_barang'=>'Kamera','harga'=>130000,'unit'=>3,'status'=>'Ready','deskripsi'=>'Kamera stabilizer','gambar'=>null],
+        ['id'=>8,'nama_barang'=>'Canon EOS 700D','jenis_barang'=>'Kamera','harga'=>100000,'unit'=>5,'status'=>'Ready','deskripsi'=>'DSLR entry level','gambar'=>null],
+        ['id'=>9,'nama_barang'=>'Nikon D5600','jenis_barang'=>'Kamera','harga'=>150000,'unit'=>4,'status'=>'Ready','deskripsi'=>'DSLR Nikon','gambar'=>null],
+        ['id'=>10,'nama_barang'=>'Sony ZV-E10','jenis_barang'=>'Kamera','harga'=>180000,'unit'=>3,'status'=>'Ready','deskripsi'=>'Kamera vlog','gambar'=>null],
+        ['id'=>11,'nama_barang'=>'Canon EOS R','jenis_barang'=>'Kamera','harga'=>300000,'unit'=>2,'status'=>'Ready','deskripsi'=>'Mirrorless Full Frame','gambar'=>null],
+        ['id'=>12,'nama_barang'=>'Fujifilm X-T20','jenis_barang'=>'Kamera','harga'=>160000,'unit'=>3,'status'=>'Ready','deskripsi'=>'Mirrorless Fuji','gambar'=>null],
+        ['id'=>13,'nama_barang'=>'Sony A6400','jenis_barang'=>'Kamera','harga'=>200000,'unit'=>2,'status'=>'Ready','deskripsi'=>'Mirrorless Sony','gambar'=>null],
+        ['id'=>14,'nama_barang'=>'Canon EOS 90D','jenis_barang'=>'Kamera','harga'=>220000,'unit'=>2,'status'=>'Ready','deskripsi'=>'DSLR Canon terbaru','gambar'=>null],
+        ['id'=>15,'nama_barang'=>'Insta360 One X2','jenis_barang'=>'Kamera','harga'=>140000,'unit'=>4,'status'=>'Ready','deskripsi'=>'Kamera 360','gambar'=>null],
+
+        // ALAT CAMPING 
+        ['id'=>16,'nama_barang'=>'Tenda 2 Orang','jenis_barang'=>'Camping','harga'=>80000,'unit'=>5,'status'=>'Ready','deskripsi'=>'Tenda kecil 2 orang','gambar'=>null],
+        ['id'=>17,'nama_barang'=>'Tenda 4 Orang','jenis_barang'=>'Camping','harga'=>100000,'unit'=>4,'status'=>'Ready','deskripsi'=>'Tenda keluarga','gambar'=>null],
+        ['id'=>18,'nama_barang'=>'Sleeping Bag','jenis_barang'=>'Camping','harga'=>30000,'unit'=>10,'status'=>'Ready','deskripsi'=>'Sleeping bag hangat','gambar'=>null],
+        ['id'=>19,'nama_barang'=>'Matras Camping','jenis_barang'=>'Camping','harga'=>20000,'unit'=>8,'status'=>'Ready','deskripsi'=>'Matras ringan','gambar'=>null],
+        ['id'=>20,'nama_barang'=>'Kompor Portable','jenis_barang'=>'Camping','harga'=>30000,'unit'=>6,'status'=>'Ready','deskripsi'=>'Kompor gas kecil','gambar'=>null],
+        ['id'=>21,'nama_barang'=>'Gas Portable','jenis_barang'=>'Camping','harga'=>15000,'unit'=>12,'status'=>'Ready','deskripsi'=>'Gas isi ulang','gambar'=>null],
+        ['id'=>22,'nama_barang'=>'Carrier 60L','jenis_barang'=>'Camping','harga'=>50000,'unit'=>5,'status'=>'Ready','deskripsi'=>'Tas gunung besar','gambar'=>null],
+        ['id'=>23,'nama_barang'=>'Carrier 40L','jenis_barang'=>'Camping','harga'=>40000,'unit'=>6,'status'=>'Ready','deskripsi'=>'Tas gunung sedang','gambar'=>null],
+        ['id'=>24,'nama_barang'=>'Headlamp','jenis_barang'=>'Camping','harga'=>15000,'unit'=>10,'status'=>'Ready','deskripsi'=>'Lampu kepala','gambar'=>null],
+        ['id'=>25,'nama_barang'=>'Senter LED','jenis_barang'=>'Camping','harga'=>10000,'unit'=>12,'status'=>'Ready','deskripsi'=>'Senter terang','gambar'=>null],
+        ['id'=>26,'nama_barang'=>'Jas Hujan','jenis_barang'=>'Camping','harga'=>20000,'unit'=>7,'status'=>'Ready','deskripsi'=>'Raincoat outdoor','gambar'=>null],
+        ['id'=>27,'nama_barang'=>'Trekking Pole','jenis_barang'=>'Camping','harga'=>25000,'unit'=>6,'status'=>'Ready','deskripsi'=>'Tongkat hiking','gambar'=>null],
+        ['id'=>28,'nama_barang'=>'Cooking Set','jenis_barang'=>'Camping','harga'=>35000,'unit'=>5,'status'=>'Ready','deskripsi'=>'Peralatan masak','gambar'=>null],
+        ['id'=>29,'nama_barang'=>'Hammock','jenis_barang'=>'Camping','harga'=>30000,'unit'=>4,'status'=>'Ready','deskripsi'=>'Ayunan camping','gambar'=>null],
+        ['id'=>30,'nama_barang'=>'Flysheet','jenis_barang'=>'Camping','harga'=>40000,'unit'=>3,'status'=>'Ready','deskripsi'=>'Pelindung hujan tenda','gambar'=>null],
+
+    ]);
 }
 
 //if (!function_exists('syncRentalStock')) {
@@ -198,7 +201,7 @@ Route::post('/login', function (Request $request) {
     }
 
     // AMBIL DATA USER
-    $users = session('users', []);
+    $users = session('admin_users', []);
 
     $user = collect($users)->firstWhere('email', $email);
 
@@ -278,17 +281,38 @@ Route::post('/daftar', function (Request $request) {
         'password' => 'required',
     ]);
 
-     $users = session('users', []);
+     $users = session('admin_users', []);
 
-      $users[] = [
-        'name' => $request->name,
+    // CEK EMAIL SUDAH TERDAFTAR
+    foreach ($users as $user) {
+        if ($user['email'] === $request->email) {
+            return redirect()->back()->withErrors([
+                'Email sudah terdaftar, silakan login.'
+            ]);
+        }
+    }
+
+    // SIMPAN USER BARU
+    $nextId = count($users) > 0 ? max(array_column($users, 'id')) + 1 : 1;
+
+    $users[] = [
+        'id' => $nextId,
+        'nama_lengkap' => $request->name,
         'email' => $request->email,
         'password' => $request->password,
+        'rentals' => [],
     ];
 
-session(['users' => $users]);
+    session(['admin_users' => $users]);
 
-    return redirect()->route('login')->with('success', 'Berhasil daftar, silakan login');
+    // auto login
+    session([
+        'user' => $request->email,
+        'role' => 'pelanggan',
+    ]);
+
+    return redirect()->route('home');
+
 })->name('daftar.proses');
 
 Route::get('/logout', function () {
