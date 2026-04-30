@@ -114,7 +114,7 @@ if (!function_exists('ensurePelanggan')) {
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('home');
 })->name('root');
 
 /*
@@ -177,45 +177,95 @@ Route::get('/products/detail', fn () => view('products.detail'))->name('products
 |--------------------------------------------------------------------------
 */
 
-Route::get('/login', function () {
-    return view('auth.login-pilih');
-})->name('login');
+Route::post('/login', function (Request $request) {
 
-Route::get('/login/admin', function () {
-    return view('auth.login-admin');
-})->name('login.admin');
-
-Route::post('/login/admin', function (Request $request) {
     $request->validate([
         'email' => 'required',
         'password' => 'required',
     ]);
 
+    $email = $request->email;
+    $password = $request->password;
+
+    // admin (hardcode)
+    if ($email === 'admin@gmail.com') {
+        session([
+            'user' => $email,
+            'role' => 'admin',
+        ]);
+
+        return redirect()->route('dashboard.admin');
+    }
+
+    // AMBIL DATA USER
+    $users = session('users', []);
+
+    $user = collect($users)->firstWhere('email', $email);
+
+     // belum daftar
+    if (!$user) {
+        return redirect()->route('daftar')
+            ->withErrors(['Email belum terdaftar, silakan daftar dulu']);
+    }
+
+    // password salah
+    if ($user['password'] !== $password) {
+        return back()->withErrors(['Password salah']);
+    }
+
+// login berhasil
     session([
-        'user' => $request->email,
-        'role' => 'admin',
-    ]);
-
-    return redirect()->route('dashboard.admin');
-})->name('login.admin.proses');
-
-Route::get('/login/pelanggan', function () {
-    return view('auth.login-pelanggan');
-})->name('login.pelanggan');
-
-Route::post('/login/pelanggan', function (Request $request) {
-    $request->validate([
-        'email' => 'required',
-        'password' => 'required',
-    ]);
-
-    session([
-        'user' => $request->email,
+        'user' => $email,
         'role' => 'pelanggan',
     ]);
 
     return redirect()->route('home');
-})->name('login.pelanggan.proses');
+
+})->name('login.proses');
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+//Route::get('/login', function () {
+//    return view('auth.login-pilih');
+//})->name('login');
+
+//Route::get('/login/admin', function () {
+//    return view('auth.login-admin');
+//})->name('login.admin');
+
+//Route::post('/login/admin', function (Request $request) {
+//    $request->validate([
+//        'email' => 'required',
+//        'password' => 'required',
+//    ]);
+
+//    session([
+//        'user' => $request->email,
+//        'role' => 'admin',
+//    ]);
+
+//    return redirect()->route('dashboard.admin');
+//})->name('login.admin.proses');
+
+//Route::get('/login/pelanggan', function () {
+//    return view('auth.login-pelanggan');
+//})->name('login.pelanggan');
+
+//Route::post('/login/pelanggan', function (Request $request) {
+//    $request->validate([
+//        'email' => 'required',
+//        'password' => 'required',
+//    ]);
+
+//    session([
+//        'user' => $request->email,
+//        'role' => 'pelanggan',
+//    ]);
+
+//    return redirect()->route('home');
+//})->name('login.pelanggan.proses');
 
 Route::get('/daftar', function () {
     return view('daftar');
@@ -228,12 +278,17 @@ Route::post('/daftar', function (Request $request) {
         'password' => 'required',
     ]);
 
-    session([
-        'user' => $request->email,
-        'role' => 'pelanggan',
-    ]);
+     $users = session('users', []);
 
-    return redirect()->route('home');
+      $users[] = [
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => $request->password,
+    ];
+
+session(['users' => $users]);
+
+    return redirect()->route('login')->with('success', 'Berhasil daftar, silakan login');
 })->name('daftar.proses');
 
 Route::get('/logout', function () {

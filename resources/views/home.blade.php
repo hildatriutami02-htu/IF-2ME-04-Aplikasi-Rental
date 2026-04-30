@@ -316,7 +316,7 @@
                             <div class="mt-5 grid grid-cols-2 gap-3">
                                 <a href="{{ route('login') }}"
                                    class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700 transition">
-                                    Login
+                                    Masuk
                                 </a>
 
                                 <a href="#hubungi-kami"
