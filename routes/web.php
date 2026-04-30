@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
-use App\Models\Product;
+//use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,42 +12,80 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-if (!function_exists('syncRentalStock')) {
-    function syncRentalStock(array $products, ?array $oldRental, ?array $newRental): array
+if (!function_exists('dummyProducts')) {
+    function dummyProducts()
     {
-        $oldWasBooked = $oldRental && (($oldRental['status_transaksi'] ?? '') === 'Booking');
-        $newIsBooked = $newRental && (($newRental['status_transaksi'] ?? '') === 'Booking');
-
-        if ($oldWasBooked) {
-            foreach ($products as &$product) {
-                if (($product['id'] ?? 0) == ($oldRental['product_id'] ?? 0)) {
-                    $product['unit'] = (int) ($product['unit'] ?? 0) + (int) ($oldRental['qty'] ?? 0);
-                    $product['status'] = ((int) $product['unit'] > 0) ? 'Ready' : 'Disewa';
-                }
-            }
-            unset($product);
-        }
-
-        if ($newIsBooked) {
-            foreach ($products as &$product) {
-                if (($product['id'] ?? 0) == ($newRental['product_id'] ?? 0)) {
-                    $stokSekarang = (int) ($product['unit'] ?? 0);
-                    $qtyBaru = (int) ($newRental['qty'] ?? 0);
-
-                    if ($stokSekarang < $qtyBaru) {
-                        throw new \Exception('Stok barang tidak cukup untuk booking.');
-                    }
-
-                    $product['unit'] = $stokSekarang - $qtyBaru;
-                    $product['status'] = ((int) $product['unit'] > 0) ? 'Ready' : 'Disewa';
-                }
-            }
-            unset($product);
-        }
-
-        return $products;
+        return collect([
+            [
+                'id' => 1,
+                'nama_barang' => 'Tenda 4 Orang',
+                'jenis_barang' => 'Tenda',
+                'harga' => 100000,
+                'unit' => 5,
+                'status' => 'Ready',
+                'deskripsi' => 'Tenda untuk 4 orang',
+                'gambar' => null,
+            ],
+            [
+                'id' => 2,
+                'nama_barang' => 'Tas Gunung 60L',
+                'jenis_barang' => 'Tas',
+                'harga' => 50000,
+                'unit' => 3,
+                'status' => 'Ready',
+                'deskripsi' => 'Tas hiking kapasitas besar',
+                'gambar' => null,
+            ],
+            [
+                'id' => 3,
+                'nama_barang' => 'Kompor Portable',
+                'jenis_barang' => 'Alat masak',
+                'harga' => 30000,
+                'unit' => 4,
+                'status' => 'Ready',
+                'deskripsi' => 'Kompor kecil untuk camping',
+                'gambar' => null,
+            ],
+        ]);
     }
 }
+
+//if (!function_exists('syncRentalStock')) {
+    //function syncRentalStock(array $products, ?array $oldRental, ?array $newRental): array
+    //{
+     //   $oldWasBooked = $oldRental && (($oldRental['status_transaksi'] ?? '') === 'Booking');
+   //     $newIsBooked = $newRental && (($newRental['status_transaksi'] ?? '') === 'Booking');
+
+      //  if ($oldWasBooked) {
+      //      foreach ($products as &$product) {
+               // if (($product['id'] ?? 0) == ($oldRental['product_id'] ?? 0)) {
+             //       $product['unit'] = (int) ($product['unit'] ?? 0) + (int) ($oldRental['qty'] ?? 0);
+           //         $product['status'] = ((int) $product['unit'] > 0) ? 'Ready' : 'Disewa';
+         //       }
+       //     }
+     //       unset($product);
+   //     }
+
+ //       if ($newIsBooked) {
+        //    foreach ($products as &$product) {
+      //          if (($product['id'] ?? 0) == ($newRental['product_id'] ?? 0)) {
+    //                $stokSekarang = (int) ($product['unit'] ?? 0);
+  //                  $qtyBaru = (int) ($newRental['qty'] ?? 0);
+//
+    //                if ($stokSekarang < $qtyBaru) {
+  //                      throw new \Exception('Stok barang tidak cukup untuk booking.');
+//                    }
+
+                //    $product['unit'] = $stokSekarang - $qtyBaru;
+              //      $product['status'] = ((int) $product['unit'] > 0) ? 'Ready' : 'Disewa';
+            //    }
+          //  }
+        //    unset($product);
+      //  }
+
+    //    return $products;
+  //  }
+//}
 
 if (!function_exists('ensureAdmin')) {
     function ensureAdmin()
@@ -86,7 +124,8 @@ Route::get('/', function () {
 */
 
 Route::get('/home', function () {
-    $products = Product::latest()->get();
+  //  $products = Product::latest()->get();
+    $products = dummyProducts();
 
     $isLoggedIn = session()->has('role');
     $isPelanggan = session('role') === 'pelanggan';
@@ -212,7 +251,8 @@ Route::get('/dashboard-admin', function () {
     ensureAdmin();
 
     $users = session('admin_users', []);
-    $products = Product::all()->toArray();
+  //  $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $rentals = session('admin_rentals', []);
 
     $totalPendapatan = collect($rentals)
@@ -308,7 +348,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/admin/products', function () {
     ensureAdmin();
 
-    $products = Product::latest()->get();
+//    $products = Product::latest()->get();
+    $products = dummyProducts();
 
     return view('admin.products', compact('products'));
 })->name('admin.products');
@@ -328,17 +369,17 @@ Route::post('/admin/products/store', function (Request $request) {
         'gambar' => 'nullable',
     ]);
 
-    Product::create([
-        'kode_barang' => $request->kode_barang,
-        'nama_barang' => $request->nama_barang,
-        'jenis_barang' => $request->jenis_barang,
-        'deskripsi' => $request->deskripsi,
-        'status' => $request->status ?? 'Ready',
-        'estimasi' => $request->estimasi,
-        'harga' => $request->harga,
-        'unit' => $request->unit,
-        'gambar' => $request->gambar,
-    ]);
+//    Product::create([
+//        'kode_barang' => $request->kode_barang,
+//        'nama_barang' => $request->nama_barang,
+//        'jenis_barang' => $request->jenis_barang,
+//        'deskripsi' => $request->deskripsi,
+//        'status' => $request->status ?? 'Ready',
+//        'estimasi' => $request->estimasi,
+//        'harga' => $request->harga,
+//        'unit' => $request->unit,
+//        'gambar' => $request->gambar,
+//    ]);
 
     return redirect()->route('admin.products')->with('success', 'Barang berhasil ditambahkan.');
 })->name('admin.products.store');
@@ -358,19 +399,24 @@ Route::put('/admin/products/{id}', function (Request $request, $id) {
         'gambar' => 'nullable',
     ]);
 
-    $product = Product::findOrFail($id);
+  //  $product = Product::findOrFail($id);
+    $product = dummyProducts()->firstWhere('id', (int) $id);
 
-    $product->update([
-        'kode_barang' => $request->kode_barang,
-        'nama_barang' => $request->nama_barang,
-        'jenis_barang' => $request->jenis_barang,
-        'deskripsi' => $request->deskripsi,
-        'status' => $request->status ?? $product->status,
-        'estimasi' => $request->estimasi,
-        'harga' => $request->harga,
-        'unit' => $request->unit,
-        'gambar' => $request->gambar,
-    ]);
+if (!$product) {
+    abort(404);
+}
+
+//    $product->update([
+//        'kode_barang' => $request->kode_barang,
+//        'nama_barang' => $request->nama_barang,
+//        'jenis_barang' => $request->jenis_barang,
+//        'deskripsi' => $request->deskripsi,
+//        'status' => $request->status ?? $product->status,
+//        'estimasi' => $request->estimasi,
+//        'harga' => $request->harga,
+//        'unit' => $request->unit,
+//        'gambar' => $request->gambar,
+//    ]);
 
     return redirect()->route('admin.products')->with('success', 'Barang berhasil diupdate.');
 })->name('admin.products.update');
@@ -378,7 +424,7 @@ Route::put('/admin/products/{id}', function (Request $request, $id) {
 Route::delete('/admin/products/{id}', function ($id) {
     ensureAdmin();
 
-    Product::findOrFail($id)->delete();
+//    Product::findOrFail($id)->delete();
 
     return redirect()->route('admin.products')->with('success', 'Barang berhasil dihapus.');
 })->name('admin.products.destroy');
@@ -590,7 +636,8 @@ Route::get('/admin/rentals', function (Request $request) {
         ]);
     }
 
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $rentals = session('admin_rentals', []);
 
     $status = $request->query('status', 'semua');
@@ -622,7 +669,8 @@ Route::get('/admin/rentals/{id}/edit', function ($id) {
 
     $rentals = session('admin_rentals', []);
     $users = session('admin_users', []);
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
 
     $rental = collect($rentals)->firstWhere('id', (int) $id);
 
@@ -699,7 +747,8 @@ Route::post('/admin/rentals/store', function (Request $request) {
     ]);
 
     $users = session('admin_users', []);
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $rentals = session('admin_rentals', []);
 
     $user = collect($users)->firstWhere('id', (int) $request->user_id);
@@ -745,14 +794,14 @@ Route::post('/admin/rentals/store', function (Request $request) {
     ];
 
     try {
-        $updatedProducts = syncRentalStock($products, null, $newRental);
+//        $updatedProducts = syncRentalStock($products, null, $newRental);
 
-        foreach ($updatedProducts as $updatedProduct) {
-            Product::where('id', $updatedProduct['id'])->update([
-                'unit' => $updatedProduct['unit'],
-                'status' => $updatedProduct['status'],
-            ]);
-        }
+//        foreach ($updatedProducts as $updatedProduct) {
+//            Product::where('id', $updatedProduct['id'])->update([
+//                'unit' => $updatedProduct['unit'],
+//                'status' => $updatedProduct['status'],
+//            ]);
+//        }
     } catch (\Exception $e) {
         return redirect()->route('admin.rentals')->withErrors([$e->getMessage()]);
     }
@@ -790,7 +839,8 @@ Route::put('/admin/rentals/{id}', function (Request $request, $id) {
     ]);
 
     $rentals = session('admin_rentals', []);
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $users = session('admin_users', []);
 
     foreach ($rentals as $index => $rental) {
@@ -816,14 +866,14 @@ Route::put('/admin/rentals/{id}', function (Request $request, $id) {
             $newRental['total_harga'] = $total;
 
             try {
-                $updatedProducts = syncRentalStock($products, $oldRental, $newRental);
+//                $updatedProducts = syncRentalStock($products, $oldRental, $newRental);
 
-                foreach ($updatedProducts as $updatedProduct) {
-                    Product::where('id', $updatedProduct['id'])->update([
-                        'unit' => $updatedProduct['unit'],
-                        'status' => $updatedProduct['status'],
-                    ]);
-                }
+//                foreach ($updatedProducts as $updatedProduct) {
+//                    Product::where('id', $updatedProduct['id'])->update([
+//                        'unit' => $updatedProduct['unit'],
+//                        'status' => $updatedProduct['status'],
+//                    ]);
+//                }
             } catch (\Exception $e) {
                 return redirect()->route('admin.rentals')->withErrors([$e->getMessage()]);
             }
@@ -862,7 +912,8 @@ Route::post('/admin/rentals/{id}/return', function ($id) {
     ensureAdmin();
 
     $rentals = session('admin_rentals', []);
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $totalDenda = 0;
 
     foreach ($rentals as &$rental) {
@@ -879,14 +930,14 @@ Route::post('/admin/rentals/{id}/return', function ($id) {
             $rental['status_transaksi'] = 'Dikembalikan';
 
             try {
-                $updatedProducts = syncRentalStock($products, $rental, null);
+//                $updatedProducts = syncRentalStock($products, $rental, null);
 
-                foreach ($updatedProducts as $updatedProduct) {
-                    Product::where('id', $updatedProduct['id'])->update([
-                        'unit' => $updatedProduct['unit'],
-                        'status' => $updatedProduct['status'],
-                    ]);
-                }
+//                foreach ($updatedProducts as $updatedProduct) {
+//                    Product::where('id', $updatedProduct['id'])->update([
+//                        'unit' => $updatedProduct['unit'],
+//                        'status' => $updatedProduct['status'],
+//                  ]);
+//                }
             } catch (\Exception $e) {
                 return redirect()->route('admin.rentals')->withErrors([$e->getMessage()]);
             }
@@ -908,20 +959,21 @@ Route::delete('/admin/rentals/{id}', function ($id) {
     ensureAdmin();
 
     $rentals = session('admin_rentals', []);
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $users = session('admin_users', []);
 
     foreach ($rentals as $key => $rental) {
         if ($rental['id'] == $id) {
             try {
-                $updatedProducts = syncRentalStock($products, $rental, null);
+//                $updatedProducts = syncRentalStock($products, $rental, null);
 
-                foreach ($updatedProducts as $updatedProduct) {
-                    Product::where('id', $updatedProduct['id'])->update([
-                        'unit' => $updatedProduct['unit'],
-                        'status' => $updatedProduct['status'],
-                    ]);
-                }
+//                foreach ($updatedProducts as $updatedProduct) {
+//                    Product::where('id', $updatedProduct['id'])->update([
+//                        'unit' => $updatedProduct['unit'],
+//                        'status' => $updatedProduct['status'],
+//                    ]);
+//                }
             } catch (\Exception $e) {
                 return redirect()->route('admin.rentals')->withErrors([$e->getMessage()]);
             }
@@ -1014,18 +1066,31 @@ Route::get('/pelanggan/dashboard', function () {
 Route::get('/pelanggan/produk', function () {
     ensurePelanggan();
 
-    $products = Product::latest()->get()->map(function ($item) {
-        return [
-            'id' => $item->id,
-            'nama' => $item->nama_barang ?? '-',
-            'kategori' => $item->jenis_barang ?? '-',
-            'harga' => $item->harga ?? 0,
-            'stok' => $item->unit ?? 0,
-            'deskripsi' => $item->deskripsi ?? '-',
-            'status' => $item->status ?? 'Ready',
-            'gambar' => $item->gambar ?? null,
-        ];
-    })->all();
+//    $products = Product::latest()->get()->map(function ($item) {
+//        return [
+//            'id' => $item->id,
+//            'nama' => $item->nama_barang ?? '-',
+//            'kategori' => $item->jenis_barang ?? '-',
+//            'harga' => $item->harga ?? 0,
+//            'stok' => $item->unit ?? 0,
+//            'deskripsi' => $item->deskripsi ?? '-',
+//            'status' => $item->status ?? 'Ready',
+//            'gambar' => $item->gambar ?? null,
+//        ];
+//    })->all();
+
+    $products = dummyProducts()->map(function ($item) {
+    return [
+        'id' => $item['id'],
+        'nama' => $item['nama_barang'],
+        'kategori' => $item['jenis_barang'],
+        'harga' => $item['harga'],
+        'stok' => $item['unit'],
+        'deskripsi' => $item['deskripsi'],
+        'status' => $item['status'],
+        'gambar' => $item['gambar'],
+    ];
+})->all();
 
     return view('pelanggan.produk', compact('products'));
 })->name('pelanggan.produk');
@@ -1149,7 +1214,12 @@ Route::post('/pelanggan/sewa/{id}/extend', function (Request $request, $id) {
 Route::get('/pelanggan/produk/{id}/sewa', function ($id) {
     ensurePelanggan();
 
-    $product = Product::findOrFail((int) $id);
+//    $product = Product::findOrFail((int) $id);
+    $product = collect(dummyProducts())->firstWhere('id', (int) $id);
+
+if (!$product) {
+    abort(404);
+}
 
     return view('pelanggan.sewa-form', compact('product'));
 })->name('pelanggan.sewa.form');
@@ -1166,7 +1236,8 @@ Route::post('/pelanggan/produk/{id}/sewa', function (Request $request, $id) {
         'tanggal_kembali.after_or_equal' => 'Tanggal kembali tidak boleh lebih kecil dari tanggal pinjam.',
     ]);
 
-    $products = Product::all()->toArray();
+//    $products = Product::all()->toArray();
+    $products = dummyProducts()->toArray();
     $rentals = session('admin_rentals', []);
     $users = session('admin_users', []);
 
@@ -1224,14 +1295,14 @@ Route::post('/pelanggan/produk/{id}/sewa', function (Request $request, $id) {
     ];
 
     try {
-        $updatedProducts = syncRentalStock($products, null, $newRental);
+//        $updatedProducts = syncRentalStock($products, null, $newRental);
 
-        foreach ($updatedProducts as $updatedProduct) {
-            Product::where('id', $updatedProduct['id'])->update([
-                'unit' => $updatedProduct['unit'],
-                'status' => $updatedProduct['status'],
-            ]);
-        }
+//        foreach ($updatedProducts as $updatedProduct) {
+//            Product::where('id', $updatedProduct['id'])->update([
+//                'unit' => $updatedProduct['unit'],
+//                'status' => $updatedProduct['status'],
+//            ]);
+//        }
     } catch (\Exception $e) {
         return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
     }
@@ -1342,4 +1413,8 @@ Route::post('/pelanggan/hubungi-admin', function (Request $request) {
 
 Route::get('/gambar1deh', function () {
     return view('gambar1deh');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class);
 });
