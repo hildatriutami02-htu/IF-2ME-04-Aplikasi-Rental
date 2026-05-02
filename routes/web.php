@@ -69,15 +69,6 @@ if (!function_exists('ensurePelanggan')) {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| Root
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/', function () {
-    return redirect()->route('login');
-})->name('root');
 
 /*
 |--------------------------------------------------------------------------
@@ -85,42 +76,24 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
+Route::get('/', function () {
+    return redirect()->route('home');
+});
+
 Route::get('/home', function () {
     $products = Product::latest()->get();
 
-    $isLoggedIn = session()->has('role');
-    $isPelanggan = session('role') === 'pelanggan';
+    $isPelanggan = false;
+    $isAdmin = false;
 
-    $customerRentals = collect();
-    $paymentHistory = collect();
+    $customerRentals = [];
+    $paymentHistory = [];
     $pickupReminder = null;
-
-    if ($isPelanggan) {
-        $customerName = session('user') ?? 'Pelanggan';
-        $rentals = collect(session('admin_rentals', []));
-
-        $customerRentals = $rentals->filter(function ($item) use ($customerName) {
-            return ($item['nama_pelanggan'] ?? '') === $customerName
-                || ($item['email'] ?? '') === $customerName;
-        })->values();
-
-        $paymentHistory = $customerRentals->map(function ($item) {
-            return [
-                'invoice' => $item['kode_transaksi'] ?? '-',
-                'produk' => $item['nama_barang'] ?? '-',
-                'tanggal' => $item['tanggal_pinjam'] ?? '-',
-                'nominal' => $item['total_harga'] ?? 0,
-                'status' => $item['status_pembayaran'] ?? 'Belum Bayar',
-            ];
-        });
-
-        $pickupReminder = $customerRentals->first();
-    }
 
     return view('home', compact(
         'products',
-        'isLoggedIn',
         'isPelanggan',
+        'isAdmin',
         'customerRentals',
         'paymentHistory',
         'pickupReminder'
@@ -130,7 +103,11 @@ Route::get('/home', function () {
 Route::get('/about', fn () => view('about'))->name('about');
 Route::get('/contact', fn () => view('contact'))->name('contact');
 Route::get('/products', fn () => view('products'))->name('products');
-Route::get('/products/detail', fn () => view('products.detail'))->name('products.detail');
+Route::get('/products/{id}', function ($id) {
+    $product = Product::findOrFail((int) $id);
+
+    return view('detail', compact('product'));
+})->name('products.detail');
 
 /*
 |--------------------------------------------------------------------------
@@ -166,16 +143,29 @@ Route::get('/login/pelanggan', function () {
 
 Route::post('/login/pelanggan', function (Request $request) {
     $request->validate([
-        'email' => 'required',
+        'email' => 'required|email',
         'password' => 'required',
     ]);
 
+    $users = session('admin_users', []);
+
+    $user = collect($users)->first(function ($item) use ($request) {
+        return ($item['email'] ?? '') === $request->email
+            && ($item['password'] ?? '') === $request->password;
+    });
+
+    if (!$user) {
+        return redirect()->back()->withInput()->withErrors([
+            'Email atau password salah, atau akun belum terdaftar.'
+        ]);
+    }
+
     session([
-        'user' => $request->email,
+        'user' => $user['email'],
         'role' => 'pelanggan',
     ]);
 
-    return redirect()->route('home');
+    return redirect()->route('pelanggan.dashboard');
 })->name('login.pelanggan.proses');
 
 Route::get('/daftar', function () {
@@ -184,21 +174,56 @@ Route::get('/daftar', function () {
 
 Route::post('/daftar', function (Request $request) {
     $request->validate([
-        'name' => 'required',
-        'email' => 'required',
-        'password' => 'required',
+        'nama_lengkap' => 'required|string|max:100',
+        'email' => 'required|email',
+        'password' => 'required|string|min:3',
+        'no_ktp' => 'required|string|max:30',
+        'no_telp' => 'required|string|max:20',
+        'no_wa' => 'required|string|max:20',
+        'jenis_kelamin' => 'required|string',
+        'alamat' => 'required|string',
     ]);
+
+    $users = session('admin_users', []);
+
+    $emailExists = collect($users)->contains(function ($user) use ($request) {
+        return ($user['email'] ?? '') === $request->email;
+    });
+
+    if ($emailExists) {
+        return redirect()->back()->withInput()->withErrors([
+            'Email sudah terdaftar.'
+        ]);
+    }
+
+    $nextId = count($users) > 0 ? max(array_column($users, 'id')) + 1 : 1;
+
+    $users[] = [
+        'id' => $nextId,
+        'kode_user' => 'USR' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+        'nama_lengkap' => $request->nama_lengkap,
+        'email' => $request->email,
+        'password' => $request->password,
+        'no_ktp' => $request->no_ktp,
+        'no_telp' => $request->no_telp,
+        'no_wa' => $request->no_wa,
+        'jenis_kelamin' => $request->jenis_kelamin,
+        'alamat' => $request->alamat,
+        'status' => 'Aktif',
+        'rentals' => [],
+    ];
+
+    session(['admin_users' => $users]);
 
     session([
         'user' => $request->email,
         'role' => 'pelanggan',
     ]);
 
-    return redirect()->route('home');
+    return redirect()->route('pelanggan.dashboard')->with('success', 'Pendaftaran berhasil.');
 })->name('daftar.proses');
-
 Route::get('/logout', function () {
-    session()->flush();
+    session()->forget(['user', 'role']);
     return redirect()->route('login');
 })->name('logout');
 
@@ -949,6 +974,45 @@ Route::delete('/admin/rentals/{id}', function ($id) {
     return redirect()->route('admin.rentals')->with('success', 'Transaksi berhasil dihapus.');
 })->name('admin.rentals.destroy');
 
+Route::post('/admin/rentals/{id}/verify', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+
+    foreach ($rentals as &$rental) {
+        if (($rental['id'] ?? 0) == $id) {
+            $rental['status_transaksi'] = 'Booking';
+            break;
+        }
+    }
+    unset($rental);
+
+    session(['admin_rentals' => $rentals]);
+
+    return redirect()->route('admin.rentals')
+        ->with('success', 'Pesanan berhasil diverifikasi.');
+})->name('admin.rentals.verify');
+
+Route::post('/admin/rentals/{id}/pickup', function ($id) {
+    ensureAdmin();
+
+    $rentals = session('admin_rentals', []);
+
+    foreach ($rentals as &$rental) {
+        if (($rental['id'] ?? 0) == $id) {
+            $rental['status_transaksi'] = 'Diambil';
+            $rental['tanggal_diambil'] = Carbon::now()->format('d-m-Y');
+            break;
+        }
+    }
+    unset($rental);
+
+    session(['admin_rentals' => $rentals]);
+
+    return redirect()->route('admin.rentals')
+        ->with('success', 'Barang berhasil ditandai sudah diambil pelanggan.');
+})->name('admin.rentals.pickup');
+
 /*
 |--------------------------------------------------------------------------
 | Admin Other Pages
@@ -1008,7 +1072,10 @@ Route::get('/admin/settings', function () {
 
 Route::get('/pelanggan/dashboard', function () {
     ensurePelanggan();
-    return view('pelanggan.dashboard');
+
+    $products = Product::latest()->get();
+
+    return view('pelanggan.dashboard', compact('products'));
 })->name('pelanggan.dashboard');
 
 Route::get('/pelanggan/produk', function () {
@@ -1029,6 +1096,175 @@ Route::get('/pelanggan/produk', function () {
 
     return view('pelanggan.produk', compact('products'));
 })->name('pelanggan.produk');
+
+/*
+|--------------------------------------------------------------------------
+| Keranjang Pelanggan
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pelanggan/keranjang', function () {
+    ensurePelanggan();
+
+    $cart = session('cart', []);
+
+    return view('pelanggan.keranjang', compact('cart'));
+})->name('pelanggan.keranjang');
+
+Route::post('/pelanggan/keranjang/tambah', function (Request $request) {
+    ensurePelanggan();
+
+    $request->validate([
+        'product_id' => 'required|numeric',
+        'tanggal_pinjam' => 'required|date',
+        'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+        'qty' => 'required|numeric|min:1',
+        'catatan' => 'nullable|string',
+    ], [
+        'tanggal_kembali.after_or_equal' => 'Tanggal kembali tidak boleh lebih kecil dari tanggal pinjam.',
+    ]);
+
+    $product = Product::findOrFail((int) $request->product_id);
+
+    if ((int) $product->unit < (int) $request->qty) {
+        return redirect()->back()->withInput()->withErrors([
+            'Stok produk tidak mencukupi.'
+        ]);
+    }
+
+    $cart = session('cart', []);
+
+    $cart[] = [
+        'product_id' => $product->id,
+        'nama_barang' => $product->nama_barang,
+        'harga_per_hari' => (int) $product->harga,
+        'tanggal_pinjam' => $request->tanggal_pinjam,
+        'tanggal_kembali' => $request->tanggal_kembali,
+        'qty' => (int) $request->qty,
+        'catatan' => $request->catatan,
+    ];
+
+    session(['cart' => $cart]);
+
+    return redirect()->route('pelanggan.keranjang')
+        ->with('success', 'Produk berhasil ditambahkan ke keranjang.');
+})->name('pelanggan.keranjang.tambah');
+
+Route::delete('/pelanggan/keranjang/{index}', function ($index) {
+    ensurePelanggan();
+
+    $cart = session('cart', []);
+
+    if (isset($cart[$index])) {
+        unset($cart[$index]);
+        $cart = array_values($cart);
+        session(['cart' => $cart]);
+    }
+
+    return redirect()->route('pelanggan.keranjang')
+        ->with('success', 'Produk berhasil dihapus dari keranjang.');
+})->name('pelanggan.keranjang.hapus');
+
+Route::post('/pelanggan/keranjang/checkout', function (Request $request) {
+    ensurePelanggan();
+
+    $request->validate([
+        'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $ktpPath = $request->file('foto_ktp')->store('ktp', 'public');
+
+    $cart = session('cart', []);
+
+    if (count($cart) === 0) {
+        return redirect()->route('pelanggan.keranjang')
+            ->withErrors(['Keranjang masih kosong.']);
+    }
+
+    $products = Product::all()->toArray();
+    $rentals = session('admin_rentals', []);
+    $users = session('admin_users', []);
+    $userSession = session('user') ?? 'pelanggan@email.com';
+
+    foreach ($cart as $item) {
+        $product = collect($products)->firstWhere('id', (int) $item['product_id']);
+
+        if (!$product) {
+            return redirect()->route('pelanggan.keranjang')
+                ->withErrors(['Ada produk yang tidak ditemukan.']);
+        }
+
+        $qty = (int) $item['qty'];
+        $stok = (int) ($product['unit'] ?? 0);
+
+        if ($stok < $qty) {
+            return redirect()->route('pelanggan.keranjang')
+                ->withErrors(['Stok produk ' . $product['nama_barang'] . ' tidak mencukupi.']);
+        }
+
+        $start = Carbon::parse($item['tanggal_pinjam']);
+        $end = Carbon::parse($item['tanggal_kembali']);
+        $lama = max($start->diffInDays($end), 1);
+
+        $nextId = count($rentals) > 0 ? max(array_column($rentals, 'id')) + 1 : 1;
+        $kode = 'TRX' . str_pad((string) $nextId, 3, '0', STR_PAD_LEFT);
+
+        $hargaPerHari = (int) ($product['harga'] ?? 0);
+        $total = $hargaPerHari * $qty * $lama;
+
+        $matchingUser = collect($users)->first(function ($user) use ($userSession) {
+            return ($user['nama_lengkap'] ?? '') === $userSession
+                || ($user['email'] ?? '') === $userSession;
+        });
+
+        $newRental = [
+            'id' => $nextId,
+            'kode_transaksi' => $kode,
+            'user_id' => $matchingUser['id'] ?? 0,
+            'product_id' => (int) $product['id'],
+            'nama_pelanggan' => $userSession,
+            'email' => $userSession,
+            'nama_barang' => $product['nama_barang'] ?? '-',
+            'qty' => $qty,
+            'tanggal_pinjam' => $start->format('d M Y'),
+            'tanggal_kembali' => $end->format('d M Y'),
+            'tanggal_pinjam_raw' => $item['tanggal_pinjam'],
+            'tanggal_kembali_raw' => $item['tanggal_kembali'],
+            'tanggal_kembali_real' => null,
+            'harga_per_hari' => $hargaPerHari,
+            'total_harga' => $total,
+            'denda_per_hari' => 10000,
+            'total_denda' => 0,
+            'status_pembayaran' => 'Belum Bayar',
+            'status_transaksi' => 'Menunggu Verifikasi',
+            'catatan' => $item['catatan'] ?? null,
+            'foto_ktp' => $ktpPath,
+        ];
+
+        try {
+            $products = syncRentalStock($products, null, $newRental);
+
+            foreach ($products as $updatedProduct) {
+                Product::where('id', $updatedProduct['id'])->update([
+                    'unit' => $updatedProduct['unit'],
+                    'status' => $updatedProduct['status'],
+                ]);
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('pelanggan.keranjang')
+                ->withErrors([$e->getMessage()]);
+        }
+
+        $rentals[] = $newRental;
+    }
+
+    session(['admin_rentals' => $rentals]);
+    session(['admin_users' => $users]);
+    session()->forget('cart');
+
+    return redirect()->route('pelanggan.sewa')
+        ->with('success', 'Checkout berhasil. Pesanan menunggu verifikasi admin.');
+})->name('pelanggan.keranjang.checkout');
 
 Route::get('/pelanggan/sewa', function () {
     ensurePelanggan();
@@ -1060,6 +1296,7 @@ Route::get('/pelanggan/sewa', function () {
             'warna' => match ($item['status_transaksi'] ?? '') {
                 'Booking' => 'blue',
                 'Dikembalikan' => 'slate',
+                'Menunggu Verifikasi' => 'yellow',
                 default => 'soft',
             },
         ];
@@ -1320,8 +1557,13 @@ Route::post('/pelanggan/profil', function (Request $request) {
     return redirect()->route('pelanggan.profil')->with('success', 'Profil berhasil diperbarui.');
 })->name('pelanggan.profil.update');
 
+Route::get('/pelanggan/home', function () {
+    return redirect()->route('home');
+})->name('pelanggan.home');
+
 Route::get('/pelanggan/hubungi-admin', function () {
     ensurePelanggan();
+
     return view('pelanggan.hubungi-admin');
 })->name('pelanggan.hubungi-admin');
 
@@ -1339,7 +1581,3 @@ Route::post('/pelanggan/hubungi-admin', function (Request $request) {
 
     return redirect()->route('pelanggan.hubungi-admin');
 })->name('pelanggan.hubungi-admin.kirim');
-
-Route::get('/gambar1deh', function () {
-    return view('gambar1deh');
-});

@@ -2,6 +2,7 @@
     $customerMenu = [
         ['route' => 'pelanggan.dashboard', 'label' => 'Dashboard'],
         ['route' => 'pelanggan.produk', 'label' => 'Produk'],
+        ['route' => 'pelanggan.keranjang', 'label' => 'Keranjang'], // TAMBAHAN
         ['route' => 'pelanggan.sewa', 'label' => 'Sewa Saya'],
         ['route' => 'pelanggan.pembayaran', 'label' => 'Pembayaran'],
         ['route' => 'pelanggan.riwayat', 'label' => 'Riwayat Sewa'],
@@ -15,6 +16,8 @@
 @endphp
 
 <aside class="fixed inset-y-0 left-0 z-30 hidden w-80 lg:flex flex-col bg-slate-900 text-white border-r border-slate-800 shadow-xl">
+    
+    <!-- HEADER -->
     <div class="px-6 py-7 border-b border-slate-800">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-2xl font-extrabold shadow-lg">
@@ -27,6 +30,7 @@
         </div>
     </div>
 
+    <!-- USER -->
     <div class="px-6 py-6 border-b border-slate-800">
         <p class="text-sm text-slate-300">Halo, Pelanggan</p>
         <h2 class="mt-3 text-xl font-bold text-white break-words leading-snug">
@@ -34,6 +38,7 @@
         </h2>
     </div>
 
+    <!-- MENU -->
     <nav class="flex-1 px-5 py-6 space-y-3">
         @foreach ($customerMenu as $item)
             <a
@@ -45,6 +50,7 @@
         @endforeach
     </nav>
 
+    <!-- FOOTER -->
     <div class="px-5 py-5 border-t border-slate-800 space-y-3">
         <a
             href="{{ route('home') }}"
@@ -60,4 +66,5 @@
             Keluar
         </a>
     </div>
+
 </aside>

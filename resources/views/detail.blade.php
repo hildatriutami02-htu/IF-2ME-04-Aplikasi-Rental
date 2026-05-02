@@ -1,181 +1,103 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Produk - LensCamp</title>
-</head>
+@extends('pelanggan.layouts.app')
 
 @php
-    $menus = [
-        ['route'=>'home','label'=>'Home'],
-        ['route'=>'about','label'=>'About'],
-        ['route'=>'products','label'=>'Product','active'=>true],
-        ['route'=>'contact','label'=>'Contact Us'],
-    ];
+    $title = 'Detail Produk - LensCamp';
+    $headerTitle = 'Detail Produk';
+    $headerDesc = 'Lihat detail produk sebelum menambahkan ke keranjang';
 
-    $requirements = [
-        'Wajib KTP',
-        'Denda keterlambatan berlaku',
-        'Barang harus dikembalikan dalam kondisi baik'
-    ];
+    $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
 @endphp
 
-<body class="bg-gray-50">
+@section('content')
+<div class="max-w-5xl mx-auto">
 
-<!-- HEADER -->
-<header class="fixed w-full z-20 top-0 start-0">
-
-    <nav class="bg-neutral-primary">
-        <div class="flex justify-between items-center mx-auto max-w-screen-xl p-4">
-
-            <a href="{{ route('home') }}" class="flex items-center space-x-3">
-                <img src="https://flowbite.com/docs/images/logo.svg" class="h-7">
-                <span class="text-xl text-heading font-semibold">LensCamp</span>
-            </a>
-
-            <div class="flex items-center space-x-6">
-                @if(session('user'))
-                    <span class="text-sm text-body">{{ session('user') }}</span>
-                    <a href="{{ route('logout') }}" class="text-sm font-medium text-fg-brand hover:underline">Logout</a>
-                @else
-                    <a href="{{ route('daftar') }}" class="text-sm text-body hover:underline">Register</a>
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-fg-brand hover:underline">Login</a>
-                @endif
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex h-80 items-center justify-center rounded-2xl bg-slate-100 text-6xl font-bold text-slate-400">
+                {{ strtoupper(substr($product->nama_barang, 0, 1)) }}
             </div>
-
-        </div>
-    </nav>
-
-    <nav class="bg-neutral-secondary-soft border-y border-default">
-        <div class="max-w-screen-xl px-4 py-3 mx-auto">
-            <ul class="flex space-x-8 text-sm">
-                @foreach($menus as $menu)
-                    <li>
-                        <a href="{{ route($menu['route']) }}"
-                           class="text-heading {{ isset($menu['active']) ? 'font-semibold underline' : 'hover:underline' }}">
-                            {{ $menu['label'] }}
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    </nav>
-
-</header>
-
-<div class="h-28"></div>
-
-<!-- CONTENT -->
-<div class="max-w-6xl mx-auto p-6">
-
-    <div class="bg-white rounded-2xl shadow-lg p-6 grid md:grid-cols-2 gap-8">
-
-        <!-- IMAGE -->
-        <div>
-            <img src="https://via.placeholder.com/600x400?text=Canon+EOS+1500D"
-                 class="w-full h-96 object-cover rounded-lg">
         </div>
 
-        <!-- DETAIL -->
-        <div>
-
-            <h1 class="text-3xl font-bold mb-3 text-heading">
-                Canon EOS 1500D
-            </h1>
-
-            <p class="text-body mb-4">
-                Sewa kamera DSLR dengan kualitas terbaik untuk kebutuhan fotografi, event, dan dokumentasi perjalanan.
-            </p>
-
-            <p class="text-2xl font-semibold text-fg-brand mb-4">
-                Rp 100.000 / hari
-            </p>
-
-            <span class="bg-brand-softer text-fg-brand-strong text-sm font-medium px-3 py-1 rounded">
-                Tersedia
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                {{ $product->jenis_barang ?? 'Produk' }}
             </span>
 
-            <!-- DATE -->
-            <div class="mt-4">
-                <label class="block mb-2 font-semibold text-heading">Tanggal Mulai:</label>
-                <input type="date" class="w-full border border-default rounded-lg p-2 mb-3">
+            <h1 class="mt-4 text-3xl font-bold text-slate-800">
+                {{ $product->nama_barang }}
+            </h1>
 
-                <label class="block mb-2 font-semibold text-heading">Tanggal Selesai:</label>
-                <input type="date" class="w-full border border-default rounded-lg p-2">
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+                {{ $product->deskripsi }}
+            </p>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p class="text-sm text-slate-500">Harga / Hari</p>
+                    <p class="mt-1 font-bold text-blue-600">
+                        Rp {{ number_format($product->harga, 0, ',', '.') }}
+                    </p>
+                </div>
+
+                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p class="text-sm text-slate-500">Stok</p>
+                    <p class="mt-1 font-bold text-slate-800">
+                        {{ $product->unit }}
+                    </p>
+                </div>
             </div>
 
-            <!-- QTY -->
-            <div class="flex items-center gap-3 mt-4 mb-6">
-                <button onclick="kurang()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" type="button">-</button>
-                <span id="qty" class="font-semibold">1</span>
-                <button onclick="tambah()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" type="button">+</button>
-            </div>
+            <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST" class="mt-6 space-y-4">
+                @csrf
 
-            <!-- BUTTON -->
-            <div class="flex gap-4">
-                <button class="bg-brand text-white px-6 py-3 rounded-lg hover:bg-brand-strong transition">
-                    Sewa Sekarang
-                </button>
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                <button class="border border-brand text-fg-brand px-6 py-3 rounded-lg hover:bg-brand-softer transition">
-                    + Keranjang
-                </button>
-            </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700">Tanggal Pinjam</label>
+                        <input type="date" name="tanggal_pinjam" required class="{{ $inputClass }}">
+                    </div>
 
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700">Tanggal Kembali</label>
+                        <input type="date" name="tanggal_kembali" required class="{{ $inputClass }}">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Jumlah Unit</label>
+                    <input type="number" name="qty" min="1" max="{{ $product->unit }}" value="1" required class="{{ $inputClass }}">
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Catatan</label>
+                    <textarea name="catatan" rows="4" placeholder="Opsional" class="{{ $inputClass }}"></textarea>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <button type="submit"
+                        class="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                        Tambah ke Keranjang
+                    </button>
+
+                    <a href="{{ route('pelanggan.produk') }}"
+                       class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+                        Kembali ke Produk
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- DESKRIPSI -->
-    <div class="mt-6 bg-white rounded-2xl shadow-lg p-6">
-        <h2 class="text-xl font-bold text-heading mb-4">Deskripsi</h2>
-        <p class="text-body mb-4">
-            Kamera ini cocok untuk kebutuhan pemula hingga profesional dengan hasil gambar yang tajam dan warna yang natural.
-        </p>
+    <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-800">Syarat Penyewaan</h2>
 
-        <h2 class="text-xl font-bold text-heading mb-4">Syarat</h2>
-        <p class="text-body">
-            @foreach($requirements as $req)
-                - {{ $req }} <br>
-            @endforeach
-        </p>
-    </div>
-
-    <!-- BACK -->
-    <div class="mt-6">
-        <a href="{{ route('products') }}" class="text-fg-brand hover:underline">
-            ← Kembali ke halaman products
-        </a>
+        <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-600">
+            <li>Wajib membawa atau mengunggah identitas diri.</li>
+            <li>Denda keterlambatan berlaku sesuai ketentuan admin.</li>
+            <li>Barang harus dikembalikan dalam kondisi baik.</li>
+        </ul>
     </div>
 
 </div>
-
-<!-- FOOTER -->
-<footer class="bg-neutral-primary-soft rounded-base shadow-xs border border-default m-4">
-    <div class="max-w-screen-xl mx-auto p-4 flex justify-between items-center">
-        <span class="text-sm text-body">
-            © 2026 <a href="{{ route('home') }}" class="hover:underline">LensCamp™</a>. All Rights Reserved.
-        </span>
-    </div>
-</footer>
-
-<!-- SCRIPT -->
-<script>
-let qty = 1;
-
-function tambah() {
-    qty++;
-    document.getElementById("qty").innerText = qty;
-}
-
-function kurang() {
-    if (qty > 1) {
-        qty--;
-        document.getElementById("qty").innerText = qty;
-    }
-}
-</script>
-
-</body>
-</html>
+@endsection

@@ -134,7 +134,7 @@
             @endforeach
         </div>
 
-        <div class="overflow-x-auto custom-scroll">
+        <div class="overflow-x-auto custom-scroll pb-24">
             <table class="w-full text-xs text-left text-slate-600">
                 <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                     <tr>
@@ -184,7 +184,7 @@
                                 </div>
                             </td>
 
-                            <td class="px-2 py-3 text-center">
+                            <td class="px-2 py-3 text-center relative">
                                 {{ $item['qty'] ?? 1 }}
                             </td>
 
@@ -246,6 +246,28 @@
                                            class="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
                                             Update
                                         </a>
+
+                                        @if(($item['status_transaksi'] ?? '') === 'Menunggu Verifikasi')
+                                             <form action="{{ route('admin.rentals.verify', $item['id']) }}" method="POST"
+                                                 onsubmit="return confirm('Verifikasi pesanan ini?')">
+                                                  @csrf
+                                              <button type="submit"
+                                                 class="block w-full text-left px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50">
+                                                    Verifikasi
+                                              </button>
+                                             </form>
+                                            @endif
+                                       
+                                        @if(($item['status_transaksi'] ?? '') === 'Booking')
+                                            <form action="{{ route('admin.rentals.pickup', $item['id']) }}" method="POST"
+                                              onsubmit="return confirm('Tandai barang sudah diambil pelanggan?')">
+                                             @csrf
+                                               <button type="submit"
+                                            class="block w-full text-left px-4 py-2.5 text-sm text-purple-600 hover:bg-purple-50">
+                                              Diambil
+                                             </button>
+                                              </form>
+                                                @endif
 
                                         @if(!$isReturned)
                                             <a href="{{ route('admin.rentals.extend', $item['id']) }}"

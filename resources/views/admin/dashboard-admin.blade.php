@@ -46,6 +46,7 @@
             background: transparent;
         }
     </style>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="bg-slate-100 text-slate-800">

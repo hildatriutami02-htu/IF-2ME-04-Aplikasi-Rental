@@ -68,8 +68,9 @@
                 </p>
             </div>
 
-            <form action="{{ route('pelanggan.sewa.store', $product['id']) }}" method="POST" class="space-y-5">
+            <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST">
                 @csrf
+                <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
@@ -122,7 +123,7 @@
                         type="submit"
                         class="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
                     >
-                        Ajukan Sewa
+                        Tambah ke Keranjang
                     </button>
 
                     <a
