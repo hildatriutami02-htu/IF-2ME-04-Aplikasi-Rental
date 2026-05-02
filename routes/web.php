@@ -1732,4 +1732,4 @@ Route::get('/gambar1deh', function () {
     return view('gambar1deh');
 });
 
-
+// update terbaru
