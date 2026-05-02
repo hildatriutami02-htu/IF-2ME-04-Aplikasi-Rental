@@ -9,8 +9,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = DataUser::latest()->get();
-        return view('admin.users', compact('users'));
+//        $users = DataUser::latest()->get();
+//        return view('admin.users', compact('users'));
+        $users = \App\Models\DataUser::orderBy('created_at', 'desc')->get();
+
+    return view('admin.users', compact('users'));
     }
 
     public function store(Request $request)

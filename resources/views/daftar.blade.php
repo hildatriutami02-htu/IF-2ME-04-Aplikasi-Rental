@@ -206,7 +206,7 @@
 
                 <div class="mt-6 text-center text-sm text-slate-500">
                     Sudah punya akun?
-                    <a href="{{ route('login.pelanggan') }}" class="font-semibold text-blue-600 hover:text-blue-700">
+                    <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:text-blue-700">
                         Masuk di sini
                     </a>
                 </div>
