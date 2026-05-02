@@ -88,10 +88,10 @@
                     <div class="mt-4 grid grid-cols-3 gap-3">
 
                         <!-- DETAIL -->
-                        <a href="{{ route('products.detail', $item->id ?? $item['id']) }}"
-                           class="rounded-xl bg-slate-100 px-3 py-2 text-center text-sm font-semibold text-slate-700">
-                            Detail
-                        </a>
+                       <a href="{{ route('products.detail', ['id' => $item->id ?? $item['id'] ?? 0]) }}"
+   class="rounded-xl bg-slate-100 px-3 py-2 text-center text-sm font-semibold text-slate-700">
+    Detail
+</a>
 
                         <!-- KERANJANG -->
                         <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST">

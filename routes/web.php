@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
-//use App\Models\Product;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -121,40 +121,21 @@ Route::get('/', function () {
     return redirect()->route('home');
 })->name('root');
 
-/*
-|--------------------------------------------------------------------------
-| Public Pages
-|--------------------------------------------------------------------------
-*/
 
-Route::get('/', function () {
-    return redirect()->route('home');
-});
-
+// TAMBAH DI SINI BOS
 Route::get('/home', function () {
-  //  $products = Product::latest()->get();
-    $products = dummyProducts();
+    $products = Product::latest()->get();
 
     $isPelanggan = false;
     $isAdmin = false;
 
-    $customerRentals = [];
-    $paymentHistory = [];
-    $pickupReminder = null;
-
     return view('home', compact(
         'products',
         'isPelanggan',
-        'isAdmin',
-        'customerRentals',
-        'paymentHistory',
-        'pickupReminder'
+        'isAdmin'
     ));
 })->name('home');
 
-Route::get('/about', fn () => view('about'))->name('about');
-Route::get('/contact', fn () => view('contact'))->name('contact');
-Route::get('/products', fn () => view('products'))->name('products');
 Route::get('/products/{id}', function ($id) {
     $product = Product::findOrFail((int) $id);
 
@@ -163,7 +144,7 @@ Route::get('/products/{id}', function ($id) {
 
 /*
 |--------------------------------------------------------------------------
-| Auth
+| Public Pages
 |--------------------------------------------------------------------------
 */
 
@@ -178,14 +159,13 @@ Route::post('/login', function (Request $request) {
     $password = $request->password;
 
     // admin (hardcode)
-    if ($email === 'admin@gmail.com') {
-        session([
-            'user' => $email,
-            'role' => 'admin',
-        ]);
+session([
+    'user' => $email,
+    'role' => 'pelanggan',
+]);
 
-        return redirect()->route('dashboard.admin');
-    }
+return redirect()->route('pelanggan.dashboard');
+ 
 
     // AMBIL DATA USER
     $users = session('admin_users', []);
@@ -210,11 +190,7 @@ Route::post('/login', function (Request $request) {
     ]);
 
     return redirect()->route('dashboard.admin');
-})->name('login.admin.proses');
-
-Route::get('/login/pelanggan', function () {
-    return view('auth.login-pelanggan');
-})->name('login.pelanggan');
+})->name('login.proses');
 
 Route::post('/login/pelanggan', function (Request $request) {
     $request->validate([
@@ -241,10 +217,35 @@ Route::post('/login/pelanggan', function (Request $request) {
     ]);
 
     return redirect()->route('pelanggan.dashboard');
+
 })->name('login.pelanggan.proses');
 Route::get('/login', function () {
-    return view('auth.login');
+    return view('auth.login-pilih');
 })->name('login');
+
+Route::get('/login/admin', function () {
+    return view('auth.login-admin');
+})->name('login.admin');
+
+Route::get('/login/pelanggan', function () {
+    return view('auth.login-pelanggan');
+})->name('login.pelanggan');
+
+
+// TAMBAH INI DI SINI
+Route::post('/login/admin', function (Request $request) {
+    $request->validate([
+        'email' => 'required',
+        'password' => 'required',
+    ]);
+
+    session([
+        'user' => $request->email,
+        'role' => 'admin',
+    ]);
+
+    return redirect()->route('dashboard.admin');
+})->name('login.admin.proses');
 
 //Route::get('/login', function () {
 //    return view('auth.login-pilih');
@@ -341,9 +342,6 @@ Route::post('/daftar', function (Request $request) {
         'jenis_kelamin' => $request->jenis_kelamin,
         'alamat' => $request->alamat,
         'status' => 'Aktif',
-        'nama_lengkap' => $request->name,
-        'email' => $request->email,
-        'password' => $request->password,
         'rentals' => [],
     ];
 
@@ -374,7 +372,7 @@ Route::get('/dashboard-admin', function () {
 
     $users = session('admin_users', []);
   //  $products = Product::all()->toArray();
-    $products = dummyProducts()->toArray();
+   $products = Product::all()->toArray();
     $rentals = session('admin_rentals', []);
 
     $totalPendapatan = collect($rentals)
@@ -471,7 +469,7 @@ Route::get('/admin/products', function () {
     ensureAdmin();
 
 //    $products = Product::latest()->get();
-    $products = dummyProducts();
+    $products = Product::latest()->get();
 
     return view('admin.products', compact('products'));
 })->name('admin.products');
@@ -491,17 +489,17 @@ Route::post('/admin/products/store', function (Request $request) {
         'gambar' => 'nullable',
     ]);
 
-//    Product::create([
-//        'kode_barang' => $request->kode_barang,
-//        'nama_barang' => $request->nama_barang,
-//        'jenis_barang' => $request->jenis_barang,
-//        'deskripsi' => $request->deskripsi,
-//        'status' => $request->status ?? 'Ready',
-//        'estimasi' => $request->estimasi,
-//        'harga' => $request->harga,
-//        'unit' => $request->unit,
-//        'gambar' => $request->gambar,
-//    ]);
+    Product::create([
+        'kode_barang' => $request->kode_barang,
+        'nama_barang' => $request->nama_barang,
+        'jenis_barang' => $request->jenis_barang,
+        'deskripsi' => $request->deskripsi,
+        'status' => $request->status ?? 'Ready',
+        'estimasi' => $request->estimasi,
+        'harga' => $request->harga,
+        'unit' => $request->unit,
+        'gambar' => $request->gambar,
+    ]);
 
     return redirect()->route('admin.products')->with('success', 'Barang berhasil ditambahkan.');
 })->name('admin.products.store');
@@ -522,7 +520,7 @@ Route::put('/admin/products/{id}', function (Request $request, $id) {
     ]);
 
   //  $product = Product::findOrFail($id);
-    $product = dummyProducts()->firstWhere('id', (int) $id);
+    $product = Product::findOrFail((int) $id);
 
 if (!$product) {
     abort(404);
@@ -1230,33 +1228,20 @@ Route::get('/pelanggan/dashboard', function () {
 Route::get('/pelanggan/produk', function () {
     ensurePelanggan();
 
-//    $products = Product::latest()->get()->map(function ($item) {
-//        return [
-//            'id' => $item->id,
-//            'nama' => $item->nama_barang ?? '-',
-//            'kategori' => $item->jenis_barang ?? '-',
-//            'harga' => $item->harga ?? 0,
-//            'stok' => $item->unit ?? 0,
-//            'deskripsi' => $item->deskripsi ?? '-',
-//            'status' => $item->status ?? 'Ready',
-//            'gambar' => $item->gambar ?? null,
-//        ];
-//    })->all();
+$products = Product::latest()->get()->map(function ($item) {
+        return [
+          'id' => $item->id,
+      'nama' => $item->nama_barang ?? '-',
+            'kategori' => $item->jenis_barang ?? '-',
+            'harga' => $item->harga ?? 0,
+            'stok' => $item->unit ?? 0,
+            'deskripsi' => $item->deskripsi ?? '-',
+            'status' => $item->status ?? 'Ready',
+            'gambar' => $item->gambar ?? null,
+        ];
+    })->all();
 
-    $products = dummyProducts()->map(function ($item) {
-    return [
-        'id' => $item['id'],
-        'nama' => $item['nama_barang'],
-        'kategori' => $item['jenis_barang'],
-        'harga' => $item['harga'],
-        'stok' => $item['unit'],
-        'deskripsi' => $item['deskripsi'],
-        'status' => $item['status'],
-        'gambar' => $item['gambar'],
-    ];
-})->all();
-
-    return view('pelanggan.produk', compact('products'));
+  return view('pelanggan.produk', compact('products'));
 })->name('pelanggan.produk');
 
 /*
@@ -1403,19 +1388,12 @@ Route::post('/pelanggan/keranjang/checkout', function (Request $request) {
             'foto_ktp' => $ktpPath,
         ];
 
-        try {
-            $products = syncRentalStock($products, null, $newRental);
-
-            foreach ($products as $updatedProduct) {
-                Product::where('id', $updatedProduct['id'])->update([
-                    'unit' => $updatedProduct['unit'],
-                    'status' => $updatedProduct['status'],
-                ]);
-            }
-        } catch (\Exception $e) {
-            return redirect()->route('pelanggan.keranjang')
-                ->withErrors([$e->getMessage()]);
-        }
+       try {
+    // sementara stok tidak dikurangi dulu
+} catch (\Exception $e) {
+    return redirect()->route('pelanggan.keranjang')
+        ->withErrors([$e->getMessage()]);
+}
 
         $rentals[] = $newRental;
     }
@@ -1549,7 +1527,7 @@ Route::get('/pelanggan/produk/{id}/sewa', function ($id) {
     ensurePelanggan();
 
 //    $product = Product::findOrFail((int) $id);
-    $product = collect(dummyProducts())->firstWhere('id', (int) $id);
+    $product = Product::findOrFail((int) $id)->toArray();
 
 if (!$product) {
     abort(404);
@@ -1754,7 +1732,4 @@ Route::get('/gambar1deh', function () {
     return view('gambar1deh');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('users', UserController::class);
-});
 
