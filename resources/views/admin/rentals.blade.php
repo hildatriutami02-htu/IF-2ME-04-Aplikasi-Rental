@@ -46,16 +46,21 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
 
                 <div>
-                    <label class="block mb-1 text-xs font-medium text-slate-800">Pelanggan</label>
-                    <select name="user_id" class="{{ $inputClass }}" required>
-                        <option value="">Pilih Pelanggan</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user['id'] }}">
-                                {{ $user['nama_lengkap'] ?? $user['nama'] ?? $user['email'] ?? '-' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+    <label class="block mb-1 text-xs font-medium text-slate-800">
+        Pelanggan
+    </label>
+
+    <select name="user_id" class="{{ $inputClass }}" required>
+        <option value="">Pilih Pelanggan</option>
+
+        @foreach($users as $user)
+            <option value="{{ $user['id'] }}">
+                {{ $user['nama_lengkap'] }}
+            </option>
+        @endforeach
+
+    </select>
+</div>
 
                 <div>
                     <label class="block mb-1 text-xs font-medium text-slate-800">Barang</label>
@@ -188,14 +193,19 @@
                                 {{ $item['qty'] ?? 1 }}
                             </td>
 
-                            <td class="px-2 py-3 whitespace-nowrap">
-                                <div>{{ \Carbon\Carbon::parse($item['tanggal_pinjam_raw'])->format('d/m') }} - {{ \Carbon\Carbon::parse($item['tanggal_kembali_raw'])->format('d/m') }}</div>
-                                @if(!empty($item['tanggal_kembali_real']))
-                                    <div class="text-[10px] text-green-600 mt-0.5">
-                                        Aktual: {{ $item['tanggal_kembali_real'] }}
-                                    </div>
-                                @endif
-                            </td>
+                          <td class="px-2 py-3 whitespace-nowrap">
+                     <div>
+                          {{ \Carbon\Carbon::parse($item['tanggal_pinjam_raw'] ?? $item['tanggal_pinjam'])->format('d/m') }}
+                          -
+                          {{ \Carbon\Carbon::parse($item['tanggal_kembali_raw'] ?? $item['tanggal_kembali'])->format('d/m') }}
+                         </div>
+
+                     @if(!empty($item['tanggal_kembali_real']))
+                         <div class="text-[10px] text-green-600 mt-0.5">
+                            Aktual: {{ $item['tanggal_kembali_real'] }}
+                        </div>
+                          @endif
+                        </td>
 
                             <td class="px-2 py-3 whitespace-nowrap">
                                 <div>Rp {{ number_format((int) ($item['total_harga'] ?? 0), 0, ',', '.') }}</div>

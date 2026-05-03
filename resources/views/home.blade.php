@@ -49,9 +49,11 @@
         <div class="mx-auto grid max-w-screen-2xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 py-4 sm:px-6">
 
             <a href="{{ route('home') }}" class="flex items-center gap-3 whitespace-nowrap">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-lg font-extrabold text-white shadow">
-                    L
-                </div>
+                <div class="h-11 w-11 rounded-2xl bg-white p-1 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
 
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-slate-800">LensCamp</h1>
@@ -330,11 +332,15 @@
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
                 @foreach($products as $item)
                     <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-                        <div class="h-44 overflow-hidden rounded-2xl bg-slate-100">
-                            <img src="{{ asset('images/' . $item['gambar']) }}" 
-                                alt="{{ $item['nama_barang'] }}"
-                                class="h-full w-full object-contain">
-                            </div>
+                        @if(!empty($item['gambar']))
+    <img src="{{ asset('images/' . $item['gambar']) }}"
+         alt="{{ $item['nama_barang'] }}"
+         class="w-full h-44 object-contain bg-white p-3 rounded-2xl">
+@else
+    <div class="flex h-44 items-center justify-center rounded-2xl bg-slate-100 text-4xl font-bold text-slate-400">
+        {{ strtoupper(substr($item['nama_barang'], 0, 1)) }}
+    </div>
+@endif
 
                         <div class="mt-4">
                             <div class="flex items-start justify-between gap-4">

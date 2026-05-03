@@ -8,6 +8,8 @@
     $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
     $labelClass = 'block text-sm font-medium text-slate-700 mb-2';
 
+    $gambarProduk = $product->gambar ?? null;
+
     $rentalInfo = [
         ['label' => 'Invoice', 'value' => $rental['kode_transaksi'] ?? '-'],
         ['label' => 'Harga / hari', 'value' => 'Rp ' . number_format((int) ($rental['harga_per_hari'] ?? 0), 0, ',', '.')],
@@ -18,25 +20,20 @@
 
 @section('content')
 
-@if($errors->any())
-    <div class="mb-6 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-        <ul class="space-y-1">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
 <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    <!-- INFO -->
     <div class="lg:col-span-1">
         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
 
-            <div class="h-44 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 text-4xl font-bold">
-                {{ strtoupper(substr($rental['nama_barang'] ?? 'S', 0, 1)) }}
-            </div>
+            @if(!empty($gambarProduk))
+                <img src="{{ asset('images/' . $gambarProduk) }}"
+                     alt="{{ $rental['nama_barang'] ?? 'Produk' }}"
+                     class="h-44 w-full rounded-2xl object-contain bg-white border p-3">
+            @else
+                <div class="h-44 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 text-4xl font-bold">
+                    {{ strtoupper(substr($rental['nama_barang'] ?? 'S', 0, 1)) }}
+                </div>
+            @endif
 
             <div class="mt-4">
                 <h3 class="text-xl font-bold text-slate-800">{{ $rental['nama_barang'] ?? '-' }}</h3>
@@ -49,9 +46,7 @@
                     @foreach($rentalInfo as $info)
                         <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                             <span class="text-slate-500">{{ $info['label'] }}</span>
-                            <span class="font-semibold text-slate-800">
-                                {{ $info['value'] }}
-                            </span>
+                            <span class="font-semibold text-slate-800">{{ $info['value'] }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -60,7 +55,6 @@
         </div>
     </div>
 
-    <!-- FORM -->
     <div class="lg:col-span-2">
         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
 
@@ -75,56 +69,31 @@
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
                     <div>
                         <label class="{{ $labelClass }}">Tanggal Pinjam</label>
-                        <input
-                            type="text"
-                            value="{{ $rental['tanggal_pinjam'] ?? '-' }}"
-                            class="{{ $inputClass }} bg-slate-100"
-                            disabled
-                        >
+                        <input type="text" value="{{ $rental['tanggal_pinjam'] ?? '-' }}" class="{{ $inputClass }} bg-slate-100" disabled>
                     </div>
 
                     <div>
                         <label class="{{ $labelClass }}">Tanggal Kembali Lama</label>
-                        <input
-                            type="text"
-                            value="{{ $rental['tanggal_kembali'] ?? '-' }}"
-                            class="{{ $inputClass }} bg-slate-100"
-                            disabled
-                        >
+                        <input type="text" value="{{ $rental['tanggal_kembali'] ?? '-' }}" class="{{ $inputClass }} bg-slate-100" disabled>
                     </div>
-
                 </div>
 
                 <div>
                     <label class="{{ $labelClass }}">Tanggal Kembali Baru</label>
-                    <input
-                        type="date"
-                        name="tanggal_kembali"
-                        value="{{ old('tanggal_kembali', $rental['tanggal_kembali_raw'] ?? '') }}"
-                        class="{{ $inputClass }}"
-                        required
-                    >
+                    <input type="date" name="tanggal_kembali" value="{{ old('tanggal_kembali', $rental['tanggal_kembali_raw'] ?? '') }}" class="{{ $inputClass }}" required>
                 </div>
 
                 <div class="flex flex-wrap gap-3 pt-2">
-                    <button
-                        type="submit"
-                        class="rounded-2xl bg-amber-500 px-6 py-3 text-sm font-semibold text-white hover:bg-amber-600 transition"
-                    >
+                    <button type="submit" class="rounded-2xl bg-amber-500 px-6 py-3 text-sm font-semibold text-white hover:bg-amber-600 transition">
                         Simpan Perpanjangan
                     </button>
 
-                    <a
-                        href="{{ route('pelanggan.sewa') }}"
-                        class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition"
-                    >
+                    <a href="{{ route('pelanggan.sewa') }}" class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
                         Kembali ke Sewa Saya
                     </a>
                 </div>
-
             </form>
 
         </div>

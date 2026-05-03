@@ -25,9 +25,11 @@
         <div class="mx-auto grid max-w-screen-2xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 py-4 sm:px-6">
 
             <a href="{{ route('pelanggan.dashboard') }}" class="flex items-center gap-3 whitespace-nowrap">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-lg font-extrabold text-white shadow">
-                    L
-                </div>
+               <div class="h-16 w-16 rounded-2xl bg-white p-0 shadow">
+   <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+     alt="lenscamp"
+     class="w-full h-full object-contain">
+</div>
 
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-slate-800">LensCamp</h1>

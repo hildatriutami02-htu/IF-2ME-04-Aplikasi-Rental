@@ -1,9 +1,11 @@
 <aside class="fixed inset-y-0 left-0 z-30 hidden w-80 lg:flex flex-col bg-slate-900 text-white border-r border-slate-800 shadow-xl">
     <div class="px-6 py-7 border-b border-slate-800">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-2xl font-extrabold shadow-lg">
-                L
-            </div>
+            <div class="w-20 h-20 rounded-2xl bg-white p-0 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
             <div class="min-w-0">
                 <h1 class="text-3xl font-extrabold tracking-tight leading-none">LensCamp</h1>
                 <p class="mt-1 text-base text-slate-300">Ruang Pelanggan</p>

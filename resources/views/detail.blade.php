@@ -13,9 +13,15 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex h-80 items-center justify-center rounded-2xl bg-slate-100 text-6xl font-bold text-slate-400">
-                {{ strtoupper(substr($product->nama_barang, 0, 1)) }}
-            </div>
+            @if(!empty($product->gambar))
+    <img src="{{ asset('images/' . $product->gambar) }}"
+         alt="{{ $product->nama_barang }}"
+         class="w-full h-80 object-contain bg-white p-4 rounded-2xl">
+@else
+    <div class="flex h-80 items-center justify-center rounded-2xl bg-slate-100 text-6xl font-bold text-slate-400">
+        {{ strtoupper(substr($product->nama_barang, 0, 1)) }}
+    </div>
+@endif
         </div>
 
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -66,7 +72,12 @@
 
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Jumlah Unit</label>
-                    <input type="number" name="qty" min="1" max="{{ $product->unit }}" value="1" required class="{{ $inputClass }}">
+                   @if((int) $product->unit > 0)
+                         <input type="number" name="qty" min="1" max="{{ $product->unit }}" value="1" required class="{{ $inputClass }}">
+                    @else
+                       <input type="number" value="0" disabled class="{{ $inputClass }}">
+                      <p class="mt-2 text-sm text-red-500">Stok habis, produk belum bisa disewa.</p>
+                @endif
                 </div>
 
                 <div>
@@ -75,11 +86,12 @@
                 </div>
 
                 <div class="flex flex-wrap gap-3">
-                    <button type="submit"
-                        class="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
-                        Tambah ke Keranjang
+                   <button type="submit"
+                    @if((int) $product->unit <= 0) disabled @endif
+                      class="rounded-2xl px-6 py-3 text-sm font-semibold text-white transition
+                      {{ (int) $product->unit > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-400 cursor-not-allowed' }}">
+                      Tambah ke Keranjang
                     </button>
-
                     <a href="{{ route('pelanggan.produk') }}"
                        class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
                         Kembali ke Produk

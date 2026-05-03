@@ -1,0 +1,103 @@
+@extends('admin.dashboard-admin')
+
+@section('title', 'Update Barang - LensCamp')
+@section('page_title', 'Update Barang')
+@section('page_desc', 'Edit data produk rental')
+
+@section('content')
+@php
+    $inputClass = 'bg-slate-50 border border-slate-300 text-sm rounded-xl block w-full p-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500';
+@endphp
+
+<div class="max-w-5xl mx-auto">
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div>
+                    @if(!empty($product->gambar))
+                        <img src="{{ asset('storage/' . $product->gambar) }}"
+                             alt="{{ $product->nama_barang }}"
+                             class="w-full h-64 object-contain bg-white p-3 rounded-2xl border">
+                    @else
+                        <div class="h-64 rounded-2xl bg-slate-100 flex items-center justify-center text-6xl font-bold text-slate-400">
+                            {{ strtoupper(substr($product->nama_barang, 0, 1)) }}
+                        </div>
+                    @endif
+                </div>
+
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Kode Barang</label>
+                        <input type="text" name="kode_barang" value="{{ old('kode_barang', $product->kode_barang) }}" class="{{ $inputClass }}">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Jenis Barang</label>
+                        <select name="jenis_barang" class="{{ $inputClass }}" required>
+                            <option value="Kamera" {{ old('jenis_barang', $product->jenis_barang) == 'Kamera' ? 'selected' : '' }}>Kamera</option>
+                            <option value="Camping" {{ old('jenis_barang', $product->jenis_barang) == 'Camping' ? 'selected' : '' }}>Camping</option>
+                            <option value="Alat Camping" {{ old('jenis_barang', $product->jenis_barang) == 'Alat Camping' ? 'selected' : '' }}>Alat Camping</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Nama Barang</label>
+                        <input type="text" name="nama_barang" value="{{ old('nama_barang', $product->nama_barang) }}" class="{{ $inputClass }}" required>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Status</label>
+                        <select name="status" class="{{ $inputClass }}">
+                            <option value="Ready" {{ old('status', $product->status) == 'Ready' ? 'selected' : '' }}>Ready</option>
+                            <option value="Pending" {{ old('status', $product->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Disewa" {{ old('status', $product->status) == 'Disewa' ? 'selected' : '' }}>Disewa</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Estimasi</label>
+                        <input type="text" name="estimasi" value="{{ old('estimasi', $product->estimasi) }}" class="{{ $inputClass }}">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Harga</label>
+                        <input type="number" min="0" name="harga" value="{{ old('harga', $product->harga) }}" class="{{ $inputClass }}" required>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Unit</label>
+                        <input type="number" min="0" name="unit" value="{{ old('unit', $product->unit) }}" class="{{ $inputClass }}" required>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Upload Gambar Baru</label>
+                        <input type="file" name="gambar" accept="image/*" class="{{ $inputClass }}">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block mb-1 text-sm font-medium text-slate-700">Keterangan</label>
+                        <textarea name="deskripsi" rows="4" class="{{ $inputClass }}" required>{{ old('deskripsi', $product->deskripsi) }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <a href="{{ route('admin.products') }}"
+                   class="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+                    Batal
+                </a>
+
+                <button type="submit"
+                        class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+@endsection

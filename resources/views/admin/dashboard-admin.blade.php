@@ -59,9 +59,11 @@
         <!-- Logo -->
         <div class="px-3 py-3 border-b border-white/10">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/15 glass-soft flex items-center justify-center text-base font-bold text-white shadow-sm ring-1 ring-white/10 hover:scale-105 transition">
-                    L
-                </div>
+              <div class="w-16 h-16 rounded-2xl bg-white p-0 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
                 <div>
                     <h1 class="text-lg font-bold">LensCamp</h1>
                     <p class="text-xs text-blue-100">Ruang Admin</p>

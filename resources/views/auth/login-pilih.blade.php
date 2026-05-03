@@ -30,9 +30,11 @@
 
         <div>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-xl font-extrabold shadow">
-                    L
-                </div>
+              <div class="w-20 h-20 rounded-2xl bg-white p-0 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">LensCamp</h1>
                     <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
@@ -74,9 +76,11 @@
             <!-- MOBILE LOGO -->
             <div class="mb-8 lg:hidden">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-extrabold">
-                        L
-                    </div>
+                   <div class="w-11 h-11 rounded-2xl bg-white p-2 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight">LensCamp</h1>
                         <p class="text-xs text-slate-500">Aplikasi Rental Outdoor</p>

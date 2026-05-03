@@ -100,30 +100,26 @@
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-center">
-                                <div class="flex justify-center gap-2">
-                                    <a
-                                        href="{{ route('admin.users.show', $item->id) }}"
-                                        class="px-3 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg text-xs"
-                                    >
-                                        Detail
-                                    </a>
+                             <div class="flex justify-center gap-2">
 
-                                    <button
-                                        type="button"
-                                        onclick="openModal('editUserModal{{ $item->id }}')"
-                                        class="px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs"
-                                    >
-                                        Edit
-                                    </button>
+    <a href="{{ route('admin.users.show', $item->id) }}"
+       class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition">
+        Detail
+    </a>
 
-                                    <button
-                                        type="button"
-                                        onclick="openModal('hapusUserModal{{ $item->id }}')"
-                                        class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs"
-                                    >
-                                        Hapus
-                                    </button>
-                                </div>
+    <button type="button"
+        onclick="openModal('editUserModal{{ $item->id }}')"
+        class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
+        Edit
+    </button>
+
+    <button type="button"
+        onclick="openModal('hapusUserModal{{ $item->id }}')"
+        class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-semibold transition">
+        Hapus
+    </button>
+
+</div>
                             </td>
                         </tr>
                     @empty

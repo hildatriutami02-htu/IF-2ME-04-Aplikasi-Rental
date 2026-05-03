@@ -8,24 +8,6 @@
     $products = $products ?? [];
 
     $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
-
-    $filters = [
-        [
-            'label' => 'Cari Produk',
-            'type' => 'input',
-            'placeholder' => 'Cari produk...',
-        ],
-        [
-            'label' => 'Kategori',
-            'type' => 'select',
-            'options' => ['Semua Kategori','Tenda','Tas','Aksesoris'],
-        ],
-        [
-            'label' => 'Urutkan',
-            'type' => 'select',
-            'options' => ['Urutkan','Harga Termurah','Harga Termahal','Stok Terbanyak'],
-        ],
-    ];
 @endphp
 
 @section('content')
@@ -42,25 +24,49 @@
     </section>
 
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            @foreach($filters as $filter)
+        <form method="GET" action="{{ route('pelanggan.produk') }}">
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-slate-700">
-                        {{ $filter['label'] }}
-                    </label>
-
-                    @if($filter['type'] === 'input')
-                        <input type="text" placeholder="{{ $filter['placeholder'] }}" class="{{ $inputClass }}">
-                    @else
-                        <select class="{{ $inputClass }}">
-                            @foreach($filter['options'] as $opt)
-                                <option>{{ $opt }}</option>
-                            @endforeach
-                        </select>
-                    @endif
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Cari Produk</label>
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Cari produk..."
+                           class="{{ $inputClass }}">
                 </div>
-            @endforeach
-        </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Kategori</label>
+                    <select name="kategori" class="{{ $inputClass }}">
+                        <option value="">Semua Kategori</option>
+                        <option value="Kamera" {{ request('kategori') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
+                        <option value="Camping" {{ request('kategori') == 'Camping' ? 'selected' : '' }}>Camping</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Urutkan</label>
+                    <select name="sort" class="{{ $inputClass }}">
+                        <option value="">Urutkan</option>
+                        <option value="murah" {{ request('sort') == 'murah' ? 'selected' : '' }}>Harga Termurah</option>
+                        <option value="mahal" {{ request('sort') == 'mahal' ? 'selected' : '' }}>Harga Termahal</option>
+                        <option value="stok" {{ request('sort') == 'stok' ? 'selected' : '' }}>Stok Terbanyak</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button type="submit"
+                            class="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                        Filter
+                    </button>
+
+                    <a href="{{ route('pelanggan.produk') }}"
+                       class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+                        Reset
+                    </a>
+                </div>
+            </div>
+        </form>
     </section>
 
     <section class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -68,53 +74,55 @@
 
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
 
-                <div class="h-52 bg-slate-100 overflow-hidden">
-                    <img
-                        src="{{ asset('images/' . ($item['gambar'] ?? 'default.png')) }}"
-                        class="h-full w-full object-contain">
-                        alt="{{ $item['nama'] }}"
-                    >
-                </div>
+                @if(!empty($item->gambar))
+                    <img src="{{ asset('images/' . $item->gambar) }}"
+                         alt="{{ $item->nama_barang }}"
+                         class="w-full h-40 object-contain bg-white p-3 rounded-t-3xl">
+                @else
+                    <div class="flex h-40 items-center justify-center bg-slate-100 text-5xl font-bold text-slate-400">
+                        {{ strtoupper(substr($item->nama_barang, 0, 1)) }}
+                    </div>
+                @endif
 
                 <div class="p-5">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                                {{ $item['kategori'] }}
+                                {{ $item->jenis_barang }}
                             </span>
 
                             <h3 class="mt-3 text-lg font-bold text-slate-800">
-                                {{ $item['nama'] }}
+                                {{ $item->nama_barang }}
                             </h3>
                         </div>
 
                         <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                            {{ $item['status'] ?? 'Ready' }}
+                            {{ $item->status ?? 'Ready' }}
                         </span>
                     </div>
 
                     <p class="mt-3 text-sm leading-6 text-slate-500">
-                        {{ $item['deskripsi'] }}
+                        {{ $item->deskripsi }}
                     </p>
 
                     <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
                         <div class="rounded-2xl bg-slate-50 px-4 py-3">
                             <p class="text-slate-500">Harga</p>
                             <p class="mt-1 font-bold text-blue-600">
-                                Rp {{ number_format($item['harga'], 0, ',', '.') }}
+                                Rp {{ number_format($item->harga, 0, ',', '.') }}
                             </p>
                         </div>
 
                         <div class="rounded-2xl bg-slate-50 px-4 py-3">
                             <p class="text-slate-500">Stok</p>
                             <p class="mt-1 font-bold text-slate-800">
-                                {{ $item['stok'] }}
+                                {{ $item->unit }}
                             </p>
                         </div>
                     </div>
 
                     <div class="mt-5 grid grid-cols-3 gap-3">
-                        <a href="{{ route('products.detail', $item['id']) }}"
+                        <a href="{{ route('products.detail', $item->id) }}"
                            class="rounded-2xl bg-slate-100 px-3 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
                             Detail
                         </a>
@@ -122,15 +130,13 @@
                         <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST">
                             @csrf
 
-                            <input type="hidden" name="product_id" value="{{ $item['id'] }}">
+                            <input type="hidden" name="product_id" value="{{ $item->id }}">
                             <input type="hidden" name="tanggal_pinjam" value="{{ date('Y-m-d') }}">
                             <input type="hidden" name="tanggal_kembali" value="{{ date('Y-m-d', strtotime('+1 day')) }}">
                             <input type="hidden" name="qty" value="1">
 
-                            <button
-                                type="submit"
-                                class="w-full rounded-2xl bg-blue-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700 transition"
-                            >
+                            <button type="submit"
+                                    class="w-full rounded-2xl bg-blue-600 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700 transition">
                                 Keranjang
                             </button>
                         </form>
@@ -146,9 +152,9 @@
 
         @empty
             <div class="col-span-full rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-                <h3 class="text-2xl font-bold text-slate-800">Produk belum tersedia</h3>
+                <h3 class="text-2xl font-bold text-slate-800">Produk tidak ditemukan</h3>
                 <p class="mt-2 text-sm text-slate-500">
-                    Saat ini belum ada produk yang bisa ditampilkan.
+                    Coba ubah kata kunci atau filter kategori.
                 </p>
             </div>
         @endforelse

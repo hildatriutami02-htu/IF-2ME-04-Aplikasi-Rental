@@ -15,6 +15,7 @@
 @section('content')
 <div class="space-y-6">
 
+    <!-- HERO -->
     <section class="rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white shadow-sm">
         <p class="text-sm font-semibold text-blue-100">
             Halo, {{ session('user') ?? 'Pelanggan' }}
@@ -36,17 +37,19 @@
         </div>
     </section>
 
+    <!-- STATS -->
     <section class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        @foreach($stats as $stat)
+        @foreach($stats as $item)
             <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm text-slate-500">{{ $stat['label'] }}</p>
-                <h3 class="mt-2 text-3xl font-bold {{ $stat['color'] }}">
-                    {{ $stat['value'] }}
+                <p class="text-sm text-slate-500">{{ $item['label'] }}</p>
+                <h3 class="mt-2 text-3xl font-bold {{ $item['color'] }}">
+                    {{ $item['value'] }}
                 </h3>
             </div>
         @endforeach
     </section>
 
+    <!-- PRODUK LANGSUNG -->
     <section class="space-y-5">
         <div>
             <h3 class="text-2xl font-bold text-slate-800">
@@ -58,57 +61,58 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            @forelse($products ?? [] as $item)
-                @php
-                    $id = $item['id'] ?? 0;
-                    $nama = $item['nama_barang'] ?? 'Produk';
-                    $kategori = $item['jenis_barang'] ?? '-';
-                    $deskripsi = $item['deskripsi'] ?? '-';
-                    $harga = $item['harga'] ?? 0;
-                @endphp
+            @forelse($products as $item)
 
-                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-                        <div class="h-44 overflow-hidden rounded-2xl bg-slate-100">
-                            <img src="{{ asset('images/' . $item['gambar']) }}" 
-                                alt="{{ $item['nama_barang'] }}"
-                                class="h-full w-full object-contain">
-                            </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+
+                    @if(!empty($item->gambar))
+    <img src="{{ asset('images/' . $item->gambar) }}"
+         alt="{{ $item->nama_barang }}"
+         class="w-full h-44 object-contain bg-white p-2 rounded-2xl">
+@else
+    <div class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl text-slate-400 font-bold">
+        {{ strtoupper(substr($item->nama_barang ?? $item['nama'], 0, 1)) }}
+    </div>
+@endif
 
                     <h4 class="mt-4 text-lg font-bold text-slate-800">
-                        {{ $nama }}
+                        {{ $item->nama_barang ?? $item['nama'] }}
                     </h4>
 
                     <p class="text-sm text-slate-500">
-                        {{ $kategori }}
+                        {{ $item->jenis_barang ?? $item['kategori'] }}
                     </p>
 
                     <p class="mt-3 text-sm text-slate-500">
-                        {{ $deskripsi }}
+                        {{ $item->deskripsi }}
                     </p>
 
                     <p class="mt-3 font-bold text-blue-600">
-                        Rp {{ number_format($harga, 0, ',', '.') }}
+                        Rp {{ number_format($item->harga ?? $item['harga'], 0, ',', '.') }}
                     </p>
 
                     <div class="mt-4 grid grid-cols-3 gap-3">
 
-                        <a href="{{ route('products.detail', ['id' => $id]) }}"
-                           class="rounded-xl bg-slate-100 px-3 py-2 text-center text-sm font-semibold text-slate-700">
-                            Detail
-                        </a>
+                        <!-- DETAIL -->
+                       <a href="{{ route('products.detail', ['id' => $item->id ?? $item['id'] ?? 0]) }}"
+   class="rounded-xl bg-slate-100 px-3 py-2 text-center text-sm font-semibold text-slate-700">
+    Detail
+</a>
 
+                        <!-- KERANJANG -->
                         <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="product_id" value="{{ $id }}">
+                            <input type="hidden" name="product_id" value="{{ $item->id ?? $item['id'] }}">
                             <input type="hidden" name="tanggal_pinjam" value="{{ date('Y-m-d') }}">
                             <input type="hidden" name="tanggal_kembali" value="{{ date('Y-m-d', strtotime('+1 day')) }}">
                             <input type="hidden" name="qty" value="1">
 
-                            <button type="submit" class="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm text-white font-semibold">
+                            <button class="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm text-white font-semibold">
                                 Keranjang
                             </button>
                         </form>
 
+                        <!-- TANYA -->
                         <a href="{{ route('pelanggan.hubungi-admin') }}"
                            class="rounded-xl bg-blue-800 px-3 py-2 text-center text-sm text-white font-semibold">
                             Tanya
@@ -123,6 +127,12 @@
                     Produk belum tersedia
                 </div>
             @endforelse
+ <div class="col-span-full flex justify-center mt-6">
+    <a href="{{ route('pelanggan.produk') }}"
+       class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+        Lihat Semua Produk
+    </a>
+</div>
         </div>
     </section>
 

@@ -50,9 +50,11 @@
 
         <div>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-xl font-extrabold shadow">
-                    L
-                </div>
+                <div class="w-20 h-20 rounded-2xl bg-white p-0 shadow">
+    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+         alt="LensCamp"
+         class="w-full h-full object-contain">
+</div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">LensCamp</h1>
                     <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
