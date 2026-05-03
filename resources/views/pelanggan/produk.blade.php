@@ -68,8 +68,12 @@
 
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
 
-                <div class="flex h-52 items-center justify-center bg-slate-100 text-5xl font-bold text-slate-400">
-                    {{ strtoupper(substr($item['nama'], 0, 1)) }}
+                <div class="h-52 bg-slate-100 overflow-hidden">
+                    <img
+                        src="{{ asset('images/' . ($item['gambar'] ?? 'default.png')) }}"
+                        class="h-full w-full object-contain">
+                        alt="{{ $item['nama'] }}"
+                    >
                 </div>
 
                 <div class="p-5">

@@ -53,7 +53,7 @@
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        🔍
+                        
                     </div>
                     <input
                         type="text"
@@ -352,4 +352,71 @@
         }
     }
 </script>
+
+<script>
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function filterUserTable() {
+        const input = document.getElementById("searchUser");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("userTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            const rowText = tr[i].textContent.toLowerCase();
+            tr[i].style.display = rowText.includes(filter) ? "" : "none";
+        }
+    }
+</script>
+
+<style>
+@media (max-width: 768px) {
+    .max-w-7xl {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        white-space: nowrap;
+    }
+
+    .text-xl {
+        font-size: 16px !important;
+    }
+
+    .px-5 {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .py-4 {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+
+    .max-w-3xl {
+        max-width: 95% !important;
+    }
+
+    .max-w-md {
+        max-width: 90% !important;
+    }
+}
+</style>
 @endsection

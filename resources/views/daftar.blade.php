@@ -112,8 +112,8 @@
                         <label class="{{ $labelClass }}">Nama Lengkap</label>
                         <input
                             type="text"
-                            name="nama_lengkap"
-                            value="{{ old('nama_lengkap') }}"
+                            name="name"
+                            value="{{ old('name') }}"
                             placeholder="Masukkan nama lengkap"
                             required
                             class="{{ $inputClass }}">
