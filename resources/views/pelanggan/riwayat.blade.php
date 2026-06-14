@@ -36,9 +36,13 @@
                             {{ $item['produk'] }}
                         </h3>
 
-                        <p class="mt-2 text-sm text-slate-500">
-                            {{ $item['tanggal'] }}
-                        </p>
+                        @php
+    $tanggal = explode(' - ', $item['tanggal']);
+@endphp
+
+{{ \Carbon\Carbon::parse($tanggal[0])->format('d F Y') }}
+-
+{{ \Carbon\Carbon::parse($tanggal[1])->format('d F Y') }}
 
                         <p class="mt-3 text-sm font-semibold text-blue-600">
                             Rp {{ number_format($item['harga'], 0, ',', '.') }}

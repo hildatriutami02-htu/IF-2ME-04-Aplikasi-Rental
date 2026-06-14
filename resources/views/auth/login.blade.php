@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Pelanggan - LensCamp</title>
+    <title>Login - LensCamp</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -127,30 +127,54 @@
                 <form action="{{ route('login.proses') }}" method="POST" class="space-y-5">
                     @csrf
 
-                    @foreach($formFields as $field)
-                        <div>
-                            <label class="{{ $labelClass }}">{{ $field['label'] }}</label>
-                            <input
-                                type="{{ $field['type'] }}"
-                                name="{{ $field['name'] }}"
-                                value="{{ $field['value'] }}"
-                                placeholder="{{ $field['placeholder'] }}"
-                                class="{{ $inputClass }}">
-                        </div>
-                    @endforeach
+<form action="{{ route('login.proses') }}" method="POST" class="space-y-5">
+    @csrf
 
-                    <button type="submit"
-                        class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
-                        Masuk Sekarang
-                    </button>
-                </form>
+    @foreach($formFields as $field)
+        <div>
+            <label class="{{ $labelClass }}">{{ $field['label'] }}</label>
 
-                <div class="mt-6 text-center text-sm text-slate-500">
-                    Belum punya akun?
-                    <a href="{{ route('daftar') }}" class="font-semibold text-blue-600 hover:text-blue-700">
-                        Daftar di sini
-                    </a>
-                </div>
+            <input
+                type="{{ $field['type'] }}"
+                name="{{ $field['name'] }}"
+                value="{{ $field['value'] }}"
+                placeholder="{{ $field['placeholder'] }}"
+                @if($field['name'] == 'password')
+                    minlength="6"
+                    maxlength="6"
+                    pattern=".{6}"
+                    title="Password harus tepat 6 karakter"
+                @endif
+                required
+                class="{{ $inputClass }}">
+
+            @if($field['name'] == 'password')
+                <p class="mt-1 text-xs text-slate-500">
+                    Password harus tepat 6 karakter
+                </p>
+            @endif
+        </div>
+    @endforeach
+
+    <button
+        type="submit"
+        class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+        Masuk Sekarang
+    </button>
+</form>
+
+        <div class="mt-6 text-center text-sm text-slate-500">
+    Belum punya akun?
+    <a href="{{ route('daftar') }}" class="font-semibold text-blue-600 hover:text-blue-700">
+        Daftar di sini
+    </a>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
+        ← Kembali ke Home
+    </a>
+</div>
             </div>
         </div>
     </div>

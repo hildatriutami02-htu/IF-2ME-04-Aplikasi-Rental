@@ -45,7 +45,7 @@
                 <div>
                     <label class="block mb-1 text-sm font-medium text-slate-700">Tanggal Pinjam</label>
                     <input type="text"
-                        value="{{ $rental['tanggal_pinjam'] ?? '-' }}"
+                        value="{{ !empty($rental['tanggal_pinjam']) ? \Carbon\Carbon::parse($rental['tanggal_pinjam'])->format('d-m-Y') : '-' }}"
                         class="w-full rounded-xl border border-slate-300 px-4 py-3 bg-slate-100"
                         disabled>
                 </div>
@@ -53,7 +53,7 @@
                 <div>
                     <label class="block mb-1 text-sm font-medium text-slate-700">Tanggal Kembali Lama</label>
                     <input type="text"
-                        value="{{ $rental['tanggal_kembali'] ?? '-' }}"
+                        value="{{ !empty($rental['tanggal_kembali']) ? \Carbon\Carbon::parse($rental['tanggal_kembali'])->format('d-m-Y') : '-' }}"
                         class="w-full rounded-xl border border-slate-300 px-4 py-3 bg-slate-100"
                         disabled>
                 </div>

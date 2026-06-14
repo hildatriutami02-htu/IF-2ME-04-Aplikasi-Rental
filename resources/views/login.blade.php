@@ -130,7 +130,10 @@
                 @endif
 
                 <!-- FORM -->
-                <form action="{{ route('login.proses') }}" method="POST" class="space-y-5">
+               <form action="{{ route('login.proses') }}"
+      method="POST"
+      autocomplete="off"
+      class="space-y-5">
                     @csrf
 
                     <!-- ROLE -->
@@ -147,13 +150,15 @@
                     @foreach($formFields as $field)
                         <div>
                             <label class="{{ $labelClass }}">{{ $field['label'] }}</label>
-                            <input
-                                type="{{ $field['type'] }}"
-                                name="{{ $field['name'] }}"
-                                value="{{ $field['value'] }}"
-                                placeholder="{{ $field['placeholder'] }}"
-                                class="{{ $inputClass }}">
-                        </div>
+                     <input
+    type="{{ $field['type'] }}"
+    name="{{ $field['name'] }}"
+    value=""
+    placeholder="{{ $field['placeholder'] }}"
+    autocomplete="new-password"
+    readonly
+    onfocus="this.removeAttribute('readonly');"
+    class="{{ $inputClass }}">
                     @endforeach
 
                     <button type="submit"

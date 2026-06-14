@@ -112,8 +112,8 @@
                         <label class="{{ $labelClass }}">Nama Lengkap</label>
                         <input
                             type="text"
-                            name="name"
-                            value="{{ old('name') }}"
+                            name="nama_lengkap"
+                            value="{{ old('nama_lengkap') }}"
                             placeholder="Masukkan nama lengkap"
                             required
                             class="{{ $inputClass }}">
@@ -137,8 +137,14 @@
                                 type="password"
                                 name="password"
                                 placeholder="Masukkan password"
+                                minlength="6"
+                                maxlength="6"
                                 required
                                 class="{{ $inputClass }}">
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                Password harus tepat 6 karakter
+                            </p>
                         </div>
                     </div>
 
@@ -166,12 +172,12 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label class="{{ $labelClass }}">Nomor Telepon</label>
+                            <label class="{{ $labelClass }}">Nomor Handphone</label>
                             <input
                                 type="text"
                                 name="no_telp"
                                 value="{{ old('no_telp') }}"
-                                placeholder="Masukkan nomor telepon"
+                                placeholder="Masukkan nomor handphone"
                                 required
                                 class="{{ $inputClass }}">
                         </div>

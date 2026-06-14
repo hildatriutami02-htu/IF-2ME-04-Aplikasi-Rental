@@ -28,4 +28,10 @@ class Rental extends Model
         'catatan',
         'foto_ktp',
     ];
+
+    protected $casts = [
+        'tanggal_pinjam' => 'date',
+        'tanggal_kembali' => 'date',
+        'tanggal_kembali_real' => 'date',
+    ];
 }

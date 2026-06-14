@@ -1,8 +1,8 @@
 @extends('admin.dashboard-admin')
 
-@section('title', 'Katalog Sub Barang - LensCamp')
-@section('page_title', 'Katalog Sub Barang')
-@section('page_desc', 'Kelola setting jenis barang, estimasi, dan status')
+@section('title', 'Pengaturan Katalog Barang - LensCamp')
+@section('page_title', 'Pengaturan Katalog Barang')
+@section('page_desc', 'Kelola master jenis barang, estimasi rental, dan status barang')
 
 @section('content')
 
@@ -14,8 +14,8 @@
 
     $sections = [
         ['key' => 'jenis_barang', 'title' => 'Jenis Barang'],
-        ['key' => 'estimasi', 'title' => 'Estimasi'],
-        ['key' => 'status', 'title' => 'Status'],
+        ['key' => 'estimasi', 'title' => 'Estimasi Rental'],
+        ['key' => 'status', 'title' => 'Status Barang'],
     ];
 @endphp
 
@@ -40,7 +40,13 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition">
 
         <div class="px-5 py-4 border-b border-slate-200">
-            <h3 class="text-lg font-bold text-slate-800">Update Sub Barang</h3>
+            <h3 class="text-lg font-bold text-slate-800">
+                Pengaturan Katalog Barang
+            </h3>
+
+            <p class="text-sm text-slate-500 mt-1">
+                Kelola master data untuk kategori produk rental
+            </p>
         </div>
 
         <div class="p-5 grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -48,7 +54,12 @@
             @foreach($sections as $section)
                 <div class="space-y-4">
 
-                    <form action="{{ route('admin.product.settings.store', $section['key']) }}" method="POST" class="space-y-3">
+                    <form
+                        action="{{ route('admin.product.settings.store', $section['key']) }}"
+                        method="POST"
+                        autocomplete="off"
+                        class="space-y-3"
+                    >
                         @csrf
 
                         <div>
@@ -56,11 +67,17 @@
                                 {{ $section['title'] }}
                             </label>
 
-                            <input type="text"
-                                   name="nama"
-                                   placeholder="Tambah {{ $section['title'] }}"
-                                   class="{{ $inputClass }}"
-                                   required>
+                            <input
+                                type="text"
+                                name="nama_{{ $section['key'] }}"
+                                placeholder="Tambah {{ $section['title'] }}"
+                                class="{{ $inputClass }}"
+                                autocomplete="new-password"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                required
+                            >
                         </div>
 
                         <button type="submit" class="{{ $btnPrimary }}">
@@ -95,9 +112,11 @@
                                                     Update
                                                 </a>
 
-                                                <form action="{{ route('admin.product.settings.destroy', ['type' => $section['key'], 'id' => $item['id']]) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('Yakin hapus data ini?')">
+                                                <form
+                                                    action="{{ route('admin.product.settings.destroy', ['type' => $section['key'], 'id' => $item['id']]) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Yakin hapus data ini?')"
+                                                >
                                                     @csrf
                                                     @method('DELETE')
 

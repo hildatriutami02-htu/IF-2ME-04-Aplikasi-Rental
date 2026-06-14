@@ -36,13 +36,24 @@
                             <th class="p-4 text-center">Tanggal Pinjam</th>
                             <th class="p-4 text-center">Tanggal Kembali</th>
                             <th class="p-4 text-center">Qty</th>
-                            <th class="p-4 text-center">Harga / Hari</th>
+                            <th class="p-4 text-center">Total Harga</th>
                             <th class="p-4 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @foreach($cart as $index => $item)
+
+                            @php
+                              $hari = max(
+                                \Carbon\Carbon::parse($item['tanggal_pinjam'])
+                                    ->diffInDays(\Carbon\Carbon::parse($item['tanggal_kembali'])) + 1,
+                                1
+                            );
+
+                                $total = $item['harga_per_hari'] * $item['qty'] * $hari;
+                            @endphp
+
                             <tr class="border-t border-slate-200">
                                 <td class="p-4 font-semibold text-slate-800">
                                     {{ $item['nama_barang'] }}
@@ -61,7 +72,11 @@
                                 </td>
 
                                 <td class="p-4 text-center font-semibold text-blue-600">
-                                    Rp {{ number_format($item['harga_per_hari'], 0, ',', '.') }}
+                                    Rp {{ number_format($total, 0, ',', '.') }}
+
+                                    <p class="mt-1 text-xs text-slate-500">
+                                        {{ $hari }} hari × Rp {{ number_format($item['harga_per_hari'], 0, ',', '.') }}
+                                    </p>
                                 </td>
 
                                 <td class="p-4 text-center">

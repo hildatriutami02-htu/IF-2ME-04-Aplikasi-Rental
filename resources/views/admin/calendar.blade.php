@@ -6,109 +6,43 @@
 
 @section('content')
 @php
+    use Carbon\Carbon;
+
+    $rentals = $rentals ?? collect();
+
+    $today = Carbon::today();
+    $currentMonth = request('month') ? Carbon::parse(request('month')) : Carbon::today();
+
+    $startOfMonth = $currentMonth->copy()->startOfMonth();
+    $endOfMonth = $currentMonth->copy()->endOfMonth();
+
+    $calendarStart = $startOfMonth->copy()->startOfWeek(Carbon::MONDAY);
+    $calendarEnd = $endOfMonth->copy()->endOfWeek(Carbon::SUNDAY);
+
+    $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m-01');
+    $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m-01');
+
     $summaryCardClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg';
     $panelClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:shadow-md';
-    $calendarDayClass = 'h-24 rounded-2xl bg-white border border-slate-200 p-2';
-    $calendarMutedDayClass = 'h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400';
+    $calendarDayClass = 'min-h-24 rounded-2xl bg-white border border-slate-200 p-2';
+    $calendarMutedDayClass = 'min-h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400';
     $badgeBaseClass = 'inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium';
     $miniBadgeClass = 'mt-2 text-[10px] px-2 py-1 rounded-full w-fit';
     $agendaItemClass = 'rounded-xl border border-slate-200 p-4 bg-slate-50';
 
-    $summaryCards = [
-        [
-            'title' => 'Booking Hari Ini',
-            'value' => '8',
-            'badgeText' => 'Jadwal masuk',
-            'badgeClass' => 'bg-yellow-100 text-yellow-700',
-        ],
-        [
-            'title' => 'Sedang Disewa',
-            'value' => '14',
-            'badgeText' => 'Rental aktif',
-            'badgeClass' => 'bg-blue-100 text-blue-700',
-        ],
-        [
-            'title' => 'Jatuh Tempo Kembali',
-            'value' => '5',
-            'badgeText' => 'Perlu dipantau',
-            'badgeClass' => 'bg-red-100 text-red-700',
-        ],
-        [
-            'title' => 'Selesai Hari Ini',
-            'value' => '3',
-            'badgeText' => 'Dikembalikan',
-            'badgeClass' => 'bg-green-100 text-green-700',
-        ],
-    ];
+$bookingHariIni = $rentals->where('status_transaksi', 'Booking')->count();
 
-    $calendarDays = [
-        ['day' => '30', 'type' => 'muted'],
-        ['day' => '31', 'type' => 'muted'],
-        ['day' => '1', 'type' => 'normal'],
-        [
-            'day' => '2',
-            'type' => 'normal',
-            'badges' => [
-                ['text' => '1 Booking', 'class' => 'bg-yellow-100 text-yellow-700'],
-            ],
-        ],
-        ['day' => '3', 'type' => 'normal'],
-        [
-            'day' => '4',
-            'type' => 'normal',
-            'badges' => [
-                ['text' => '2 Aktif', 'class' => 'bg-blue-100 text-blue-700'],
-            ],
-        ],
-        ['day' => '5', 'type' => 'normal'],
-        ['day' => '6', 'type' => 'normal'],
-        [
-            'day' => '7',
-            'type' => 'normal',
-            'badges' => [
-                ['text' => 'Return', 'class' => 'bg-red-100 text-red-700'],
-            ],
-        ],
-        ['day' => '8', 'type' => 'normal'],
-        ['day' => '9', 'type' => 'normal'],
-        [
-            'day' => '10',
-            'type' => 'active',
-            'badges' => [
-                ['text' => '2 Booking', 'class' => 'bg-yellow-100 text-yellow-700'],
-                ['text' => '1 Aktif', 'class' => 'bg-blue-100 text-blue-700', 'extraClass' => 'mt-1'],
-            ],
-        ],
-        ['day' => '11', 'type' => 'normal'],
-        ['day' => '12', 'type' => 'normal'],
-        ['day' => '13', 'type' => 'normal'],
-        [
-            'day' => '14',
-            'type' => 'normal',
-            'badges' => [
-                ['text' => 'Selesai', 'class' => 'bg-green-100 text-green-700'],
-            ],
-        ],
-        ['day' => '15', 'type' => 'normal'],
-        ['day' => '16', 'type' => 'normal'],
-        ['day' => '17', 'type' => 'normal'],
-        ['day' => '18', 'type' => 'normal'],
-        ['day' => '19', 'type' => 'normal'],
-        ['day' => '20', 'type' => 'normal'],
-        ['day' => '21', 'type' => 'normal'],
-        ['day' => '22', 'type' => 'normal'],
-        ['day' => '23', 'type' => 'normal'],
-        ['day' => '24', 'type' => 'normal'],
-        ['day' => '25', 'type' => 'normal'],
-        ['day' => '26', 'type' => 'normal'],
-        ['day' => '27', 'type' => 'normal'],
-        ['day' => '28', 'type' => 'normal'],
-        ['day' => '29', 'type' => 'normal'],
-        ['day' => '30', 'type' => 'normal'],
-        ['day' => '1', 'type' => 'muted'],
-        ['day' => '2', 'type' => 'muted'],
-        ['day' => '3', 'type' => 'muted'],
-    ];
+$sedangDisewa = $rentals->filter(fn($r) =>
+    in_array($r->status_transaksi, ['Booking', 'Diambil', 'Sedang Disewa', 'Menunggu Verifikasi'])
+)->count();
+
+$jatuhTempo = $rentals->filter(fn($r) =>
+    $r->tanggal_kembali
+    && Carbon::parse($r->tanggal_kembali)->lte($today)
+    && $r->status_transaksi !== 'Dikembalikan'
+)->count();
+
+$selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
 
     $legendItems = [
         ['color' => 'bg-yellow-400', 'label' => 'Booking'],
@@ -117,40 +51,41 @@
         ['color' => 'bg-red-500', 'label' => 'Jatuh Tempo Return'],
     ];
 
-    $agendaItems = [
-        [
-            'title' => 'Canon EOS 80D',
-            'desc' => 'Booking oleh Ahmad Nasrulloh',
-            'badgeText' => 'Booking',
-            'badgeClass' => 'bg-yellow-100 text-yellow-700',
-        ],
-        [
-            'title' => 'Tenda 4 Orang',
-            'desc' => 'Masih dalam masa sewa',
-            'badgeText' => 'Sedang Disewa',
-            'badgeClass' => 'bg-blue-100 text-blue-700',
-        ],
-        [
-            'title' => 'Tripod Kamera',
-            'desc' => 'Jadwal pengembalian hari ini',
-            'badgeText' => 'Return',
-            'badgeClass' => 'bg-red-100 text-red-700',
-        ],
-    ];
+    $agendaToday = $rentals->filter(function ($r) use ($today) {
+        $tanggalPinjam = $r->tanggal_pinjam ? Carbon::parse($r->tanggal_pinjam)->isSameDay($today) : false;
+        $tanggalKembali = $r->tanggal_kembali ? Carbon::parse($r->tanggal_kembali)->isSameDay($today) : false;
+        $tanggalReal = $r->tanggal_kembali_real ? Carbon::parse($r->tanggal_kembali_real)->isSameDay($today) : false;
+
+        return $tanggalPinjam || $tanggalKembali || $tanggalReal;
+    });
 @endphp
 
 <div class="max-w-7xl mx-auto space-y-5 animate-fade-up">
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-        @foreach ($summaryCards as $card)
-            <div class="{{ $summaryCardClass }}">
-                <p class="text-sm text-slate-500">{{ $card['title'] }}</p>
-                <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $card['value'] }}</h3>
-                <span class="{{ $badgeBaseClass }} {{ $card['badgeClass'] }}">
-                    {{ $card['badgeText'] }}
-                </span>
-            </div>
-        @endforeach
+        <div class="{{ $summaryCardClass }}">
+            <p class="text-sm text-slate-500">Booking Hari Ini</p>
+            <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $bookingHariIni }}</h3>
+            <span class="{{ $badgeBaseClass }} bg-yellow-100 text-yellow-700">Jadwal masuk</span>
+        </div>
+
+        <div class="{{ $summaryCardClass }}">
+            <p class="text-sm text-slate-500">Sedang Disewa</p>
+            <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $sedangDisewa }}</h3>
+            <span class="{{ $badgeBaseClass }} bg-blue-100 text-blue-700">Rental aktif</span>
+        </div>
+
+        <div class="{{ $summaryCardClass }}">
+            <p class="text-sm text-slate-500">Jatuh Tempo Kembali</p>
+            <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $jatuhTempo }}</h3>
+            <span class="{{ $badgeBaseClass }} bg-red-100 text-red-700">Perlu dipantau</span>
+        </div>
+
+        <div class="{{ $summaryCardClass }}">
+            <p class="text-sm text-slate-500">Selesai Hari Ini</p>
+            <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $selesaiHariIni }}</h3>
+            <span class="{{ $badgeBaseClass }} bg-green-100 text-green-700">Dikembalikan</span>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
@@ -158,17 +93,22 @@
         <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
             <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-800">April 2026</h3>
+                    <h3 class="text-xl font-bold text-slate-800">
+                        {{ $currentMonth->translatedFormat('F Y') }}
+                    </h3>
                     <p class="text-sm text-slate-500">Kalender jadwal rental bulanan</p>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                    <a href="{{ route('admin.calendar', ['month' => $prevMonth]) }}"
+                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
                         ←
-                    </button>
-                    <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                    </a>
+
+                    <a href="{{ route('admin.calendar', ['month' => $nextMonth]) }}"
+                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
                         →
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -184,32 +124,66 @@
                 </div>
 
                 <div class="grid grid-cols-7 gap-3">
-                    @foreach ($calendarDays as $day)
+                    @for ($date = $calendarStart->copy(); $date->lte($calendarEnd); $date->addDay())
                         @php
-                            $dayClass = $calendarDayClass;
-                            $textClass = 'text-sm font-semibold text-slate-700';
+                            $isCurrentMonth = $date->month === $currentMonth->month;
+                            $isToday = $date->isSameDay($today);
 
-                            if ($day['type'] === 'muted') {
-                                $dayClass = $calendarMutedDayClass;
-                                $textClass = '';
-                            } elseif ($day['type'] === 'active') {
-                                $dayClass = 'h-24 rounded-2xl bg-blue-50 border border-blue-200 p-2 shadow-sm';
-                                $textClass = 'text-sm font-semibold text-blue-700';
+                            $dayRentals = $rentals->filter(function ($r) use ($date) {
+                                $pinjam = $r->tanggal_pinjam ? Carbon::parse($r->tanggal_pinjam)->isSameDay($date) : false;
+                                $kembali = $r->tanggal_kembali ? Carbon::parse($r->tanggal_kembali)->isSameDay($date) : false;
+                                $real = $r->tanggal_kembali_real ? Carbon::parse($r->tanggal_kembali_real)->isSameDay($date) : false;
+
+                                return $pinjam || $kembali || $real;
+                            });
+
+                            $bookingCount = $dayRentals->filter(fn($r) =>
+                                $r->tanggal_pinjam
+                                && Carbon::parse($r->tanggal_pinjam)->isSameDay($date)
+                            )->count();
+
+                            $returnCount = $dayRentals->filter(fn($r) =>
+                                $r->tanggal_kembali
+                                && Carbon::parse($r->tanggal_kembali)->isSameDay($date)
+                                && $r->status_transaksi !== 'Dikembalikan'
+                            )->count();
+
+                            $doneCount = $dayRentals->filter(fn($r) =>
+                                $r->tanggal_kembali_real
+                                && Carbon::parse($r->tanggal_kembali_real)->isSameDay($date)
+                            )->count();
+
+                            $dayClass = $isCurrentMonth ? $calendarDayClass : $calendarMutedDayClass;
+
+                            if ($isToday) {
+                                $dayClass = 'min-h-24 rounded-2xl bg-blue-50 border border-blue-200 p-2 shadow-sm';
                             }
                         @endphp
 
                         <div class="{{ $dayClass }}">
-                            <div class="{{ $textClass }}">{{ $day['day'] }}</div>
+                            <div class="text-sm font-semibold {{ $isToday ? 'text-blue-700' : 'text-slate-700' }}">
+                                {{ $date->day }}
+                            </div>
 
-                            @if (!empty($day['badges']))
-                                @foreach ($day['badges'] as $badge)
-                                    <div class="{{ $miniBadgeClass }} {{ $badge['class'] }} {{ $badge['extraClass'] ?? '' }}">
-                                        {{ $badge['text'] }}
-                                    </div>
-                                @endforeach
+                            @if ($bookingCount > 0)
+                                <div class="{{ $miniBadgeClass }} bg-yellow-100 text-yellow-700">
+                                    {{ $bookingCount }} Booking
+                                </div>
+                            @endif
+
+                            @if ($returnCount > 0)
+                                <div class="{{ $miniBadgeClass }} bg-red-100 text-red-700">
+                                    {{ $returnCount }} Return
+                                </div>
+                            @endif
+
+                            @if ($doneCount > 0)
+                                <div class="{{ $miniBadgeClass }} bg-green-100 text-green-700">
+                                    {{ $doneCount }} Selesai
+                                </div>
                             @endif
                         </div>
-                    @endforeach
+                    @endfor
                 </div>
             </div>
         </div>
@@ -232,15 +206,39 @@
                 <h3 class="text-lg font-bold text-slate-800 mb-4">Agenda Hari Ini</h3>
 
                 <div class="space-y-4">
-                    @foreach ($agendaItems as $agenda)
+                    @forelse ($agendaToday as $agenda)
+                        @php
+                            $badgeClass = 'bg-blue-100 text-blue-700';
+                            $badgeText = $agenda->status_transaksi ?? '-';
+
+                            if (($agenda->status_transaksi ?? '') === 'Booking') {
+                                $badgeClass = 'bg-yellow-100 text-yellow-700';
+                            } elseif (($agenda->status_transaksi ?? '') === 'Dikembalikan') {
+                                $badgeClass = 'bg-green-100 text-green-700';
+                            } elseif ($agenda->tanggal_kembali && Carbon::parse($agenda->tanggal_kembali)->isSameDay($today)) {
+                                $badgeClass = 'bg-red-100 text-red-700';
+                                $badgeText = 'Return';
+                            }
+                        @endphp
+
                         <div class="{{ $agendaItemClass }}">
-                            <p class="font-semibold text-slate-800">{{ $agenda['title'] }}</p>
-                            <p class="text-sm text-slate-500 mt-1">{{ $agenda['desc'] }}</p>
-                            <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $agenda['badgeClass'] }}">
-                                {{ $agenda['badgeText'] }}
+                            <p class="font-semibold text-slate-800">{{ $agenda->nama_barang ?? '-' }}</p>
+                            <p class="text-sm text-slate-500 mt-1">
+                                {{ $agenda->nama_pelanggan ?? '-' }}
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                {{ $agenda->tanggal_pinjam }} - {{ $agenda->tanggal_kembali }}
+                            </p>
+
+                            <span class="inline-flex mt-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $badgeClass }}">
+                                {{ $badgeText }}
                             </span>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                            <p class="text-sm text-slate-500">Tidak ada agenda hari ini.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 

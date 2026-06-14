@@ -34,10 +34,19 @@
         ['label' => 'Layanan', 'value' => 'Cepat'],
     ];
 
-    $contactItems = [
-        ['label' => 'Email', 'value' => 'admin@lenscamp.com'],
-        ['label' => 'WhatsApp', 'value' => '081234567890'],
-        ['label' => 'Jam Operasional', 'value' => '08:00 - 20:00 WIB'],
+     $contactItems = [
+    [
+        'label' => 'Email',
+        'value' => $settings['email_admin'] ?? 'admin.lenscamp@gmail.com'
+    ],
+    [
+        'label' => 'WhatsApp',
+        'value' => $settings['no_whatsapp'] ?? '081291516627'
+    ],
+    [
+        'label' => 'Jam Operasional',
+        'value' => '08:00 - 20:00 WIB'
+    ],
     ];
 
     $productInputClass = 'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500';

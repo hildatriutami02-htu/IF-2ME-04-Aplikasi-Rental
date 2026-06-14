@@ -199,12 +199,11 @@
                           -
                           {{ \Carbon\Carbon::parse($item['tanggal_kembali_raw'] ?? $item['tanggal_kembali'])->format('d/m') }}
                          </div>
-
-                     @if(!empty($item['tanggal_kembali_real']))
-                         <div class="text-[10px] text-green-600 mt-0.5">
-                            Aktual: {{ $item['tanggal_kembali_real'] }}
-                        </div>
-                          @endif
+@if(
+    !empty($item['tanggal_kembali_real']) &&
+    ($item['status_transaksi'] ?? '') === 'Dikembalikan')
+   
+@endif
                         </td>
 
                             <td class="px-2 py-3 whitespace-nowrap">

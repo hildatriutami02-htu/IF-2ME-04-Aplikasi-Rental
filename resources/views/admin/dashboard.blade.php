@@ -8,10 +8,30 @@
 
 @php
     $stats = [
-        ['title' => 'Pendapatan', 'value' => 'Rp 12.500.000', 'desc' => 'Bulan ini', 'sub' => 'Data keuangan terkini'],
-        ['title' => 'Total Rental', 'value' => '48 Transaksi', 'desc' => 'Aktif', 'sub' => 'Rental berjalan & selesai'],
-        ['title' => 'Total User', 'value' => '126 User', 'desc' => 'Terdaftar', 'sub' => 'Akun pengguna aktif'],
-        ['title' => 'Produk', 'value' => '32 Barang', 'desc' => 'Siap sewa', 'sub' => 'Stok tercatat sistem'],
+        [
+            'title' => 'Pendapatan',
+            'value' => 'Rp ' . number_format($totalPendapatan ?? 0, 0, ',', '.'),
+            'desc' => 'Bulan ini',
+            'sub' => 'Data keuangan terkini',
+        ],
+        [
+            'title' => 'Total Rental',
+            'value' => ($totalRental ?? 0) . ' Transaksi',
+            'desc' => 'Aktif',
+            'sub' => 'Rental berjalan & selesai',
+        ],
+        [
+            'title' => 'Total User',
+            'value' => ($totalUser ?? 0) . ' User',
+            'desc' => 'Terdaftar',
+            'sub' => 'Akun pengguna aktif',
+        ],
+        [
+            'title' => 'Produk',
+            'value' => ($totalProduk ?? 0) . ' Barang',
+            'desc' => 'Siap sewa',
+            'sub' => 'Stok tercatat sistem',
+        ],
     ];
 
     $menus = [
@@ -73,13 +93,12 @@
                 <h3 class="text-xl font-bold">Ringkasan Aktivitas</h3>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-5">
-                @foreach ([
-                    ['Booking','12','Hari ini'],
-                    ['Sedang Disewa','19','Aktif'],
-                    ['Sudah Dikembalikan','8','Selesai'],
-                    ['User Aktif','74','Online']
-                ] as $item)
+           @foreach ([
+            ['Booking', $totalBooking, 'Hari ini'],
+            ['Sedang Disewa', $totalSedangDisewa, 'Aktif'],
+            ['Sudah Dikembalikan', $totalDikembalikan, 'Selesai'],
+            ['User Aktif', $totalUserAktif, 'Online']
+        ] as $item)
 
                 <div class="rounded-2xl bg-blue-50 border border-blue-100 p-5 hover:-translate-y-1 transition">
                     <div class="flex justify-between">
@@ -102,46 +121,34 @@
         <div class="bg-white rounded-2xl border p-5">
             <h3 class="text-xl font-bold mb-4">User Terbaru</h3>
 
-            @foreach ([
-                ['A','USR001 - Ahmad','Terdaftar hari ini','Aktif'],
-                ['P','USR002 - Putri','Terdaftar kemarin','Aktif'],
-                ['B','USR003 - Budi','2 hari lalu','Baru']
-            ] as $user)
-
-            <div class="flex justify-between px-3 py-3 hover:bg-slate-50 rounded-xl">
-                <div class="flex gap-3">
-                    <div class="w-11 h-11 bg-blue-50 flex items-center justify-center rounded-full font-bold">
-                        {{ $user[0] }}
-                    </div>
-                    <div>
-                        <p class="font-semibold">{{ $user[1] }}</p>
-                        <p class="text-sm text-slate-500">{{ $user[2] }}</p>
-                    </div>
-                </div>
-                <span class="text-xs px-3 py-1 rounded-full bg-blue-50">
-                    {{ $user[3] }}
-                </span>
-            </div>
-
-            @endforeach
+@foreach ($latestUsers as $user)
+<div class="flex justify-between px-3 py-3 hover:bg-slate-50 rounded-xl">
+    <div class="flex gap-3">
+        <div class="w-11 h-11 bg-blue-50 flex items-center justify-center rounded-full font-bold">
+            {{ substr($user['nama'], 0, 1) }}
+        </div>
+        <div>
+            <p class="font-semibold">{{ $user['kode'] }} - {{ $user['nama'] }}</p>
+            <p class="text-sm text-slate-500">{{ $user['waktu'] }}</p>
+        </div>
+    </div>
+    <span class="text-xs px-3 py-1 rounded-full bg-blue-50">
+        {{ $user['status'] }}
+    </span>
+</div>
+@endforeach
         </div>
 
         <!-- ================= RENTAL ================= -->
         <div class="bg-white rounded-2xl border p-5">
             <h3 class="text-xl font-bold mb-4">Riwayat Rental</h3>
 
-            @foreach ([
-                ['Canon','Ahmad'],
-                ['Tenda','Putri'],
-                ['Tripod','Budi']
-            ] as $rental)
-
-            <div class="px-3 py-3 hover:bg-slate-50 rounded-xl">
-                <p class="font-semibold">{{ $rental[0] }}</p>
-                <p class="text-sm text-slate-500">{{ $rental[1] }}</p>
-            </div>
-
-            @endforeach
+@foreach ($latestRentals as $rental)
+<div class="px-3 py-3 hover:bg-slate-50 rounded-xl">
+    <p class="font-semibold">{{ $rental['produk'] }}</p>
+    <p class="text-sm text-slate-500">{{ $rental['pelanggan'] }}</p>
+</div>
+@endforeach
         </div>
     </div>
 

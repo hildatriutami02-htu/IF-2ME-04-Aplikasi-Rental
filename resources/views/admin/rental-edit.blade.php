@@ -148,12 +148,12 @@
                 </div>
             </div>
 
-            <div class="flex gap-2 pt-5">
-                <button type="submit"
-                        class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-                    Simpan Perubahan
-                </button>
-            </div>
+       <div class="flex gap-2 pt-5">
+    <button type="submit"
+            class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+        Simpan Perubahan
+    </button>
+</div>
         </form>
     </div>
 </div>

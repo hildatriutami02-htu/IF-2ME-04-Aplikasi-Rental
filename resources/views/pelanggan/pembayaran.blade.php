@@ -70,7 +70,7 @@
                             </td>
 
                             <td class="px-4 py-5 text-sm text-slate-700">
-                                {{ $item['tanggal'] }}
+                                {{ \Carbon\Carbon::parse($item['tanggal'])->format('d F Y') }}
                             </td>
 
                             <td class="px-4 py-5 text-sm font-semibold text-blue-600">

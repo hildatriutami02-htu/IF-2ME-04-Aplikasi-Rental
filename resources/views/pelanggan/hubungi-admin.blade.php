@@ -5,21 +5,20 @@
     $headerTitle = 'Bantuan';
     $headerDesc = 'Butuh bantuan? Silakan hubungi admin kami';
 
-    $infoCards = [
-        [
-            'label' => 'Email',
-            'value' => 'admin@lenscamp.com',
-        ],
-        [
-            'label' => 'WhatsApp',
-            'value' => '081291516627',
-        ],
-        [
-            'label' => 'Jam Operasional',
-            'value' => '08:00 - 20:00 WIB',
-        ],
-    ];
-
+$infoCards = [
+    [
+        'label' => 'Email',
+        'value' => $settings['email_admin'] ?? 'admin@lenscamp.com',
+    ],
+    [
+        'label' => 'WhatsApp',
+        'value' => $settings['no_whatsapp'] ?? '081234567890',
+    ],
+    [
+        'label' => 'Jam Operasional',
+        'value' => '08:00 - 20:00 WIB',
+    ],
+];
     $inputClass = 'w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500';
     $labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 

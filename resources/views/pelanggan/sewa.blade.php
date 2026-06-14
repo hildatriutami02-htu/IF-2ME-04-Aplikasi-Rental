@@ -113,9 +113,9 @@
                 @endphp
 
                 <div class="rounded-2xl border border-slate-200 p-5 hover:shadow-sm transition">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="grid lg:grid-cols-[750px_1fr] gap-6 items-start">
 
-                        <div class="space-y-3">
+                        <div class="space-y-3 lg:ml-6">
                             <div>
                                 <p class="text-xs font-semibold tracking-wide text-slate-400 uppercase">
                                     {{ $item['invoice'] ?? '-' }}
@@ -129,7 +129,9 @@
                                 <div class="rounded-2xl bg-slate-50 px-4 py-3">
                                     <p class="text-slate-500 text-xs mb-1">Periode Sewa</p>
                                     <p class="font-medium text-slate-800">
-                                        {{ $item['tanggal_pinjam'] ?? '-' }} - {{ $item['tanggal_kembali'] ?? '-' }}
+                                        {{ \Carbon\Carbon::parse($item['tanggal_pinjam'])->format('d F Y') }}
+                                        -
+                                        {{ \Carbon\Carbon::parse($item['tanggal_kembali'])->format('d F Y') }}
                                     </p>
                                     @if(!empty($item['tanggal_kembali_real']))
                                         <p class="text-xs text-green-600 mt-1">
@@ -161,23 +163,28 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col items-start lg:items-end gap-3 min-w-[180px]">
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusClass }}">
-                                    {{ $item['status'] ?? '-' }}
-                                </span>
+                        <div class="flex justify-start pt-10">
+                            <div class="flex flex-col gap-3">
 
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $payClass }}">
-                                    {{ $item['status_pembayaran'] ?? '-' }}
-                                </span>
+                                <div class="flex gap-2">
+                                    <span class="inline-flex rounded-full px-5 py-2 text-sm font-semibold {{ $statusClass }}">
+                                        {{ $item['status'] ?? '-' }}
+                                    </span>
+
+                                    <span class="inline-flex rounded-full px-5 py-2 text-sm font-semibold {{ $payClass }}">
+                                        {{ $item['status_pembayaran'] ?? '-' }}
+                                    </span>
+                                </div>
+
+                                @if($isBooking && !empty($item['id']))
+                                    <a href="{{ route('pelanggan.sewa.extend', $item['id']) }}"
+                                    class="inline-flex items-center rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition">
+                                        Perpanjang Sewa
+                                    </a>
+                                @endif
+
                             </div>
-
-                            @if($isBooking && !empty($item['id']))
-                                <a href="{{ route('pelanggan.sewa.extend', $item['id']) }}"
-                                   class="inline-flex items-center rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition">
-                                    Perpanjang Sewa
-                                </a>
-                            @endif
+                        </div>
                         </div>
 
                     </div>

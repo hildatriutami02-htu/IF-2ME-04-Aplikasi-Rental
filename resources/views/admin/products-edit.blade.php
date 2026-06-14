@@ -19,9 +19,15 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div>
                     @if(!empty($product->gambar))
-                        <img src="{{ asset('storage/' . $product->gambar) }}"
-                             alt="{{ $product->nama_barang }}"
-                             class="w-full h-64 object-contain bg-white p-3 rounded-2xl border">
+            @php
+                $gambar = str_starts_with($product->gambar, 'products/')
+                ? asset('storage/' . $product->gambar)
+               : asset('images/' . $product->gambar);
+            @endphp
+
+    <img src="{{ $gambar }}"
+         alt="{{ $product->nama_barang }}"
+         class="w-full h-64 object-contain bg-white p-3 rounded-2xl border">
                     @else
                         <div class="h-64 rounded-2xl bg-slate-100 flex items-center justify-center text-6xl font-bold text-slate-400">
                             {{ strtoupper(substr($product->nama_barang, 0, 1)) }}

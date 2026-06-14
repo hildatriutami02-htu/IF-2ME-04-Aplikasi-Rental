@@ -6,10 +6,22 @@
     $headerDesc = 'Selamat datang kembali di aplikasi rental kamu';
 
     $stats = [
-        ['label' => 'Produk Tersedia', 'value' => count($products ?? []), 'color' => 'text-slate-800'],
-        ['label' => 'Sewa Aktif', 'value' => 3, 'color' => 'text-blue-600'],
-        ['label' => 'Tagihan', 'value' => 2, 'color' => 'text-amber-600'],
-    ];
+    [
+        'label' => 'Produk Tersedia',
+        'value' => $totalProdukTersedia ?? 0,
+        'color' => 'text-slate-800'
+    ],
+    [
+        'label' => 'Sewa Aktif',
+        'value' => $sewaAktif ?? 0,
+        'color' => 'text-blue-600'
+    ],
+    [
+        'label' => 'Tagihan',
+        'value' => $tagihan ?? 0,
+        'color' => 'text-amber-600'
+    ],
+];
 @endphp
 
 @section('content')
