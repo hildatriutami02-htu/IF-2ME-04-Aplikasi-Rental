@@ -18,7 +18,7 @@
             'denda' => 0,
             'status' => 'Booking',
             'status_pembayaran' => 'Belum Bayar',
-            'warna' => 'blue',
+            'warna' => 'green',
         ],
         [
             'id' => 2,
@@ -45,7 +45,7 @@
         [
             'label' => 'Sedang Booking',
             'value' => collect($rentals)->where('status', 'Booking')->count(),
-            'class' => 'text-blue-600',
+            'class' => 'text-[#2F5249]',
         ],
         [
             'label' => 'Total Pengeluaran',
@@ -74,7 +74,6 @@
         </div>
     @endif
 
-    <!-- SUMMARY -->
     <section class="grid grid-cols-1 gap-6 md:grid-cols-3">
         @foreach($summaryCards as $card)
             <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -86,11 +85,10 @@
         @endforeach
     </section>
 
-    <!-- LIST -->
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="mb-5 flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-semibold text-slate-800">Daftar Penyewaan</h3>
+                <h3 class="text-lg font-semibold text-[#2F5249]">Daftar Penyewaan</h3>
                 <p class="text-sm text-slate-500 mt-1">Semua transaksi sewa yang pernah kamu buat akan muncul di sini.</p>
             </div>
         </div>
@@ -98,8 +96,8 @@
         <div class="space-y-4">
             @forelse($rentals as $item)
                 @php
-                    $statusClass = ($item['warna'] ?? '') === 'blue'
-                        ? 'bg-blue-50 text-blue-700'
+                    $statusClass = ($item['warna'] ?? '') === 'green' || ($item['warna'] ?? '') === 'blue'
+                        ? 'bg-[#eef3ee] text-[#2F5249]'
                         : 'bg-slate-100 text-slate-700';
 
                     $payClass = match($item['status_pembayaran'] ?? '') {
@@ -126,7 +124,7 @@
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                                <div class="rounded-2xl bg-[#F8FAF7] px-4 py-3">
                                     <p class="text-slate-500 text-xs mb-1">Periode Sewa</p>
                                     <p class="font-medium text-slate-800">
                                         {{ \Carbon\Carbon::parse($item['tanggal_pinjam'])->format('d F Y') }}
@@ -140,21 +138,21 @@
                                     @endif
                                 </div>
 
-                                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                                <div class="rounded-2xl bg-[#F8FAF7] px-4 py-3">
                                     <p class="text-slate-500 text-xs mb-1">Jumlah Unit</p>
                                     <p class="font-medium text-slate-800">
                                         {{ $item['qty'] ?? 1 }} unit
                                     </p>
                                 </div>
 
-                                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                                <div class="rounded-2xl bg-[#F8FAF7] px-4 py-3">
                                     <p class="text-slate-500 text-xs mb-1">Biaya Sewa</p>
-                                    <p class="font-semibold text-blue-600">
+                                    <p class="font-semibold text-[#2F5249]">
                                         Rp {{ number_format((int) ($item['harga'] ?? 0), 0, ',', '.') }}
                                     </p>
                                 </div>
 
-                                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                                <div class="rounded-2xl bg-[#F8FAF7] px-4 py-3">
                                     <p class="text-slate-500 text-xs mb-1">Denda</p>
                                     <p class="font-semibold {{ $denda > 0 ? 'text-red-600' : 'text-slate-800' }}">
                                         Rp {{ number_format($denda, 0, ',', '.') }}
@@ -176,15 +174,14 @@
                                     </span>
                                 </div>
 
-                                @if($isBooking && !empty($item['id']))
-                                    <a href="{{ route('pelanggan.sewa.extend', $item['id']) }}"
-                                    class="inline-flex items-center rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition">
-                                        Perpanjang Sewa
-                                    </a>
-                                @endif
+                             @if(in_array($item['status'] ?? '', ['Booking', 'Sedang Disewa', 'Diperpanjang']))
+                                <a href="{{ route('pelanggan.sewa.extend', $item['id']) }}"
+                                class="inline-flex items-center rounded-2xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white hover:bg-[#437057] transition">
+                                    Perpanjang Sewa
+                                </a>
+                            @endif
 
                             </div>
-                        </div>
                         </div>
 
                     </div>

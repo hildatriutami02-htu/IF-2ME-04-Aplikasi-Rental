@@ -3,7 +3,7 @@
 @php
     $title = 'Keranjang - LensCamp';
     $headerTitle = 'Keranjang Rental';
-    $headerDesc = 'Daftar produk yang akan diajukan untuk penyewaan';
+    $headerDesc = 'Atur tanggal, jumlah unit, dan ajukan penyewaan';
 @endphp
 
 @section('content')
@@ -25,73 +25,67 @@
         </div>
     @endif
 
-    @if(count($cart) > 0)
-
+    @if(count($keranjang) > 0)
         <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-slate-100 text-slate-700">
+                    <thead class="bg-[#eef3ee] text-[#2F5249]">
                         <tr>
                             <th class="p-4 text-left">Produk</th>
                             <th class="p-4 text-center">Tanggal Pinjam</th>
                             <th class="p-4 text-center">Tanggal Kembali</th>
                             <th class="p-4 text-center">Qty</th>
-                            <th class="p-4 text-center">Total Harga</th>
+                            <th class="p-4 text-center">Catatan</th>
                             <th class="p-4 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach($cart as $index => $item)
-
-                            @php
-                              $hari = max(
-                                \Carbon\Carbon::parse($item['tanggal_pinjam'])
-                                    ->diffInDays(\Carbon\Carbon::parse($item['tanggal_kembali'])) + 1,
-                                1
-                            );
-
-                                $total = $item['harga_per_hari'] * $item['qty'] * $hari;
-                            @endphp
-
+                        @foreach($keranjang as $index => $item)
                             <tr class="border-t border-slate-200">
                                 <td class="p-4 font-semibold text-slate-800">
                                     {{ $item['nama_barang'] }}
-                                </td>
-
-                                <td class="p-4 text-center text-slate-600">
-                                    {{ $item['tanggal_pinjam'] }}
-                                </td>
-
-                                <td class="p-4 text-center text-slate-600">
-                                    {{ $item['tanggal_kembali'] }}
-                                </td>
-
-                                <td class="p-4 text-center text-slate-600">
-                                    {{ $item['qty'] }}
-                                </td>
-
-                                <td class="p-4 text-center font-semibold text-blue-600">
-                                    Rp {{ number_format($total, 0, ',', '.') }}
-
                                     <p class="mt-1 text-xs text-slate-500">
-                                        {{ $hari }} hari × Rp {{ number_format($item['harga_per_hari'], 0, ',', '.') }}
+                                        Rp {{ number_format($item['harga_per_hari'], 0, ',', '.') }} / hari
                                     </p>
                                 </td>
 
-                                <td class="p-4 text-center">
-                                    <form action="{{ route('pelanggan.keranjang.hapus', $index) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
+                                <form action="{{ route('pelanggan.keranjang.update', $index) }}" method="POST">
+                                    @csrf
 
-                                        <button
-                                            type="submit"
-                                            class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition"
-                                        >
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </td>
+                                    <td class="p-4 text-center">
+                                        <input type="date" name="tanggal_pinjam" value="{{ $item['tanggal_pinjam'] ?? '' }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm" required>
+                                    </td>
+
+                                    <td class="p-4 text-center">
+                                        <input type="date" name="tanggal_kembali" value="{{ $item['tanggal_kembali'] ?? '' }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm" required>
+                                    </td>
+
+                                    <td class="p-4 text-center">
+                                        <input type="number" name="qty" min="1" value="{{ $item['qty'] ?? 1 }}" class="w-20 rounded-xl border border-slate-300 px-3 py-2 text-center text-sm" required>
+                                    </td>
+
+                                    <td class="p-4 text-center">
+                                        <input type="text" name="catatan" value="{{ $item['catatan'] ?? '' }}" placeholder="Opsional" class="rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                                    </td>
+
+                                    <td class="p-4 text-center">
+                                        <div class="flex justify-center gap-2">
+                                            <button type="submit" class="rounded-xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white">
+                                                Simpan
+                                            </button>
+                                </form>
+
+                                            <form action="{{ route('pelanggan.keranjang.hapus', $index) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -99,34 +93,19 @@
             </div>
         </div>
 
-        <form
-            action="{{ route('pelanggan.keranjang.checkout') }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
+        <form action="{{ route('pelanggan.keranjang.checkout') }}" method="POST" enctype="multipart/form-data" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             @csrf
 
-            <h3 class="text-lg font-bold text-slate-800">
-                Verifikasi Identitas
-            </h3>
+            <h3 class="text-lg font-bold text-[#2F5249]">Verifikasi Identitas</h3>
 
             <p class="mt-1 text-sm text-slate-500">
                 Upload foto KTP sebagai jaminan dan verifikasi sebelum rental disetujui admin.
             </p>
 
             <div class="mt-5">
-                <label class="mb-2 block text-sm font-semibold text-slate-700">
-                    Foto KTP
-                </label>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Foto KTP</label>
 
-                <input
-                    type="file"
-                    name="foto_ktp"
-                    accept="image/*"
-                    required
-                    class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500"
-                >
+                <input type="file" name="foto_ktp" accept="image/*" required class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]">
 
                 <p class="mt-2 text-xs text-slate-500">
                     Format yang diperbolehkan: JPG, JPEG, PNG. Maksimal 2MB.
@@ -134,39 +113,27 @@
             </div>
 
             <div class="mt-6 flex flex-wrap gap-3">
-                <button
-                    type="submit"
-                    class="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
-                >
+                <button type="submit" class="rounded-2xl bg-[#2F5249] px-6 py-3 text-sm font-semibold text-white hover:bg-[#437057] transition">
                     Checkout / Ajukan Rental
                 </button>
 
-                <a
-                    href="{{ route('pelanggan.produk') }}"
-                    class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition"
-                >
+                <a href="{{ route('pelanggan.produk') }}" class="rounded-2xl bg-[#eef3ee] px-6 py-3 text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df] transition">
                     Tambah Produk Lain
                 </a>
             </div>
         </form>
-
     @else
-
         <div class="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-            <h3 class="text-xl font-bold text-slate-800">Keranjang masih kosong</h3>
+            <h3 class="text-xl font-bold text-[#2F5249]">Keranjang masih kosong</h3>
 
             <p class="mt-2 text-sm text-slate-500">
                 Silakan pilih produk terlebih dahulu sebelum checkout.
             </p>
 
-            <a
-                href="{{ route('pelanggan.produk') }}"
-                class="mt-6 inline-flex rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
-            >
+            <a href="{{ route('pelanggan.produk') }}" class="mt-6 inline-flex rounded-2xl bg-[#2F5249] px-6 py-3 text-sm font-semibold text-white hover:bg-[#437057] transition">
                 Lihat Produk
             </a>
         </div>
-
     @endif
 
 </div>

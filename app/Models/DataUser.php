@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DataUser extends Model
 {
-//    use HasFactory;
+    use HasFactory;
 
     protected $table = 'data_users';
 
@@ -23,4 +23,9 @@ class DataUser extends Model
         'alamat',
         'foto_ktp',
     ];
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class, 'user_id');
+    }
 }

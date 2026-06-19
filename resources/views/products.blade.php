@@ -21,7 +21,7 @@
         ['route'=>'contact','label'=>'Hubungi Kami'],
     ];
 
-    $inputClass = 'rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 w-full';
+    $inputClass = 'rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249] w-full';
 
     $filters = [
         ['type'=>'input','placeholder'=>'Cari produk...'],
@@ -54,16 +54,15 @@
     ];
 @endphp
 
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-[#F8FAF7] text-slate-800">
 
-<!-- HEADER -->
-<header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+<header class="sticky top-0 z-30 border-b border-[#dfe7df] bg-white/95 backdrop-blur">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
 
         <a href="{{ route('home') }}" class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg font-extrabold shadow">L</div>
+            <div class="w-11 h-11 rounded-2xl bg-[#2F5249] text-white flex items-center justify-center text-lg font-extrabold shadow">L</div>
             <div>
-                <h1 class="text-xl font-bold">LensCamp</h1>
+                <h1 class="text-xl font-bold text-[#2F5249]">LensCamp</h1>
                 <p class="text-xs text-slate-500">Sewa perlengkapan dengan cepat</p>
             </div>
         </a>
@@ -71,35 +70,32 @@
         <nav class="hidden md:flex items-center gap-6">
             @foreach($navMenu as $menu)
                 <a href="{{ route($menu['route']) }}"
-                   class="text-sm font-medium {{ isset($menu['active']) ? 'text-blue-600 font-semibold' : 'text-slate-700 hover:text-blue-600' }}">
+                   class="text-sm font-medium {{ isset($menu['active']) ? 'text-[#2F5249] font-semibold' : 'text-slate-700 hover:text-[#2F5249]' }}">
                     {{ $menu['label'] }}
                 </a>
             @endforeach
         </nav>
 
         <div class="flex items-center gap-3">
-            <a href="{{ route('login') }}" class="bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold">Masuk</a>
-            <a href="{{ route('daftar') }}" class="bg-blue-600 px-4 py-2 rounded-xl text-sm font-semibold text-white">Daftar</a>
+            <a href="{{ route('login') }}" class="bg-[#eef3ee] px-4 py-2 rounded-xl text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df] transition">Masuk</a>
+            <a href="{{ route('daftar') }}" class="bg-[#2F5249] px-4 py-2 rounded-xl text-sm font-semibold text-white hover:bg-[#437057] transition">Daftar</a>
         </div>
 
     </div>
 </header>
 
-<!-- CONTENT -->
 <main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-10 space-y-8">
 
-    <!-- HERO -->
-    <section class="rounded-[28px] bg-gradient-to-r from-blue-600 to-blue-500 p-8 text-white shadow-lg">
+    <section class="rounded-[28px] bg-gradient-to-r from-[#2F5249] to-[#437057] p-8 text-white shadow-lg">
         <h2 class="text-3xl sm:text-5xl font-extrabold">
             Pilih perlengkapan terbaik sesuai kebutuhanmu.
         </h2>
-        <p class="mt-4 text-blue-50">
+        <p class="mt-4 text-[#F1F6F2]">
             Jelajahi produk rental yang tersedia.
         </p>
     </section>
 
-    <!-- FILTER -->
-    <section class="bg-white rounded-3xl border p-6 shadow-sm">
+    <section class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             @foreach($filters as $filter)
@@ -119,33 +115,32 @@
         </div>
     </section>
 
-    <!-- PRODUK -->
     <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
         @foreach($produk as $item)
-            <div class="bg-white rounded-3xl border p-5 shadow-sm hover:shadow-md transition">
+            <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
 
-                <div class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl font-bold text-slate-400">
+                <div class="h-44 bg-[#F8FAF7] rounded-2xl flex items-center justify-center text-4xl font-bold text-[#2F5249]">
                     {{ strtoupper(substr($item['nama'],0,1)) }}
                 </div>
 
                 <div class="mt-4">
-                    <h4 class="text-lg font-bold">{{ $item['nama'] }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800">{{ $item['nama'] }}</h4>
                     <p class="text-sm text-slate-500">{{ $item['kategori'] }}</p>
 
                     <p class="mt-3 text-sm text-slate-500">
                         {{ $item['deskripsi'] }}
                     </p>
 
-                    <p class="mt-4 font-bold text-blue-600">
+                    <p class="mt-4 font-bold text-[#2F5249]">
                         Rp {{ number_format($item['harga'],0,',','.') }}
                     </p>
 
                     <div class="mt-5 grid grid-cols-2 gap-3">
-                        <a href="{{ route('login') }}" class="bg-blue-600 text-white py-3 rounded-xl text-center text-sm">
+                        <a href="{{ route('login') }}" class="bg-[#2F5249] text-white py-3 rounded-xl text-center text-sm font-semibold hover:bg-[#437057] transition">
                             Sewa
                         </a>
-                        <a href="{{ route('contact') }}" class="bg-slate-100 py-3 rounded-xl text-center text-sm">
+                        <a href="{{ route('contact') }}" class="bg-[#eef3ee] text-[#2F5249] py-3 rounded-xl text-center text-sm font-semibold hover:bg-[#dfe7df] transition">
                             Tanya
                         </a>
                     </div>

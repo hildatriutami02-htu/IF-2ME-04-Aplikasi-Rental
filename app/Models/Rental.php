@@ -34,4 +34,19 @@ class Rental extends Model
         'tanggal_kembali' => 'date',
         'tanggal_kembali_real' => 'date',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(DataUser::class, 'user_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(\App\Models\Payment::class);
+    }
 }

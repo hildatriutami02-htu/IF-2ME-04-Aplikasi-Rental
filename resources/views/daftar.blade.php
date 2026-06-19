@@ -16,8 +16,9 @@
 </head>
 
 @php
-    $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
+    $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]';
     $labelClass = 'block text-sm font-medium text-slate-700 mb-2';
+    $heroBg = asset('images/background-camping-camera.jpeg');
 
     $features = [
         ['small'=>'Cepat','big'=>'Praktis'],
@@ -26,11 +27,14 @@
     ];
 @endphp
 
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="min-h-screen bg-[#F8FAF7] text-slate-800">
 
 <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
 
-    <div class="hidden lg:flex bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white p-12 flex-col justify-between">
+    <div
+        class="hidden lg:flex text-white p-12 flex-col justify-between bg-cover bg-center relative overflow-hidden"
+        style="background-image: linear-gradient(rgba(30,46,36,.80), rgba(30,46,36,.80)), url('{{ $heroBg }}')"
+    >
 
         <div>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
@@ -39,33 +43,33 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold">LensCamp</h1>
-                    <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
+                    <p class="text-sm text-[#DDE8DF]">Aplikasi Rental Outdoor</p>
                 </div>
             </a>
         </div>
 
         <div class="max-w-xl">
-            <p class="text-sm font-semibold text-blue-100">Pendaftaran Pelanggan</p>
+            <p class="text-sm font-semibold text-[#DDE8DF]">Pendaftaran Pelanggan</p>
 
             <h2 class="mt-3 text-4xl font-extrabold leading-tight">
                 Daftar dan lengkapi biodata pelanggan.
             </h2>
 
-            <p class="mt-5 text-base text-blue-50 leading-7">
+            <p class="mt-5 text-base text-[#F1F6F2] leading-7">
                 Data pelanggan digunakan untuk verifikasi, proses penyewaan, dan pengelolaan transaksi oleh admin.
             </p>
 
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 @foreach($features as $item)
-                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
-                        <p class="text-sm text-blue-100">{{ $item['small'] }}</p>
+                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur">
+                        <p class="text-sm text-[#DDE8DF]">{{ $item['small'] }}</p>
                         <p class="mt-2 text-2xl font-bold">{{ $item['big'] }}</p>
                     </div>
                 @endforeach
             </div>
         </div>
 
-        <div class="text-sm text-blue-100">
+        <div class="text-sm text-[#DDE8DF]">
             © 2026 LensCamp. All rights reserved.
         </div>
 
@@ -76,11 +80,11 @@
 
             <div class="mb-8 lg:hidden">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-extrabold">
+                    <div class="w-11 h-11 rounded-2xl bg-[#2F5249] text-white flex items-center justify-center font-extrabold">
                         L
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold">LensCamp</h1>
+                        <h1 class="text-xl font-bold text-[#2F5249]">LensCamp</h1>
                         <p class="text-xs text-slate-500">Aplikasi Rental Outdoor</p>
                     </div>
                 </a>
@@ -89,7 +93,7 @@
             <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
 
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold text-slate-800">Daftar Pelanggan</h2>
+                    <h2 class="text-3xl font-bold text-[#2F5249]">Daftar Pelanggan</h2>
                     <p class="mt-2 text-sm text-slate-500">
                         Lengkapi data berikut untuk membuat akun pelanggan.
                     </p>
@@ -205,20 +209,20 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                        class="w-full rounded-2xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white hover:bg-[#437057] transition">
                         Daftar Sekarang
                     </button>
                 </form>
 
                 <div class="mt-6 text-center text-sm text-slate-500">
                     Sudah punya akun?
-                    <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:text-blue-700">
+                    <a href="{{ route('login') }}" class="font-semibold text-[#2F5249] hover:text-[#437057]">
                         Masuk di sini
                     </a>
                 </div>
 
                 <div class="mt-4 text-center">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-[#2F5249]">
                         Kembali ke Beranda
                     </a>
                 </div>

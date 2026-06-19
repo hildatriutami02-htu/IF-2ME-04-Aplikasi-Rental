@@ -7,13 +7,13 @@
 @section('content')
 
 @php
-    $inputClass = 'bg-slate-50 border border-slate-300 text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200';
+    $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249] transition-all duration-200';
     $totalDenda = (int) ($rental['total_denda'] ?? 0);
 @endphp
 
 <div class="max-w-5xl mx-auto space-y-4">
     @if(session('success'))
-        <div class="rounded-2xl border border-green-200 bg-green-50 text-green-800 px-4 py-3 text-sm shadow-sm">
+        <div class="rounded-2xl border border-[#dfe7df] bg-[#eef3ee] text-[#2F5249] px-4 py-3 text-sm shadow-sm">
             {{ session('success') }}
         </div>
     @endif
@@ -28,21 +28,21 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+    <div class="bg-white rounded-2xl shadow-sm border border-[#dfe7df] overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#dfe7df] flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-bold text-slate-800">Form Update Transaksi</h3>
+                <h3 class="text-lg font-bold text-[#2F5249]">Form Update Transaksi</h3>
                 <p class="text-sm text-slate-500">Kode: {{ $rental['kode_transaksi'] ?? '-' }}</p>
             </div>
 
             <div class="flex gap-2">
                 <a href="{{ route('admin.rentals.show', $rental['id']) }}"
-                   class="px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium">
+                   class="px-4 py-2 rounded-xl bg-[#2F5249] hover:bg-[#437057] text-white text-sm font-medium">
                     Lihat Detail
                 </a>
 
                 <a href="{{ route('admin.rentals') }}"
-                   class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium">
+                   class="px-4 py-2 rounded-xl bg-[#eef3ee] hover:bg-[#dfe7df] text-[#2F5249] text-sm font-medium">
                     Kembali
                 </a>
             </div>
@@ -148,12 +148,12 @@
                 </div>
             </div>
 
-       <div class="flex gap-2 pt-5">
-    <button type="submit"
-            class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-        Simpan Perubahan
-    </button>
-</div>
+            <div class="flex gap-2 pt-5">
+                <button type="submit"
+                        class="px-4 py-2 rounded-xl bg-[#2F5249] hover:bg-[#437057] text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                    Simpan Perubahan
+                </button>
+            </div>
         </form>
     </div>
 </div>

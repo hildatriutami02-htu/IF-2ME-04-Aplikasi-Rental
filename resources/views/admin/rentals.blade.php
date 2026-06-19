@@ -7,15 +7,17 @@
 @section('content')
 
 @php
-    $inputClass = 'bg-slate-50 border border-slate-300 text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200';
-    $btnPrimary = 'px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md';
-    $btnSecondary = 'px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-sm transition-all duration-300 hover:-translate-y-0.5';
+    $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249] transition-all duration-200';
+    $btnPrimary = 'px-4 py-2 rounded-xl bg-[#2F5249] hover:bg-[#437057] text-white font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md';
+    $btnSecondary = 'px-4 py-2 rounded-xl bg-[#eef3ee] hover:bg-[#dfe7df] text-[#2F5249] font-medium text-sm transition-all duration-300 hover:-translate-y-0.5';
+
+    $selectedStatus = request('status', 'semua');
 @endphp
 
 <div class="max-w-7xl mx-auto space-y-4 animate-fade-up">
 
     @if(session('success'))
-        <div class="rounded-2xl border border-green-200 bg-green-50 text-green-800 px-4 py-3 text-sm shadow-sm">
+        <div class="rounded-2xl border border-[#dfe7df] bg-[#eef3ee] text-[#2F5249] px-4 py-3 text-sm shadow-sm">
             {{ session('success') }}
         </div>
     @endif
@@ -30,14 +32,9 @@
         </div>
     @endif
 
-    @php
-        $selectedStatus = request('status', 'semua');
-    @endphp
-
-    <!-- FORM INPUT -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition">
-        <div class="px-4 py-3 border-b border-slate-200">
-            <h3 class="text-sm font-bold text-slate-800">Input Transaksi Sewa</h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-[#dfe7df] overflow-hidden hover:shadow-md transition">
+        <div class="px-4 py-3 border-b border-[#dfe7df]">
+            <h3 class="text-sm font-bold text-[#2F5249]">Input Transaksi Sewa</h3>
         </div>
 
         <form action="{{ route('admin.rentals.store') }}" method="POST" class="p-4">
@@ -46,21 +43,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
 
                 <div>
-    <label class="block mb-1 text-xs font-medium text-slate-800">
-        Pelanggan
-    </label>
-
-    <select name="user_id" class="{{ $inputClass }}" required>
-        <option value="">Pilih Pelanggan</option>
-
-        @foreach($users as $user)
-            <option value="{{ $user['id'] }}">
-                {{ $user['nama_lengkap'] }}
-            </option>
-        @endforeach
-
-    </select>
-</div>
+                    <label class="block mb-1 text-xs font-medium text-slate-800">Pelanggan</label>
+                    <select name="user_id" class="{{ $inputClass }}" required>
+                        <option value="">Pilih Pelanggan</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user['id'] }}">
+                                {{ $user['nama_lengkap'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <div>
                     <label class="block mb-1 text-xs font-medium text-slate-800">Barang</label>
@@ -120,20 +112,30 @@
         </form>
     </div>
 
-    <!-- FILTER + LIST -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition">
+    <div class="bg-white rounded-2xl shadow-sm border border-[#dfe7df] overflow-hidden hover:shadow-md transition">
 
-        <div class="px-4 py-3 border-b border-slate-200 flex flex-wrap gap-2">
+        <div class="px-4 py-3 border-b border-[#dfe7df] flex flex-wrap gap-2">
             @foreach([
-                ['label'=>'Semua','value'=>'semua'],
-                ['label'=>'Booking','value'=>'Booking'],
-                ['label'=>'Dikembalikan','value'=>'Dikembalikan'],
-            ] as $filter)
+            ['label'=>'Booking','value'=>'Booking'],
+            ['label'=>'Permintaan Perpanjangan','value'=>'Permintaan Perpanjangan'],
+            ['label'=>'Sedang Disewa','value'=>'Sedang Disewa'],
+            ['label'=>'Menunggu Denda','value'=>'Menunggu Denda'],
+            ['label'=>'Dikembalikan','value'=>'Dikembalikan'],
+            ['label'=>'Semua','value'=>'semua'],
+        ] as $filter)
 
                 <a href="{{ route('admin.rentals', $filter['value'] === 'semua' ? [] : ['status' => $filter['value']]) }}"
                    class="px-4 h-9 inline-flex items-center text-sm rounded-xl transition-all duration-200
-                   {{ $selectedStatus === $filter['value'] ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                    {{ $filter['label'] }}
+                   {{ $selectedStatus === $filter['value'] ? 'bg-[#2F5249] text-white' : 'bg-[#eef3ee] text-[#2F5249] hover:bg-[#dfe7df]' }}">
+                   {{ $filter['label'] }}
+
+                    <span class="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-white/20">
+                        {{
+                            $filter['value'] === 'semua'
+                                ? ($statusCounts['Semua'] ?? 0)
+                                : ($statusCounts[$filter['value']] ?? 0)
+                        }}
+                    </span>
                 </a>
 
             @endforeach
@@ -141,7 +143,7 @@
 
         <div class="overflow-x-auto custom-scroll pb-24">
             <table class="w-full text-xs text-left text-slate-600">
-                <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                <thead class="text-xs text-[#2F5249] uppercase bg-[#F8FAF7] border-b border-[#dfe7df]">
                     <tr>
                         <th class="px-2 py-3">Kode</th>
                         <th class="px-2 py-3">Pelanggan</th>
@@ -160,21 +162,25 @@
 
                         @php
                             $status = $item['status_transaksi'] ?? 'Booking';
-                            $badgeClass = $status === 'Dikembalikan'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-yellow-100 text-yellow-700';
+
+                            $badgeClass = match($status) {
+                            'Dikembalikan' => 'bg-[#DDE8DF] text-[#437057]',
+                            'Sedang Disewa' => 'bg-[#DDE8DF] text-[#2F5249]',
+                            'Diperpanjang' => 'bg-blue-100 text-blue-700',
+                            'Permintaan Perpanjangan' => 'bg-purple-100 text-purple-700',
+                            default => 'bg-amber-100 text-amber-700',
+                        };
 
                             $payClass = match($item['status_pembayaran'] ?? '') {
-                                'DP' => 'bg-yellow-100 text-yellow-700',
-                                'Lunas' => 'bg-green-100 text-green-700',
+                                'DP' => 'bg-amber-100 text-amber-700',
+                                'Lunas' => 'bg-[#DDE8DF] text-[#437057]',
                                 default => 'bg-red-100 text-red-700'
                             };
 
                             $totalDenda = (int) ($item['total_denda'] ?? 0);
-                            $isReturned = ($item['status_transaksi'] ?? '') === 'Dikembalikan';
                         @endphp
 
-                        <tr class="bg-white border-b border-slate-200 hover:bg-slate-50 transition align-top">
+                        <tr class="bg-white border-b border-[#dfe7df] hover:bg-[#F8FAF7] transition align-top">
                             <td class="px-2 py-3 font-semibold text-slate-800 whitespace-nowrap">
                                 {{ $item['kode_transaksi'] ?? '-' }}
                             </td>
@@ -189,25 +195,32 @@
                                 </div>
                             </td>
 
-                            <td class="px-2 py-3 text-center relative">
+                            <td class="px-2 py-3 text-center">
                                 {{ $item['qty'] ?? 1 }}
                             </td>
 
-                          <td class="px-2 py-3 whitespace-nowrap">
-                     <div>
-                          {{ \Carbon\Carbon::parse($item['tanggal_pinjam_raw'] ?? $item['tanggal_pinjam'])->format('d/m') }}
-                          -
-                          {{ \Carbon\Carbon::parse($item['tanggal_kembali_raw'] ?? $item['tanggal_kembali'])->format('d/m') }}
-                         </div>
-@if(
-    !empty($item['tanggal_kembali_real']) &&
-    ($item['status_transaksi'] ?? '') === 'Dikembalikan')
-   
-@endif
-                        </td>
+                            <td class="px-2 py-3 whitespace-nowrap">
+                                @php
+                                    $tanggalPinjam = $item['tanggal_pinjam_raw'] ?? $item['tanggal_pinjam'] ?? null;
+                                    $tanggalKembali = $item['tanggal_kembali_raw'] ?? $item['tanggal_kembali'] ?? null;
+                                @endphp
+
+                                @if($tanggalPinjam && $tanggalKembali)
+                                    <div>
+                                        {{ \Carbon\Carbon::parse($tanggalPinjam)->format('d/m') }}
+                                        -
+                                        {{ \Carbon\Carbon::parse($tanggalKembali)->format('d/m') }}
+                                    </div>
+                                @else
+                                    <div>-</div>
+                                @endif
+                            </td>
 
                             <td class="px-2 py-3 whitespace-nowrap">
-                                <div>Rp {{ number_format((int) ($item['total_harga'] ?? 0), 0, ',', '.') }}</div>
+                                <div class="font-semibold text-[#2F5249]">
+                                    Rp {{ number_format((int) ($item['total_harga'] ?? 0), 0, ',', '.') }}
+                                </div>
+
                                 @if($totalDenda > 0)
                                     <div class="text-[10px] text-red-600 mt-0.5">
                                         Denda: Rp {{ number_format($totalDenda, 0, ',', '.') }}
@@ -232,7 +245,7 @@
                                     <button
                                         type="button"
                                         @click="open = !open"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#eef3ee] hover:bg-[#dfe7df] text-[#2F5249] border border-[#dfe7df] transition"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M10 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
@@ -243,59 +256,69 @@
                                         x-show="open"
                                         @click.away="open = false"
                                         x-transition
-                                        class="absolute right-0 z-50 mt-2 w-44 origin-top-right rounded-xl bg-white shadow-lg ring-1 ring-black/5 border border-slate-200 overflow-hidden"
+                                        class="absolute right-0 z-50 mt-2 w-44 origin-top-right rounded-xl bg-white shadow-lg ring-1 ring-black/5 border border-[#dfe7df] overflow-hidden"
                                         style="display: none;"
                                     >
                                         <a href="{{ route('admin.rentals.show', $item['id']) }}"
-                                           class="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+                                           class="block px-4 py-2.5 text-sm text-slate-700 hover:bg-[#F8FAF7]">
                                             Detail
                                         </a>
 
-                                        <a href="{{ route('admin.rentals.edit', $item['id']) }}"
-                                           class="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                                            Update
-                                        </a>
+                                        @if(in_array(($item['status_transaksi'] ?? ''), ['Booking', 'Menunggu Verifikasi', 'Permintaan Perpanjangan']))
+                                        <form action="{{ route('admin.rentals.verify', $item['id']) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Verifikasi transaksi ini?')">
+                                            @csrf
+                                            <input type="hidden" name="status_filter" value="{{ request('status', 'semua') }}">
 
-                                        @if(($item['status_transaksi'] ?? '') === 'Menunggu Verifikasi')
-                                             <form action="{{ route('admin.rentals.verify', $item['id']) }}" method="POST"
-                                                 onsubmit="return confirm('Verifikasi pesanan ini?')">
-                                                  @csrf
-                                              <button type="submit"
-                                                 class="block w-full text-left px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50">
-                                                    Verifikasi
-                                              </button>
-                                             </form>
-                                            @endif
-                                       
-                                        @if(($item['status_transaksi'] ?? '') === 'Booking')
-                                            <form action="{{ route('admin.rentals.pickup', $item['id']) }}" method="POST"
-                                              onsubmit="return confirm('Tandai barang sudah diambil pelanggan?')">
-                                             @csrf
-                                               <button type="submit"
-                                            class="block w-full text-left px-4 py-2.5 text-sm text-purple-600 hover:bg-purple-50">
-                                              Diambil
-                                             </button>
-                                              </form>
-                                                @endif
+                                            <button type="submit"
+                                                class="block w-full text-left px-4 py-2.5 text-sm text-[#2F5249] hover:bg-[#eef3ee]">
+                                                Verifikasi
+                                            </button>
+                                        </form>
+                                    @endif
 
-                                        @if(!$isReturned)
+                                        @if(($item['status_transaksi'] ?? '') === 'Sedang Disewa')
                                             <a href="{{ route('admin.rentals.extend', $item['id']) }}"
                                                class="block px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-50">
                                                 Perpanjang
                                             </a>
 
-                                            <form action="{{ route('admin.rentals.return', $item['id']) }}" method="POST" onsubmit="return confirm('Tandai transaksi ini sudah dikembalikan?')">
+                                            <form action="{{ route('admin.rentals.return', $item['id']) }}"
+                                                  method="POST"
+                                                  onsubmit="return confirm('Tandai transaksi ini sudah dikembalikan?')">
                                                 @csrf
+                                                <input type="hidden" name="status_filter" value="{{ request('status', 'semua') }}">
                                                 <button type="submit"
-                                                    class="block w-full text-left px-4 py-2.5 text-sm text-green-600 hover:bg-green-50">
+                                                    class="block w-full text-left px-4 py-2.5 text-sm text-[#437057] hover:bg-[#eef3ee]">
                                                     Kembalikan
                                                 </button>
                                             </form>
                                         @endif
 
-                                        <form action="{{ route('admin.rentals.destroy', $item['id']) }}" method="POST" onsubmit="return confirm('Yakin hapus transaksi ini?')">
+                                        @if(($item['status_transaksi'] ?? '') === 'Menunggu Denda')
+
+                                            <form action="{{ route('admin.rentals.verify-denda', $item['id']) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Konfirmasi pembayaran denda ini?')">
+                                                @csrf
+                                                <input type="hidden" name="status_filter" value="{{ request('status', 'semua') }}">
+
+                                                <button type="submit"
+                                                    class="block w-full text-left px-4 py-2.5 text-sm text-green-600 hover:bg-[#eef3ee]">
+                                                    Konfirmasi Denda
+                                                </button>
+
+                                            </form>
+
+                                            @endif
+
+                                        <form action="{{ route('admin.rentals.destroy', $item['id']) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Yakin hapus transaksi ini?')">
                                             @csrf
                                             @method('DELETE')
+                                            <input type="hidden" name="status_filter" value="{{ request('status', 'semua') }}">
                                             <button type="submit"
                                                 class="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
                                                 Hapus

@@ -3,186 +3,145 @@
 @php
     $title = 'Pembayaran - LensCamp';
     $headerTitle = 'Pembayaran';
-    $headerDesc = 'Lihat status pembayaran dan tagihan kamu';
+    $headerDesc = 'Upload bukti pembayaran dan lihat status tagihan kamu';
 @endphp
 
 @section('content')
-@php
-    $payments = $payments ?? [];
-
-    $summaryCards = [
-        [
-            'label' => 'Total Tagihan',
-            'value' => 'Rp ' . number_format(collect($payments)->sum('nominal'), 0, ',', '.'),
-            'valueClass' => 'text-slate-800',
-        ],
-        [
-            'label' => 'Sudah Lunas',
-            'value' => collect($payments)->where('status', 'Lunas')->count(),
-            'valueClass' => 'text-blue-600',
-        ],
-        [
-            'label' => 'Belum Lunas',
-            'value' => collect($payments)->where('status', '!=', 'Lunas')->count(),
-            'valueClass' => 'text-amber-600',
-        ],
-    ];
-
-    $tableHeaders = ['Invoice', 'Produk', 'Tanggal', 'Nominal', 'Status', 'Aksi'];
-@endphp
-
 <div class="space-y-6">
+
+    @if(session('success'))
+        <div class="rounded-2xl border border-[#dfe7df] bg-[#eef3ee] px-4 py-3 text-sm text-[#2F5249]">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <section class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        @foreach ($summaryCards as $card)
-            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p class="text-sm text-slate-500">{{ $card['label'] }}</p>
-                <h3 class="mt-2 text-3xl font-bold {{ $card['valueClass'] }}">
-                    {{ $card['value'] }}
-                </h3>
-            </div>
-        @endforeach
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm text-slate-500">Total Tagihan</p>
+            <h3 class="mt-2 text-3xl font-bold text-slate-800">
+                Rp {{ number_format($payments->sum('nominal'), 0, ',', '.') }}
+            </h3>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm text-slate-500">Sudah Lunas</p>
+            <h3 class="mt-2 text-3xl font-bold text-[#2F5249]">
+                {{ $payments->where('status', 'Lunas')->count() }}
+            </h3>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm text-slate-500">Menunggu Verifikasi</p>
+            <h3 class="mt-2 text-3xl font-bold text-amber-600">
+                {{ $payments->where('status', 'Menunggu Verifikasi')->count() }}
+            </h3>
+        </div>
     </section>
 
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[850px] text-left">
+            <table class="w-full min-w-[950px] text-left">
                 <thead>
-                    <tr class="border-b border-slate-200 text-sm text-slate-500">
-                        @foreach ($tableHeaders as $header)
-                            <th class="px-4 py-4 font-semibold">{{ $header }}</th>
-                        @endforeach
+                    <tr class="border-b border-slate-200 bg-[#F8FAF7] text-sm text-[#2F5249]">
+                        <th class="px-4 py-4 font-semibold">Invoice</th>
+                        <th class="px-4 py-4 font-semibold">Pelanggan</th>
+                        <th class="px-4 py-4 font-semibold">Nominal</th>
+                        <th class="px-4 py-4 font-semibold">Metode</th>
+                        <th class="px-4 py-4 font-semibold">Status</th>
+                        <th class="px-4 py-4 font-semibold">Bukti</th>
+                        <th class="px-4 py-4 font-semibold">Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @forelse($payments as $item)
-                        @php
-                            $modalId = 'qrisModal' . $item['invoice'];
-                        @endphp
-
+                    @forelse($payments as $payment)
                         <tr class="border-b border-slate-100">
                             <td class="px-4 py-5 text-sm font-semibold text-slate-800">
-                                {{ $item['invoice'] }}
+                                {{ $payment->kode_transaksi }}
                             </td>
 
                             <td class="px-4 py-5 text-sm text-slate-700">
-                                {{ $item['produk'] }}
+                                {{ $payment->nama_pelanggan }}
+                            </td>
+
+                            <td class="px-4 py-5 text-sm font-semibold text-[#2F5249]">
+                                Rp {{ number_format($payment->nominal, 0, ',', '.') }}
                             </td>
 
                             <td class="px-4 py-5 text-sm text-slate-700">
-                                {{ \Carbon\Carbon::parse($item['tanggal'])->format('d F Y') }}
-                            </td>
-
-                            <td class="px-4 py-5 text-sm font-semibold text-blue-600">
-                                Rp {{ number_format($item['nominal'], 0, ',', '.') }}
+                                {{ $payment->metode }}
                             </td>
 
                             <td class="px-4 py-5">
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $item['warna'] === 'blue' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700' }}">
-                                    {{ $item['status'] }}
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-5">
-                                @if($item['status'] === 'Lunas')
-                                    <span class="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">
+                                @if($payment->status === 'Lunas')
+                                    <span class="rounded-full bg-[#eef3ee] px-3 py-1 text-xs font-semibold text-[#2F5249]">
                                         Lunas
                                     </span>
+                                @elseif($payment->status === 'Ditolak')
+                                    <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                                        Ditolak
+                                    </span>
                                 @else
-                                    <button
-                                        type="button"
-                                        onclick="document.getElementById('{{ $modalId }}').classList.remove('hidden')"
-                                        class="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-                                    >
-                                        Bayar
-                                    </button>
+                                    <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                                        Menunggu Verifikasi
+                                    </span>
                                 @endif
                             </td>
-                        </tr>
 
-                        <tr>
-                            <td colspan="6" class="p-0">
-                              <div
-                               id="{{ $modalId }}"
-                                 onclick="this.classList.add('hidden')"
-                                 class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-                                >
-                                    <div
-                                     onclick="event.stopPropagation()"
-                                      class="relative w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-xl"
-                                    >
-                                        <button
-                                            type="button"
-                                            onclick="document.getElementById('{{ $modalId }}').classList.add('hidden')"
-                                            class="absolute right-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-600 hover:bg-slate-200"
+                            <td class="px-4 py-5">
+                                @if($payment->bukti_bayar)
+                                    <a href="{{ asset('storage/' . $payment->bukti_bayar) }}" target="_blank"
+                                       class="text-sm font-semibold text-[#2F5249] hover:underline">
+                                        Lihat Bukti
+                                    </a>
+                                @else
+                                    <span class="text-sm text-slate-400">Belum upload</span>
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-5">
+                                @if($payment->status !== 'Lunas')
+                                    <form action="{{ route('pelanggan.pembayaran.upload', $payment->id) }}"
+                                          method="POST"
+                                          enctype="multipart/form-data"
+                                          class="space-y-2">
+                                        @csrf
+
+                                        <input
+                                            type="file"
+                                            name="bukti_bayar"
+                                            accept="image/*"
+                                            required
+                                            class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-xl file:border-0 file:bg-[#eef3ee] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#2F5249]"
                                         >
-                                            ×
-                                        </button>
-
-                                        <h3 class="text-xl font-bold text-slate-800">
-                                            Pembayaran QRIS
-                                        </h3>
-
-                                        <p class="mt-2 text-sm text-slate-500">
-                                            Scan QRIS untuk membayar invoice
-                                        </p>
-
-                                        <p class="mt-1 text-sm font-semibold text-slate-800">
-                                            {{ $item['invoice'] }}
-                                        </p>
-
-                                        <div class="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                                            <img
-                                                src="{{ asset('images/qris-dana.jpeg') }}"
-                                                alt="QRIS Pembayaran LensCamp"
-                                                class="mx-auto h-72 w-72 rounded-2xl bg-white object-contain"
-                                            >
-                                        </div>
-
-                                        <div class="mt-5 rounded-2xl bg-blue-50 p-4 text-left">
-                                            <p class="text-sm text-slate-600">Produk</p>
-                                            <p class="text-base font-semibold text-slate-800">
-                                                {{ $item['produk'] }}
-                                            </p>
-
-                                            <p class="mt-3 text-sm text-slate-600">Total Bayar</p>
-                                            <p class="text-2xl font-bold text-blue-600">
-                                                Rp {{ number_format($item['nominal'], 0, ',', '.') }}
-                                            </p>
-                                        </div>
-
-                                        <div class="mt-4 rounded-2xl bg-amber-50 p-4 text-left text-sm text-amber-700">
-                                            <p class="font-semibold">Instruksi Pembayaran:</p>
-                                            <ol class="mt-2 list-decimal space-y-1 pl-5">
-                                                <li>Scan QRIS menggunakan DANA, mobile banking, atau e-wallet lain.</li>
-                                                <li>Masukkan nominal sesuai total tagihan.</li>
-                                                <li>Simpan bukti pembayaran.</li>
-                                                <li>Hubungi admin LensCamp untuk konfirmasi pembayaran.</li>
-                                            </ol>
-                                        </div>
-
-                                        <a
-                                            href="{{ asset('images/qris-dana.jpeg') }}"
-                                            download="qris-lenscamp.jpeg"
-                                            class="mt-5 inline-flex w-full justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                                        >
-                                            Download QRIS
-                                        </a>
 
                                         <button
-                                            type="button"
-                                            onclick="document.getElementById('{{ $modalId }}').classList.add('hidden')"
-                                            class="mt-3 w-full rounded-2xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+                                            type="submit"
+                                            class="rounded-2xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#437057]"
                                         >
-                                            Tutup
+                                            Upload Bukti
                                         </button>
-                                    </div>
-                                </div>
+                                    </form>
+                                @else
+                                    <span class="rounded-2xl bg-[#eef3ee] px-4 py-2 text-sm font-semibold text-[#2F5249]">
+                                        Selesai
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
+                            <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">
                                 Belum ada data pembayaran.
                             </td>
                         </tr>

@@ -14,7 +14,7 @@
 </head>
 
 @php
-    $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500';
+    $inputClass = 'w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]';
     $labelClass = 'block text-sm font-medium text-slate-700 mb-2';
 
     $stats = [
@@ -41,84 +41,78 @@
     ];
 @endphp
 
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="min-h-screen bg-[#F8FAF7] text-slate-800">
 
 <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
 
-    <!-- LEFT -->
-    <div class="hidden lg:flex bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white p-12 flex-col justify-between">
+    <div class="hidden lg:flex bg-gradient-to-br from-[#25443C] via-[#2F5249] to-[#437057] text-white p-12 flex-col justify-between">
 
-        <!-- LOGO -->
         <div>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                 <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
-         alt="LensCamp"
-         class="w-full h-full object-contain">
-</div>
+                <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center overflow-hidden">
+                    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+                         alt="LensCamp"
+                         class="w-full h-full object-contain">
+                </div>
+
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">LensCamp</h1>
-                    <p class="text-sm text-blue-100">Aplikasi Rental Outdoor</p>
+                    <p class="text-sm text-[#DDE8DF]">Aplikasi Rental Outdoor</p>
                 </div>
             </a>
         </div>
 
-        <!-- HERO -->
         <div class="max-w-xl">
-            <p class="text-sm font-semibold text-blue-100">Selamat datang kembali</p>
+            <p class="text-sm font-semibold text-[#DDE8DF]">Selamat datang kembali</p>
 
             <h2 class="mt-3 text-4xl font-extrabold leading-tight">
                 Login untuk mulai menyewa lebih cepat dan praktis.
             </h2>
 
-            <p class="mt-5 text-base text-blue-50 leading-7">
+            <p class="mt-5 text-base text-[#F1F6F2] leading-7">
                 Akses produk, atur jadwal sewa, lihat pembayaran, dan pantau pesanan kamu dalam satu aplikasi.
             </p>
 
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 @foreach($stats as $item)
                     <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
-                        <p class="text-sm text-blue-100">{{ $item['label'] }}</p>
+                        <p class="text-sm text-[#DDE8DF]">{{ $item['label'] }}</p>
                         <p class="mt-2 text-2xl font-bold">{{ $item['value'] }}</p>
                     </div>
                 @endforeach
             </div>
         </div>
 
-        <!-- FOOT -->
-        <div class="text-sm text-blue-100">
+        <div class="text-sm text-[#DDE8DF]">
             © 2026 LensCamp. All rights reserved.
         </div>
 
     </div>
 
-    <!-- RIGHT -->
     <div class="flex items-center justify-center px-4 py-10 sm:px-6">
         <div class="w-full max-w-md">
 
-            <!-- MOBILE LOGO -->
             <div class="mb-8 lg:hidden">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-extrabold">
+                    <div class="w-11 h-11 rounded-2xl bg-[#2F5249] text-white flex items-center justify-center font-extrabold">
                         L
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold tracking-tight">LensCamp</h1>
+                        <h1 class="text-xl font-bold tracking-tight text-[#2F5249]">LensCamp</h1>
                         <p class="text-xs text-slate-500">Aplikasi Rental Outdoor</p>
                     </div>
                 </a>
             </div>
 
-            <!-- CARD -->
             <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
 
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold text-slate-800">Masuk</h2>
+                    <h2 class="text-3xl font-bold text-[#2F5249]">Masuk</h2>
                     <p class="mt-2 text-sm text-slate-500">
                         Login untuk melanjutkan ke aplikasi LensCamp.
                     </p>
                 </div>
 
-                <!-- ERROR -->
                 @if($errors->any())
                     <div class="mb-5 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
                         <ul class="space-y-1">
@@ -129,14 +123,12 @@
                     </div>
                 @endif
 
-                <!-- FORM -->
-               <form action="{{ route('login.proses') }}"
-      method="POST"
-      autocomplete="off"
-      class="space-y-5">
+                <form action="{{ route('login.proses') }}"
+                      method="POST"
+                      autocomplete="off"
+                      class="space-y-5">
                     @csrf
 
-                    <!-- ROLE -->
                     <div>
                         <label class="{{ $labelClass }}">Masuk Sebagai</label>
                         <select name="user_type" class="{{ $inputClass }}">
@@ -146,23 +138,23 @@
                         </select>
                     </div>
 
-                    <!-- LOOP INPUT -->
                     @foreach($formFields as $field)
                         <div>
                             <label class="{{ $labelClass }}">{{ $field['label'] }}</label>
-                     <input
-    type="{{ $field['type'] }}"
-    name="{{ $field['name'] }}"
-    value=""
-    placeholder="{{ $field['placeholder'] }}"
-    autocomplete="new-password"
-    readonly
-    onfocus="this.removeAttribute('readonly');"
-    class="{{ $inputClass }}">
+                            <input
+                                type="{{ $field['type'] }}"
+                                name="{{ $field['name'] }}"
+                                value=""
+                                placeholder="{{ $field['placeholder'] }}"
+                                autocomplete="new-password"
+                                readonly
+                                onfocus="this.removeAttribute('readonly');"
+                                class="{{ $inputClass }}">
+                        </div>
                     @endforeach
 
                     <button type="submit"
-                        class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                        class="w-full rounded-2xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white hover:bg-[#437057] transition">
                         Masuk Sekarang
                     </button>
 
@@ -170,13 +162,13 @@
 
                 <div class="mt-6 text-center text-sm text-slate-500">
                     Belum punya akun?
-                    <a href="{{ route('daftar') }}" class="font-semibold text-blue-600 hover:text-blue-700">
+                    <a href="{{ route('daftar') }}" class="font-semibold text-[#2F5249] hover:text-[#437057]">
                         Daftar di sini
                     </a>
                 </div>
 
                 <div class="mt-4 text-center">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-blue-600">
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 hover:text-[#2F5249]">
                         ← Kembali ke Beranda
                     </a>
                 </div>

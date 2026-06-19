@@ -1,27 +1,20 @@
 @extends('admin.dashboard-admin')
 
-@section('title', 'Pengaturan Website - LensCamp')
-@section('page_title', 'Pengaturan Website')
-@section('page_desc', 'Atur informasi dasar website')
+@section('title', 'Pengaturan Sistem - LensCamp')
+@section('page_title', 'Pengaturan Sistem')
+@section('page_desc', 'Atur informasi dasar sistem')
 
 @section('content')
 @php
-    $inputClass = 'bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl block w-full p-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200';
+    $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-slate-800 text-sm rounded-xl block w-full p-3 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249] transition-all duration-200';
     $labelClass = 'block mb-2 text-sm font-medium text-slate-800';
-
-$settings = $settings ?? [
-    'nama_website' => 'LensCamp',
-    'email_admin' => 'admin.lenscamp@gmail.com',
-    'no_whatsapp' => '081291516627',
-    'alamat' => 'Batam, Indonesia',
-];
 @endphp
 
 <div class="max-w-4xl mx-auto animate-fade-up">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md">
+    <div class="bg-white rounded-2xl border border-[#dfe7df] shadow-sm transition-all duration-300 hover:shadow-md">
 
-        <div class="px-5 py-4 border-b border-slate-200">
-            <h3 class="text-xl font-bold text-slate-800">Form Pengaturan</h3>
+        <div class="px-5 py-4 border-b border-[#dfe7df]">
+            <h3 class="text-xl font-bold text-[#2F5249]">Form Pengaturan</h3>
             <p class="text-sm text-slate-500">Perbarui informasi dasar website LensCamp</p>
         </div>
 
@@ -29,7 +22,7 @@ $settings = $settings ?? [
             @csrf
 
             @if (session('success'))
-                <div class="p-3 rounded-xl bg-green-50 text-green-700 text-sm border border-green-200">
+                <div class="p-3 rounded-xl bg-[#eef3ee] text-[#2F5249] text-sm border border-[#dfe7df]">
                     {{ session('success') }}
                 </div>
             @endif
@@ -49,7 +42,7 @@ $settings = $settings ?? [
                 <input
                     type="text"
                     name="nama_website"
-                    value="{{ old('nama_website', $settings['nama_website']) }}"
+                    value="{{ old('nama_website', $settings->nama_website) }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -60,7 +53,7 @@ $settings = $settings ?? [
                 <input
                     type="email"
                     name="email_admin"
-                    value="{{ old('email_admin', $settings['email_admin']) }}"
+                    value="{{ old('email_admin', $settings->email_admin) }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -71,7 +64,7 @@ $settings = $settings ?? [
                 <input
                     type="text"
                     name="no_whatsapp"
-                    value="{{ old('no_whatsapp', $settings['no_whatsapp']) }}"
+                    value="{{ old('no_whatsapp', $settings->no_whatsapp) }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -84,13 +77,13 @@ $settings = $settings ?? [
                     rows="4"
                     class="{{ $inputClass }}"
                     required
-                >{{ old('alamat', $settings['alamat']) }}</textarea>
+                >{{ old('alamat', $settings->alamat) }}</textarea>
             </div>
 
             <div class="flex justify-end">
                 <button
                     type="submit"
-                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                    class="px-6 py-2.5 text-sm font-medium text-white bg-[#2F5249] rounded-xl hover:bg-[#437057] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                     Simpan Pengaturan
                 </button>

@@ -13,12 +13,14 @@
 
         h1 {
             margin-bottom: 4px;
+            color: #2F5249;
         }
 
         h2 {
             margin-top: 24px;
             margin-bottom: 10px;
             font-size: 16px;
+            color: #2F5249;
         }
 
         .muted {
@@ -28,9 +30,13 @@
 
         .summary {
             padding: 12px;
-            border: 1px solid #cbd5e1;
-            background: #f8fafc;
+            border: 1px solid #dfe7df;
+            background: #F8FAF7;
             margin-bottom: 18px;
+        }
+
+        .summary strong {
+            color: #2F5249;
         }
 
         table {
@@ -40,13 +46,18 @@
         }
 
         th {
-            background: #e2e8f0;
+            background: #DDE8DF;
+            color: #2F5249;
             text-align: left;
         }
 
         th, td {
-            border: 1px solid #cbd5e1;
+            border: 1px solid #dfe7df;
             padding: 8px;
+        }
+
+        tr:nth-child(even) td {
+            background: #F8FAF7;
         }
 
         .footer {

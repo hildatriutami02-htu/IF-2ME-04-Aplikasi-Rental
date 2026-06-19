@@ -6,17 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $table = 'products';
-
     protected $fillable = [
         'kode_barang',
-        'nama_barang',
         'jenis_barang',
-        'deskripsi',
+        'nama_barang',
         'status',
         'estimasi',
+        'deskripsi',
         'harga',
         'unit',
         'gambar',
     ];
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class, 'product_id');
+    }
 }

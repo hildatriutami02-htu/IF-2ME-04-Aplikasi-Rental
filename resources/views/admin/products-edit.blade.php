@@ -6,12 +6,12 @@
 
 @section('content')
 @php
-    $inputClass = 'bg-slate-50 border border-slate-300 text-sm rounded-xl block w-full p-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500';
+    $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-sm rounded-xl block w-full p-3 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249]';
 @endphp
 
 <div class="max-w-5xl mx-auto">
 
-    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="rounded-3xl border border-[#dfe7df] bg-white p-6 shadow-sm">
         <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @method('PUT')
@@ -19,17 +19,17 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div>
                     @if(!empty($product->gambar))
-            @php
-                $gambar = str_starts_with($product->gambar, 'products/')
-                ? asset('storage/' . $product->gambar)
-               : asset('images/' . $product->gambar);
-            @endphp
+                        @php
+                            $gambar = str_starts_with($product->gambar, 'products/')
+                                ? asset('storage/' . $product->gambar)
+                                : asset('images/' . $product->gambar);
+                        @endphp
 
-    <img src="{{ $gambar }}"
-         alt="{{ $product->nama_barang }}"
-         class="w-full h-64 object-contain bg-white p-3 rounded-2xl border">
+                        <img src="{{ $gambar }}"
+                             alt="{{ $product->nama_barang }}"
+                             class="w-full h-64 object-contain bg-white p-3 rounded-2xl border border-[#dfe7df]">
                     @else
-                        <div class="h-64 rounded-2xl bg-slate-100 flex items-center justify-center text-6xl font-bold text-slate-400">
+                        <div class="h-64 rounded-2xl bg-[#F8FAF7] flex items-center justify-center text-6xl font-bold text-[#2F5249]">
                             {{ strtoupper(substr($product->nama_barang, 0, 1)) }}
                         </div>
                     @endif
@@ -93,12 +93,12 @@
 
             <div class="flex justify-end gap-3">
                 <a href="{{ route('admin.products') }}"
-                   class="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+                   class="rounded-xl bg-[#eef3ee] px-5 py-3 text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df]">
                     Batal
                 </a>
 
                 <button type="submit"
-                        class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                        class="rounded-xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white hover:bg-[#437057]">
                     Simpan Perubahan
                 </button>
             </div>

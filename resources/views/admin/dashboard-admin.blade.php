@@ -3,20 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>@yield('title', 'Dashboard Admin - LensCamp')</title>
 
-    <!-- Tailwind & Flowbite -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
-
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Custom Style -->
     <style>
         body { font-family: 'Inter', sans-serif; }
 
@@ -38,7 +31,7 @@
         }
 
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.5);
+            background: rgba(47, 82, 73, 0.45);
             border-radius: 999px;
         }
 
@@ -46,38 +39,33 @@
             background: transparent;
         }
     </style>
-    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-slate-100 text-slate-800">
+<body class="bg-[#F8FAF7] text-slate-800">
 
 <div class="flex min-h-screen">
 
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="w-48 bg-gradient-to-b from-blue-700 via-blue-600 to-blue-500 text-white flex flex-col shadow-xl">
+    <aside class="w-48 bg-gradient-to-b from-[#1E3932] via-[#2F5249] to-[#437057] text-white flex flex-col shadow-xl">
 
-        <!-- Logo -->
         <div class="px-3 py-3 border-b border-white/10">
             <div class="flex items-center gap-3">
-              <div class="w-16 h-16 rounded-2xl bg-white p-0 shadow">
-    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
-         alt="LensCamp"
-         class="w-full h-full object-contain">
-</div>
+                <div class="w-16 h-16 rounded-2xl bg-white p-0 shadow">
+                    <img src="{{ asset('images/logo-lenscamp.jpeg') }}"
+                         alt="LensCamp"
+                         class="w-full h-full object-contain">
+                </div>
                 <div>
                     <h1 class="text-lg font-bold">LensCamp</h1>
-                    <p class="text-xs text-blue-100">Ruang Admin</p>
+                    <p class="text-xs text-[#DDE8DF]">Ruang Admin</p>
                 </div>
             </div>
         </div>
 
-        <!-- User -->
         <div class="px-4 py-4 border-b border-white/10">
-            <p class="text-sm text-blue-100">Halo, Admin</p>
+            <p class="text-sm text-[#DDE8DF]">Halo, Admin</p>
             <h2 class="font-semibold text-white break-all text-sm">{{ session('user') }}</h2>
         </div>
 
-        <!-- Menu -->
         <nav class="flex-1 px-2 py-3 space-y-1 text-sm">
 
             @php
@@ -86,9 +74,10 @@
                     ['route' => 'admin.users.index', 'label' => 'Tabel User'],
                     ['route' => 'admin.products', 'label' => 'Katalog Barang'],
                     ['route' => 'admin.rentals', 'label' => 'Data Sewa'],
+                    ['route' => 'admin.payments', 'label' => 'Pembayaran'],
                     ['route' => 'admin.calendar', 'label' => 'Kalender Rental'],
                     ['route' => 'admin.reports', 'label' => 'Laporan'],
-                    ['route' => 'admin.settings', 'label' => 'Pengaturan Website'],
+                    ['route' => 'admin.settings', 'label' => 'Pengaturan Sistem'],
                 ];
             @endphp
 
@@ -99,50 +88,46 @@
 
                 <a href="{{ route($item['route']) }}"
                    class="group block px-4 py-3 rounded-xl
-                   {{ $active ? 'bg-white text-blue-700 font-semibold shadow-sm' : 'hover:bg-white/10 text-blue-50' }}
+                   {{ $active ? 'bg-white text-[#2F5249] font-semibold shadow-sm' : 'hover:bg-white/10 text-[#F1F6F2]' }}
                    transition-all duration-300 hover:translate-x-1 hover:shadow-sm">
 
                     <div class="flex items-center justify-between">
                         <span>{{ $item['label'] }}</span>
-                        <span class="{{ $active ? 'text-blue-500' : 'opacity-0 group-hover:opacity-100' }}">•</span>
+                        <span class="{{ $active ? 'text-[#437057]' : 'opacity-0 group-hover:opacity-100' }}">•</span>
                     </div>
                 </a>
             @endforeach
 
         </nav>
 
-        <!-- Logout -->
         <div class="p-3 border-t border-white/10">
             <a href="{{ route('logout') }}"
-               class="block w-full text-center px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold text-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+               class="block w-full text-center px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition hover:-translate-y-0.5 hover:shadow-lg">
                 Keluar
             </a>
         </div>
     </aside>
 
-    <!-- ================= MAIN ================= -->
     <div class="flex-1 flex flex-col">
 
-        <!-- Header -->
-        <header class="bg-white/95 backdrop-blur border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-20">
+        <header class="bg-white/95 backdrop-blur border-b border-[#dfe7df] px-6 py-4 flex justify-between items-center sticky top-0 z-20">
             <div>
-                <h2 class="text-2xl font-bold">@yield('page_title')</h2>
+                <h2 class="text-2xl font-bold text-[#2F5249]">@yield('page_title')</h2>
                 <p class="text-sm text-slate-500">@yield('page_desc')</p>
             </div>
 
             <div class="flex items-center gap-3">
                 <div class="text-right">
-                    <p class="text-sm font-semibold">Admin</p>
+                    <p class="text-sm font-semibold text-[#2F5249]">Admin</p>
                     <p class="text-xs text-slate-500">{{ session('user') }}</p>
                 </div>
 
-                <div class="w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold shadow-sm ring-4 ring-slate-100 hover:scale-105 transition">
+                <div class="w-10 h-10 rounded-full bg-[#2F5249] text-white flex items-center justify-center font-bold shadow-sm ring-4 ring-[#eef3ee] hover:scale-105 transition">
                     A
                 </div>
             </div>
         </header>
 
-        <!-- Content -->
         <main class="p-5">
             @yield('content')
         </main>

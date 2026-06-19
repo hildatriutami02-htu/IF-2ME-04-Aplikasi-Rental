@@ -22,32 +22,32 @@
     $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m-01');
     $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m-01');
 
-    $summaryCardClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg';
-    $panelClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all duration-300 hover:shadow-md';
-    $calendarDayClass = 'min-h-24 rounded-2xl bg-white border border-slate-200 p-2';
-    $calendarMutedDayClass = 'min-h-24 rounded-2xl bg-slate-50 border border-slate-200 p-2 text-slate-400';
+    $summaryCardClass = 'bg-white rounded-2xl border border-[#dfe7df] shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg';
+    $panelClass = 'bg-white rounded-2xl border border-[#dfe7df] shadow-sm p-5 transition-all duration-300 hover:shadow-md';
+    $calendarDayClass = 'min-h-24 rounded-2xl bg-white border border-[#dfe7df] p-2';
+    $calendarMutedDayClass = 'min-h-24 rounded-2xl bg-[#F8FAF7] border border-[#dfe7df] p-2 text-slate-400';
     $badgeBaseClass = 'inline-flex mt-4 px-2.5 py-1 rounded-full text-[11px] font-medium';
     $miniBadgeClass = 'mt-2 text-[10px] px-2 py-1 rounded-full w-fit';
-    $agendaItemClass = 'rounded-xl border border-slate-200 p-4 bg-slate-50';
+    $agendaItemClass = 'rounded-xl border border-[#dfe7df] p-4 bg-[#F8FAF7]';
 
-$bookingHariIni = $rentals->where('status_transaksi', 'Booking')->count();
+    $bookingHariIni = $rentals->where('status_transaksi', 'Booking')->count();
 
-$sedangDisewa = $rentals->filter(fn($r) =>
-    in_array($r->status_transaksi, ['Booking', 'Diambil', 'Sedang Disewa', 'Menunggu Verifikasi'])
-)->count();
+    $sedangDisewa = $rentals->filter(fn($r) =>
+        in_array($r->status_transaksi, ['Booking', 'Diambil', 'Sedang Disewa', 'Menunggu Verifikasi'])
+    )->count();
 
-$jatuhTempo = $rentals->filter(fn($r) =>
-    $r->tanggal_kembali
-    && Carbon::parse($r->tanggal_kembali)->lte($today)
-    && $r->status_transaksi !== 'Dikembalikan'
-)->count();
+    $jatuhTempo = $rentals->filter(fn($r) =>
+        $r->tanggal_kembali
+        && Carbon::parse($r->tanggal_kembali)->lte($today)
+        && $r->status_transaksi !== 'Dikembalikan'
+    )->count();
 
-$selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
+    $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
 
     $legendItems = [
-        ['color' => 'bg-yellow-400', 'label' => 'Booking'],
-        ['color' => 'bg-blue-500', 'label' => 'Sedang Disewa'],
-        ['color' => 'bg-green-500', 'label' => 'Sudah Dikembalikan'],
+        ['color' => 'bg-amber-400', 'label' => 'Booking'],
+        ['color' => 'bg-[#2F5249]', 'label' => 'Sedang Disewa'],
+        ['color' => 'bg-[#437057]', 'label' => 'Sudah Dikembalikan'],
         ['color' => 'bg-red-500', 'label' => 'Jatuh Tempo Return'],
     ];
 
@@ -66,13 +66,13 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
         <div class="{{ $summaryCardClass }}">
             <p class="text-sm text-slate-500">Booking Hari Ini</p>
             <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $bookingHariIni }}</h3>
-            <span class="{{ $badgeBaseClass }} bg-yellow-100 text-yellow-700">Jadwal masuk</span>
+            <span class="{{ $badgeBaseClass }} bg-amber-100 text-amber-700">Jadwal masuk</span>
         </div>
 
         <div class="{{ $summaryCardClass }}">
             <p class="text-sm text-slate-500">Sedang Disewa</p>
             <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $sedangDisewa }}</h3>
-            <span class="{{ $badgeBaseClass }} bg-blue-100 text-blue-700">Rental aktif</span>
+            <span class="{{ $badgeBaseClass }} bg-[#DDE8DF] text-[#2F5249]">Rental aktif</span>
         </div>
 
         <div class="{{ $summaryCardClass }}">
@@ -84,16 +84,16 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
         <div class="{{ $summaryCardClass }}">
             <p class="text-sm text-slate-500">Selesai Hari Ini</p>
             <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $selesaiHariIni }}</h3>
-            <span class="{{ $badgeBaseClass }} bg-green-100 text-green-700">Dikembalikan</span>
+            <span class="{{ $badgeBaseClass }} bg-[#DDE8DF] text-[#437057]">Dikembalikan</span>
         </div>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-        <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
-            <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div class="xl:col-span-2 bg-white rounded-2xl border border-[#dfe7df] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
+            <div class="px-5 py-4 border-b border-[#dfe7df] flex items-center justify-between">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-800">
+                    <h3 class="text-xl font-bold text-[#2F5249]">
                         {{ $currentMonth->translatedFormat('F Y') }}
                     </h3>
                     <p class="text-sm text-slate-500">Kalender jadwal rental bulanan</p>
@@ -101,12 +101,12 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
 
                 <div class="flex items-center gap-2">
                     <a href="{{ route('admin.calendar', ['month' => $prevMonth]) }}"
-                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                       class="px-3 py-2 rounded-xl bg-[#DDE8DF] hover:bg-[#C8D8CC] text-[#2F5249] text-sm transition-all duration-300">
                         ←
                     </a>
 
                     <a href="{{ route('admin.calendar', ['month' => $nextMonth]) }}"
-                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm transition-all duration-300">
+                       class="px-3 py-2 rounded-xl bg-[#DDE8DF] hover:bg-[#C8D8CC] text-[#2F5249] text-sm transition-all duration-300">
                         →
                     </a>
                 </div>
@@ -156,17 +156,17 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
                             $dayClass = $isCurrentMonth ? $calendarDayClass : $calendarMutedDayClass;
 
                             if ($isToday) {
-                                $dayClass = 'min-h-24 rounded-2xl bg-blue-50 border border-blue-200 p-2 shadow-sm';
+                                $dayClass = 'min-h-24 rounded-2xl bg-[#DDE8DF] border border-[#437057] p-2 shadow-sm';
                             }
                         @endphp
 
                         <div class="{{ $dayClass }}">
-                            <div class="text-sm font-semibold {{ $isToday ? 'text-blue-700' : 'text-slate-700' }}">
+                            <div class="text-sm font-semibold {{ $isToday ? 'text-[#2F5249]' : 'text-slate-700' }}">
                                 {{ $date->day }}
                             </div>
 
                             @if ($bookingCount > 0)
-                                <div class="{{ $miniBadgeClass }} bg-yellow-100 text-yellow-700">
+                                <div class="{{ $miniBadgeClass }} bg-amber-100 text-amber-700">
                                     {{ $bookingCount }} Booking
                                 </div>
                             @endif
@@ -178,7 +178,7 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
                             @endif
 
                             @if ($doneCount > 0)
-                                <div class="{{ $miniBadgeClass }} bg-green-100 text-green-700">
+                                <div class="{{ $miniBadgeClass }} bg-[#DDE8DF] text-[#437057]">
                                     {{ $doneCount }} Selesai
                                 </div>
                             @endif
@@ -191,7 +191,7 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
         <div class="space-y-5">
 
             <div class="{{ $panelClass }}">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Legenda</h3>
+                <h3 class="text-lg font-bold text-[#2F5249] mb-4">Legenda</h3>
                 <div class="space-y-3">
                     @foreach ($legendItems as $legend)
                         <div class="flex items-center gap-3">
@@ -203,18 +203,18 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
             </div>
 
             <div class="{{ $panelClass }}">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Agenda Hari Ini</h3>
+                <h3 class="text-lg font-bold text-[#2F5249] mb-4">Agenda Hari Ini</h3>
 
                 <div class="space-y-4">
                     @forelse ($agendaToday as $agenda)
                         @php
-                            $badgeClass = 'bg-blue-100 text-blue-700';
+                            $badgeClass = 'bg-[#DDE8DF] text-[#2F5249]';
                             $badgeText = $agenda->status_transaksi ?? '-';
 
                             if (($agenda->status_transaksi ?? '') === 'Booking') {
-                                $badgeClass = 'bg-yellow-100 text-yellow-700';
+                                $badgeClass = 'bg-amber-100 text-amber-700';
                             } elseif (($agenda->status_transaksi ?? '') === 'Dikembalikan') {
-                                $badgeClass = 'bg-green-100 text-green-700';
+                                $badgeClass = 'bg-[#DDE8DF] text-[#437057]';
                             } elseif ($agenda->tanggal_kembali && Carbon::parse($agenda->tanggal_kembali)->isSameDay($today)) {
                                 $badgeClass = 'bg-red-100 text-red-700';
                                 $badgeText = 'Return';
@@ -235,7 +235,7 @@ $selesaiHariIni = $rentals->where('status_transaksi', 'Dikembalikan')->count();
                             </span>
                         </div>
                     @empty
-                        <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                        <div class="rounded-xl border border-[#dfe7df] p-4 bg-[#F8FAF7]">
                             <p class="text-sm text-slate-500">Tidak ada agenda hari ini.</p>
                         </div>
                     @endforelse

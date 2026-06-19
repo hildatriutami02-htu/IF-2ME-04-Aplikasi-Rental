@@ -10,11 +10,10 @@
         'email' => 'entingmarpaung7@gmail.com',
         'no_wa' => '081234567890',
         'alamat' => 'Batam, Indonesia',
-        'member_sejak' => 'Februari 2026',
         'status' => 'Terverifikasi',
     ];
 
-    $inputClass = 'w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-blue-500 focus:ring-blue-500';
+    $inputClass = 'w-full rounded-2xl border border-slate-300 px-5 py-4 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]';
     $labelClass = 'mb-2 block text-sm font-medium text-slate-700';
 
     $formFields = [
@@ -53,14 +52,14 @@
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
     <div class="xl:col-span-1">
         <div class="rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-blue-600 text-4xl font-bold text-white shadow-sm">
+            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-[#2F5249] text-4xl font-bold text-white shadow-sm">
                 {{ strtoupper(substr($profil['nama'], 0, 1)) }}
             </div>
 
             <h3 class="mt-5 text-xl font-bold text-slate-800">{{ $profil['nama'] }}</h3>
             <p class="mt-2 text-sm text-slate-500">{{ $profil['email'] }}</p>
 
-            <div class="mt-4 inline-flex rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+            <div class="mt-4 inline-flex rounded-full bg-[#eef3ee] px-4 py-2 text-sm font-semibold text-[#2F5249]">
                 {{ $profil['status'] }}
             </div>
         </div>
@@ -68,7 +67,7 @@
 
     <div class="xl:col-span-2">
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 class="text-xl font-bold text-slate-800">Informasi Profil</h3>
+            <h3 class="text-xl font-bold text-[#2F5249]">Informasi Profil</h3>
 
             <form action="{{ route('pelanggan.profil.update') }}" method="POST" class="mt-6 space-y-5">
                 @csrf
@@ -94,14 +93,9 @@
                     </div>
                 @endforeach
 
-                <div class="rounded-2xl bg-slate-50 px-5 py-4">
-                    <p class="text-sm text-slate-500">Member Sejak</p>
-                    <p class="mt-1 font-semibold text-slate-800">{{ $profil['member_sejak'] }}</p>
-                </div>
-
                 <button
                     type="submit"
-                    class="rounded-2xl bg-blue-600 px-6 py-4 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                    class="rounded-2xl bg-[#2F5249] px-6 py-4 text-sm font-semibold text-white hover:bg-[#437057] transition"
                 >
                     Simpan Perubahan
                 </button>

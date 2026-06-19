@@ -49,7 +49,7 @@
     ],
     ];
 
-    $productInputClass = 'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500';
+    $productInputClass = 'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-[#437057] focus:ring-[#437057]';
 @endphp
 
 <body class="bg-slate-50 text-slate-800">
@@ -104,9 +104,9 @@
                         Riwayat
                     </a>
 
-                    <a href="{{ route('pelanggan.hubungi-admin') }}"
+                    <a href="{{ route('pelanggan.profil') }}"
                        class="rounded-xl px-4 py-2 text-sm font-medium transition text-slate-700 hover:bg-slate-100">
-                        Bantuan
+                        Profil
                     </a>
                 </nav>
 
@@ -126,7 +126,7 @@
                 <nav class="flex justify-center items-center gap-6 w-full">
                     @foreach($publicNav as $item)
                       <a href="{{ $item['href'] }}"
-                        class="menu-link text-sm font-medium text-slate-700 px-3 py-2 rounded-xl transition hover:bg-blue-100">
+                        class="menu-link text-sm font-medium text-slate-700 px-3 py-2 rounded-xl transition hover:bg-[#DDE8DF]">
                           {{ $item['label'] }}
                       </a>
                     @endforeach
@@ -139,7 +139,7 @@
                     </a>
 
                     <a href="{{ route('daftar') }}"
-                       class="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+                       class="inline-flex rounded-xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#437057]">
                         Daftar
                     </a>
                 </div>
@@ -173,8 +173,8 @@
                         Riwayat
                     </a>
 
-                    <a href="{{ route('pelanggan.hubungi-admin') }}" class="whitespace-nowrap rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
-                        Bantuan
+                    <a href="{{ route('pelanggan.profil') }}" class="whitespace-nowrap rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
+                        Profil
                     </a>
                 </div>
             </div>
@@ -184,7 +184,7 @@
     <main class="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 space-y-16">
 
         @if(session('success'))
-            <div class="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+            <div class="rounded-2xl border border-[#C9D8CC] bg-[#F1F6F2] px-4 py-3 text-sm text-[#437057]">
                 {{ session('success') }}
             </div>
         @endif
@@ -200,10 +200,10 @@
         @endif
 
         @if($isPelanggan)
-            <section id="beranda" class="rounded-[28px] bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white shadow-lg sm:p-8">
+            <section id="beranda" class="rounded-[28px] bg-gradient-to-r from-[#2F5249] to-[#437057] p-6 text-white shadow-lg sm:p-8">
                 <div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-3">
                     <div class="lg:col-span-2">
-                        <p class="text-sm font-medium text-blue-100">
+                        <p class="text-sm font-medium text-[#DDE8DF]">
                             Halo, {{ session('user') ?? 'Pelanggan' }}
                         </p>
 
@@ -211,19 +211,19 @@
                             Mau sewa apa hari ini?
                         </h2>
 
-                        <p class="mt-3 max-w-2xl text-sm text-blue-50 sm:text-base">
+                        <p class="mt-3 max-w-2xl text-sm text-[#F1F6F2] sm:text-base">
                             Pilih produk, tentukan tanggal sewa, lalu tambahkan ke keranjang sebelum checkout.
                         </p>
 
                         <div class="mt-5 flex flex-wrap gap-3">
                             <a href="#produk"
-                               class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-blue-700 transition hover:bg-slate-100">
+                               class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-[#437057] transition hover:bg-slate-100">
                                 Lihat Produk
                             </a>
 
-                            <a href="{{ route('pelanggan.hubungi-admin') }}"
-                               class="rounded-2xl bg-blue-700/40 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-blue-700/60">
-                                Hubungi Admin
+                            <a href="{{ route('pelanggan.profil') }}"
+                               class="rounded-2xl bg-[#25443C]/40 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-[#25443C]/60">
+                                Lihat Profil
                             </a>
                         </div>
                     </div>
@@ -251,11 +251,15 @@
                 </div>
             </section>
 
-            @if($pickupReminder)
-                <section class="rounded-3xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
+@if($pickupReminder)
+
+<section
+    class="relative overflow-hidden rounded-[28px] p-8 sm:p-10 text-white shadow-xl bg-cover bg-center"
+    style="background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}')"
+>
                     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <p class="text-sm font-semibold text-blue-700">Reminder Pesanan</p>
+                            <p class="text-sm font-semibold text-[#437057]">Reminder Pesanan</p>
 
                             <h3 class="mt-1 text-lg font-bold text-slate-800">
                                 {{ $pickupReminder['nama_barang'] ?? '-' }}
@@ -267,33 +271,42 @@
                         </div>
 
                         <a href="{{ route('pelanggan.sewa') }}"
-                           class="inline-flex w-fit rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
+                           class="inline-flex w-fit rounded-xl bg-[#2F5249] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#437057]">
                             Lihat Pesanan
                         </a>
                     </div>
                 </section>
             @endif
         @else
-            <section id="beranda" class="rounded-[28px] bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white shadow-lg sm:p-10">
+        
+    @php
+        $heroBg = asset('images/background-camping-camera.jpeg');
+    @endphp
+
+    <section
+        id="beranda"
+        class="relative overflow-hidden rounded-[28px] p-6 text-white shadow-xl sm:p-10 bg-cover bg-center"
+        style="background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}')"
+    >
                 <div class="max-w-3xl">
-                    <p class="text-sm font-medium text-blue-100">Outdoor & Visual Rental</p>
+                    <p class="text-sm font-medium text-[#DDE8DF]">Outdoor & Visual Rental</p>
 
                     <h2 class="mt-2 text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
                         Sewa perlengkapan lebih cepat dan lebih praktis.
                     </h2>
 
-                    <p class="mt-4 max-w-2xl text-sm text-blue-50 sm:text-base">
+                    <p class="mt-4 max-w-2xl text-sm text-[#F1F6F2] sm:text-base">
                         Login untuk langsung memesan produk, pilih tanggal sewa, dan pantau pembayaran dari satu beranda aplikasi.
                     </p>
 
                     <div class="mt-6 flex flex-wrap gap-3">
                         <a href="{{ route('login') }}"
-                           class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-blue-700 transition hover:bg-slate-100">
+                           class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-[#437057] transition hover:bg-slate-100">
                             Masuk Sekarang
                         </a>
 
                         <a href="{{ route('daftar') }}"
-                           class="rounded-2xl bg-blue-700/40 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-blue-700/60">
+                           class="rounded-2xl bg-[#437057]/40 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-[#437057]/60">
                             Daftar Sekarang
                         </a>
                     </div>
@@ -302,7 +315,7 @@
 
             <section id="tentang" class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
                 <div>
-                    <p class="text-sm font-semibold text-blue-600">Tentang LensCamp</p>
+                    <p class="text-sm font-semibold text-[#2F5249]">Tentang LensCamp</p>
 
                     <h3 class="mt-2 text-3xl font-bold text-slate-800">
                         Rental perlengkapan outdoor yang simpel dan cepat.
@@ -363,7 +376,7 @@
                                     </p>
                                 </div>
 
-                                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                <span class="rounded-full bg-[#eef3ee] px-3 py-1 text-xs font-semibold text-[#2F5249]">
                                     Stok {{ $item['unit'] }}
                                 </span>
                             </div>
@@ -372,7 +385,7 @@
                                 {{ $item['deskripsi'] }}
                             </p>
 
-                            <p class="mt-4 text-base font-bold text-blue-600">
+                            <p class="mt-4 text-base font-bold text-[#2F5249]">
                                 Rp {{ number_format($item['harga'], 0, ',', '.') }} / hari
                             </p>
                         </div>
@@ -421,25 +434,25 @@
 
                                 <div class="grid grid-cols-2 gap-3">
                                     <button type="submit"
-                                            class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                                        class="rounded-xl bg-[#2F5249] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#437057]">
                                         Tambah Keranjang
                                     </button>
 
-                                    <a href="{{ route('pelanggan.hubungi-admin') }}"
-                                       class="rounded-xl bg-blue-800 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-900">
-                                        Tanya Admin
+                                    <a href="{{ route('pelanggan.profil') }}"
+                                       class="rounded-xl bg-[#25443C] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#1E3932]">
+                                        Lihat Profil
                                     </a>
                                 </div>
                             </form>
                             @else
                             <div class="mt-5 grid grid-cols-2 gap-3">
                             <a href="{{ route('login') }}"
-                                 class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700">
-                                 Masuk
+                                 class="rounded-xl bg-[#2F5249] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#437057]">
+                                 Sewa Sekarang
                             </a>
 
                              <a href="#hubungi-kami"
-                                class="rounded-xl bg-blue-800 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-900">
+                                class="rounded-xl bg-[#2F5249] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#437057]">
                                Tanya Admin
                             </a>
                             </div>
@@ -453,7 +466,7 @@
             <section id="hubungi-kami" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
                     <div>
-                        <p class="text-sm font-semibold text-blue-600">Hubungi Kami</p>
+                        <p class="text-sm font-semibold text-[#2F5249]">Hubungi Kami</p>
 
                         <h3 class="mt-2 text-3xl font-bold text-slate-800">
                             Butuh bantuan sebelum menyewa?
@@ -483,10 +496,10 @@
     links.forEach(link => {
         link.addEventListener('click', function () {
             links.forEach(l => {
-                l.classList.remove('bg-blue-600', 'text-white');
+              l.classList.remove('bg-[#2F5249]', 'text-white');
             });
 
-            this.classList.add('bg-blue-600', 'text-white');
+            this.classList.add('bg-[#2F5249]', 'text-white');
         });
     });
 </script>

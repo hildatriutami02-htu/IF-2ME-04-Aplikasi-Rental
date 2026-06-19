@@ -18,5 +18,14 @@ class DataUser extends Model
         'no_telp',
         'no_wa',
         'jenis_kelamin',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat',
+        'foto_ktp',
     ];
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class, 'user_id');
+    }
 }

@@ -20,7 +20,7 @@
         ],
     ];
 
-    $cardClass = 'rounded-3xl border border-slate-200 bg-slate-50 p-5';
+    $cardClass = 'rounded-3xl border border-slate-200 bg-[#F8FAF7] p-5';
 @endphp
 
 @section('content')
@@ -37,20 +37,22 @@
                         </h3>
 
                         @php
-    $tanggal = explode(' - ', $item['tanggal']);
-@endphp
+                            $tanggal = explode(' - ', $item['tanggal']);
+                        @endphp
 
-{{ \Carbon\Carbon::parse($tanggal[0])->format('d F Y') }}
--
-{{ \Carbon\Carbon::parse($tanggal[1])->format('d F Y') }}
+                        <p class="mt-1 text-sm text-slate-500">
+                            {{ \Carbon\Carbon::parse($tanggal[0])->format('d F Y') }}
+                            -
+                            {{ \Carbon\Carbon::parse($tanggal[1])->format('d F Y') }}
+                        </p>
 
-                        <p class="mt-3 text-sm font-semibold text-blue-600">
+                        <p class="mt-3 text-sm font-semibold text-[#2F5249]">
                             Rp {{ number_format($item['harga'], 0, ',', '.') }}
                         </p>
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <span class="inline-flex rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">
+                        <span class="inline-flex rounded-full bg-[#eef3ee] px-4 py-2 text-sm font-semibold text-[#2F5249]">
                             {{ $item['status'] }}
                         </span>
                     </div>

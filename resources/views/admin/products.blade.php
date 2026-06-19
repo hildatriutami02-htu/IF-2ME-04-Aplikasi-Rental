@@ -6,49 +6,45 @@
 
 @section('content')
 @php
-    $totalJenis = collect($products)->pluck('jenis_barang')->filter()->unique()->count();
-    $totalEstimasi = collect($products)->pluck('estimasi')->filter()->unique()->count();
-    $totalStatus = collect($products)->pluck('status')->filter()->unique()->count();
+    $totalBarang = count($products);
     $totalUnit = collect($products)->sum('unit');
+    $totalReady = collect($products)->where('status', 'Ready')->count();
+    $totalDisewa = collect($products)->where('status', 'Disewa')->count();
 
-    $inputClass = 'bg-slate-50 border border-slate-300 text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200';
-    $cardClass = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex items-center gap-3 hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300';
-    $actionBtnBase = 'px-3 py-1.5 text-[11px] text-white rounded-md transition-all duration-200 hover:-translate-y-0.5';
-    $modalOverlayWhite = 'hidden fixed inset-0 z-50 items-center justify-center bg-slate-100';
-    $modalOverlayDark = 'hidden fixed inset-0 z-50 items-center justify-center bg-slate-100';
-    $modalPanelClass = 'relative bg-white rounded-3xl border border-slate-200 shadow-sm w-full';
+    $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249] transition-all duration-200';
+    $cardClass = 'bg-white rounded-2xl border border-[#dfe7df] shadow-sm p-3 flex items-center gap-3 hover:bg-[#F8FAF7] hover:-translate-y-0.5 hover:shadow-md transition-all duration-300';
 
     $summaryCards = [
         [
-            'href' => route('admin.product.settings'),
-            'icon' => '⚙',
-            'iconClass' => 'bg-cyan-500 text-white',
-            'label' => 'Setting Jenis Barang',
-            'value' => $totalJenis,
-            'clickable' => true,
-        ],
-        [
-            'href' => route('admin.product.settings'),
-            'icon' => '📅',
-            'iconClass' => 'bg-red-500 text-white',
-            'label' => 'Setting Estimasi',
-            'value' => $totalEstimasi,
-            'clickable' => true,
-        ],
-        [
-            'href' => route('admin.product.settings'),
-            'icon' => '🛒',
-            'iconClass' => 'bg-green-500 text-white',
-            'label' => 'Setting Status',
-            'value' => $totalStatus,
-            'clickable' => true,
+            'href' => null,
+            'icon' => '📦',
+            'iconClass' => 'bg-[#2F5249] text-white',
+            'label' => 'Total Barang',
+            'value' => $totalBarang,
+            'clickable' => false,
         ],
         [
             'href' => null,
             'icon' => '👥',
-            'iconClass' => 'bg-yellow-400 text-slate-900',
+            'iconClass' => 'bg-amber-400 text-slate-900',
             'label' => 'Total Unit',
             'value' => $totalUnit,
+            'clickable' => false,
+        ],
+        [
+            'href' => null,
+            'icon' => '✅',
+            'iconClass' => 'bg-[#437057] text-white',
+            'label' => 'Barang Ready',
+            'value' => $totalReady,
+            'clickable' => false,
+        ],
+        [
+            'href' => null,
+            'icon' => '📸',
+            'iconClass' => 'bg-[#25443C] text-white',
+            'label' => 'Barang Disewa',
+            'value' => $totalDisewa,
             'clickable' => false,
         ],
     ];
@@ -57,7 +53,7 @@
 <div class="max-w-7xl mx-auto space-y-4 animate-fade-up">
 
     @if(session('success'))
-        <div class="rounded-2xl border border-green-200 bg-green-50 text-green-800 px-4 py-3 text-sm shadow-sm">
+        <div class="rounded-2xl border border-[#dfe7df] bg-[#eef3ee] text-[#2F5249] px-4 py-3 text-sm shadow-sm">
             {{ session('success') }}
         </div>
     @endif
@@ -85,7 +81,7 @@
                     </div>
                 </a>
             @else
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex items-center gap-3 transition-all duration-300 hover:shadow-md">
+                <div class="{{ $cardClass }}">
                     <div class="w-11 h-11 rounded-xl {{ $card['iconClass'] }} flex items-center justify-center text-lg font-bold shadow-sm">
                         {{ $card['icon'] }}
                     </div>
@@ -98,9 +94,9 @@
         @endforeach
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-md">
-        <div class="px-4 py-3 border-b border-slate-200">
-            <h3 class="text-base font-bold text-slate-800">Input Data Barang</h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-[#dfe7df] overflow-hidden transition-all duration-300 hover:shadow-md">
+        <div class="px-4 py-3 border-b border-[#dfe7df]">
+            <h3 class="text-base font-bold text-[#2F5249]">Input Data Barang</h3>
         </div>
 
         <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="p-4">
@@ -117,10 +113,10 @@
 
                         <div>
                             <label class="block mb-1 text-xs font-medium text-slate-800">Jenis Barang</label>
-                                <select name="jenis_barang" class="{{ $inputClass }}" required>
-                                  <option value="">Pilih Jenis Barang</option>
-                                  <option value="Kamera" {{ old('jenis_barang') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
-                                  <option value="Alat Camping" {{ old('jenis_barang') == 'Alat Camping' ? 'selected' : '' }}>Alat Camping</option>
+                            <select name="jenis_barang" class="{{ $inputClass }}" required>
+                                <option value="">Pilih Jenis Barang</option>
+                                <option value="Kamera" {{ old('jenis_barang') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
+                                <option value="Alat Camping" {{ old('jenis_barang') == 'Alat Camping' ? 'selected' : '' }}>Alat Camping</option>
                             </select>
                         </div>
 
@@ -177,22 +173,23 @@
 
                     <div class="flex gap-2 pt-1">
                         <button type="submit"
-                        class="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition">
-                         Simpan
+                            class="px-4 py-2 rounded-xl bg-[#2F5249] text-white text-sm font-semibold hover:bg-[#437057] transition">
+                            Simpan
                         </button>
+
                         <button type="button"
-                        class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 transition">
-                        Batalkan
+                            class="px-4 py-2 rounded-xl bg-[#eef3ee] text-[#2F5249] text-sm font-semibold hover:bg-[#dfe7df] transition">
+                            Batalkan
                         </button>
                     </div>
                 </div>
 
                 <div class="xl:col-span-1">
-                    <div class="border border-slate-200 rounded-2xl p-3 bg-slate-50 min-h-[180px] flex items-center justify-center shadow-sm">
-                        <img id="previewImage" class="w-24 h-24 object-cover rounded-xl border hidden" />
+                    <div class="border border-[#dfe7df] rounded-2xl p-3 bg-[#F8FAF7] min-h-[180px] flex items-center justify-center shadow-sm">
+                        <img id="previewImage" class="w-24 h-24 object-cover rounded-xl border border-[#dfe7df] hidden" />
 
                         <div id="previewText" class="text-xs text-slate-400 text-center">
-                          Preview Gambar
+                            Preview Gambar
                         </div>
                     </div>
                 </div>
@@ -200,15 +197,15 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-md">
-        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-            <h3 class="text-base font-bold text-slate-800">Katalog Barang</h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-[#dfe7df] overflow-hidden transition-all duration-300 hover:shadow-md">
+        <div class="px-4 py-3 border-b border-[#dfe7df] flex items-center justify-between">
+            <h3 class="text-base font-bold text-[#2F5249]">Katalog Barang</h3>
             <span class="text-xs text-slate-500">Data barang rental</span>
         </div>
 
         <div class="overflow-x-auto custom-scroll">
             <table class="w-full min-w-[1100px] text-sm text-left text-slate-600">
-                <thead class="text-xs text-slate-700 bg-slate-50 border-b border-slate-200 uppercase">
+                <thead class="text-xs text-[#2F5249] bg-[#F8FAF7] border-b border-[#dfe7df] uppercase">
                     <tr>
                         <th class="px-4 py-3">No</th>
                         <th class="px-4 py-3">Kode Barang</th>
@@ -225,16 +222,16 @@
                     @forelse($products as $index => $item)
                         @php
                             $status = $item['status'] ?? 'Ready';
-                            $badgeClass = 'bg-green-100 text-green-700';
+                            $badgeClass = 'bg-[#DDE8DF] text-[#437057]';
 
                             if (strtolower($status) === 'pending') {
-                                $badgeClass = 'bg-yellow-100 text-yellow-700';
+                                $badgeClass = 'bg-amber-100 text-amber-700';
                             } elseif (strtolower($status) === 'disewa') {
-                                $badgeClass = 'bg-blue-100 text-blue-700';
+                                $badgeClass = 'bg-[#DDE8DF] text-[#2F5249]';
                             }
                         @endphp
 
-                        <tr class="bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors duration-200">
+                        <tr class="bg-white border-b border-[#dfe7df] hover:bg-[#F8FAF7] transition-colors duration-200">
                             <td class="px-4 py-3">{{ $index + 1 }}</td>
                             <td class="px-4 py-3">{{ $item['kode_barang'] ?? '-' }}</td>
                             <td class="px-4 py-3 font-medium text-slate-800">{{ $item['nama_barang'] ?? '-' }}</td>
@@ -244,32 +241,34 @@
                                     {{ $status }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3">Rp. {{ number_format((int) ($item['harga'] ?? 0), 0, ',', '.') }} /Hari</td>
+                            <td class="px-4 py-3 text-[#2F5249] font-semibold">
+                                Rp. {{ number_format((int) ($item['harga'] ?? 0), 0, ',', '.') }} /Hari
+                            </td>
                             <td class="px-4 py-3">{{ $item['unit'] ?? 0 }}</td>
                             <td class="px-4 py-3">
-                              <div class="flex justify-center items-center gap-2 whitespace-nowrap">
+                                <div class="flex justify-center items-center gap-2 whitespace-nowrap">
 
-    <a href="{{ route('admin.products.show', $item['id']) }}"
-       class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition">
-        Detail
-    </a>
+                                    <a href="{{ route('admin.products.show', $item['id']) }}"
+                                       class="px-3 py-2 bg-[#2F5249] hover:bg-[#437057] text-white rounded-xl text-xs font-semibold transition">
+                                        Detail
+                                    </a>
 
-    <a href="{{ route('admin.products.edit', $item['id']) }}"
-       class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
-        Update
-    </a>
+                                    <a href="{{ route('admin.products.edit', $item['id']) }}"
+                                       class="px-3 py-2 bg-[#eef3ee] hover:bg-[#dfe7df] text-[#2F5249] rounded-xl text-xs font-semibold transition">
+                                        Update
+                                    </a>
 
-    <form action="{{ route('admin.products.destroy', $item['id']) }}" method="POST" onsubmit="return confirm('Yakin hapus barang ini?')">
-        @csrf
-        @method('DELETE')
-        <button
-            type="submit"
-            class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-semibold transition">
-            Hapus
-        </button>
-    </form>
+                                    <form action="{{ route('admin.products.destroy', $item['id']) }}" method="POST" onsubmit="return confirm('Yakin hapus barang ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            type="submit"
+                                            class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-semibold transition">
+                                            Hapus
+                                        </button>
+                                    </form>
 
-</div>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -283,7 +282,7 @@
             </table>
         </div>
 
-        <div class="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
+        <div class="px-4 py-3 border-t border-[#dfe7df] flex items-center justify-between">
             <span class="text-xs text-slate-500">
                 Menampilkan {{ count($products) > 0 ? '1-' . count($products) : '0' }} dari {{ count($products) }} data
             </span>
@@ -311,4 +310,3 @@ document.querySelector('input[name="gambar"]').addEventListener('change', functi
 });
 </script>
 @endsection
-
