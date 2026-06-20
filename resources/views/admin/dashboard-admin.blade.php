@@ -71,7 +71,6 @@
             @php
                 $menu = [
                     ['route' => 'dashboard.admin', 'label' => 'Dashboard'],
-                    ['route' => 'admin.users.index', 'label' => 'Tabel User'],
                     ['route' => 'admin.products', 'label' => 'Katalog Barang'],
                     ['route' => 'admin.rentals', 'label' => 'Data Sewa'],
                     ['route' => 'admin.payments', 'label' => 'Pembayaran'],

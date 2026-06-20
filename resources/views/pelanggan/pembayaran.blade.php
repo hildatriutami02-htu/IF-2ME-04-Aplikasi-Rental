@@ -29,7 +29,7 @@
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-sm text-slate-500">Total Tagihan</p>
             <h3 class="mt-2 text-3xl font-bold text-slate-800">
-                Rp {{ number_format($payments->sum('nominal'), 0, ',', '.') }}
+            Rp {{ number_format($payments->where('status', 'Menunggu Verifikasi')->sum('nominal'), 0, ',', '.') }}
             </h3>
         </div>
 
@@ -78,8 +78,14 @@
                                 Rp {{ number_format($payment->nominal, 0, ',', '.') }}
                             </td>
 
-                            <td class="px-4 py-5 text-sm text-slate-700">
-                                {{ $payment->metode }}
+                            <td class="px-4 py-5 text-sm">
+                                <button
+                                    type="button"
+                                    onclick="openQrisModal()"
+                                    class="font-semibold text-[#2F5249] hover:underline"
+                                >
+                                    {{ $payment->metode ?? 'QRIS Dana' }}
+                                </button>
                             </td>
 
                             <td class="px-4 py-5">
@@ -100,12 +106,15 @@
 
                             <td class="px-4 py-5">
                                 @if($payment->bukti_bayar)
-                                    <a href="{{ asset('storage/' . $payment->bukti_bayar) }}" target="_blank"
+                                    <a href="{{ asset('storage/' . $payment->bukti_bayar) }}"
+                                       target="_blank"
                                        class="text-sm font-semibold text-[#2F5249] hover:underline">
                                         Lihat Bukti
                                     </a>
                                 @else
-                                    <span class="text-sm text-slate-400">Belum upload</span>
+                                    <span class="text-sm text-slate-400">
+                                        Belum upload
+                                    </span>
                                 @endif
                             </td>
 
@@ -150,5 +159,51 @@
             </table>
         </div>
     </section>
+
+    <div
+        id="qrisModal"
+        class="fixed inset-0 z-[9999] hidden items-center justify-center p-4"
+    >
+        <div
+            onclick="closeQrisModal()"
+            class="absolute inset-0 bg-black/40"
+        ></div>
+
+        <div class="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
+            <div class="border-b border-slate-200 px-5 py-4">
+                <h3 class="text-lg font-bold text-[#2F5249]">
+                    QRIS Dana
+                </h3>
+                <p class="mt-1 text-xs text-slate-500">
+                    Scan QRIS lalu upload bukti pembayaran.
+                </p>
+            </div>
+
+            <div class="bg-[#F8FAF7] p-5">
+                <img
+                    src="{{ asset('images/qris-dana.jpeg') }}"
+                    alt="QRIS Dana"
+                    class="mx-auto max-h-[70vh] w-auto rounded-2xl"
+                >
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    function openQrisModal() {
+        const modal = document.getElementById('qrisModal');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeQrisModal() {
+        const modal = document.getElementById('qrisModal');
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
 @endsection

@@ -146,13 +146,20 @@
 
 </div>
 
+<script type="application/json" id="chartLabels">
+    @json($chartLabels ?? [])
+</script>
+
+<script type="application/json" id="chartData">
+    @json($chartData ?? [])
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const ctx = document.getElementById('grafikPendapatan');
 
-    const labelBulan = {!! json_encode($chartLabels ?? []) !!};
-    const dataPendapatan = {!! json_encode($chartData ?? []) !!};
+    const labelBulan = JSON.parse(document.getElementById('chartLabels').textContent);
+    const dataPendapatan = JSON.parse(document.getElementById('chartData').textContent);
 
     if (ctx) {
         new Chart(ctx, {

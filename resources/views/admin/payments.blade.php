@@ -50,6 +50,7 @@
                         <th class="px-5 py-3">Metode</th>
                         <th class="px-5 py-3">Bukti</th>
                         <th class="px-5 py-3">Status</th>
+                        <th class="px-5 py-3">Aksi</th>
                     </tr>
                 </thead>
 
@@ -107,7 +108,7 @@
                     @click="open = false"
                     class="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-600 hover:bg-slate-200"
                 >
-                    ×
+                     ×
                 </button>
             </div>
 
@@ -116,11 +117,11 @@
                     src="{{ asset('storage/' . $payment->bukti_bayar) }}"
                     alt="Bukti Pembayaran"
                     class="mx-auto max-h-[65vh] w-auto max-w-full rounded-2xl object-contain shadow-sm"
-                >
+                        >
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
                                 @else
                                     <span class="text-slate-400">Belum upload</span>
                                 @endif
@@ -141,10 +142,37 @@
                                     </span>
                                 @endif
                             </td>
+                            <td class="px-5 py-4">
+                            @if($payment->status === 'Menunggu Verifikasi' && $payment->bukti_bayar)
+    <form action="{{ route('admin.payments.reject', $payment->id) }}"
+          method="POST"
+          onsubmit="return confirm('Tolak bukti pembayaran ini?')">
+        @csrf
+
+        <button type="submit"
+                class="rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-700">
+            Tolak
+        </button>
+    </form>
+                                </div>
+                            @elseif($payment->status === 'Ditolak')
+                                <span class="text-xs font-semibold text-red-600">
+                                    Menunggu upload ulang
+                                </span>
+                            @elseif($payment->status === 'Lunas')
+                                <span class="rounded-xl bg-[#eef3ee] px-3 py-2 text-xs font-bold text-[#2F5249]">
+                                    Selesai
+                                </span>
+                            @else
+                                <span class="text-xs text-slate-400">
+                                    Tunggu bukti
+                                </span>
+                            @endif
+                        </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-10 text-center text-slate-500">
+                            <td colspan="7" class="px-5 py-10 text-center text-slate-500">
                                 Belum ada data pembayaran.
                             </td>
                         </tr>

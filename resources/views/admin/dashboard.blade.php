@@ -35,7 +35,6 @@
     ];
 
     $menus = [
-        ['route' => 'admin.users.index', 'label' => 'Kelola Tabel User'],
         ['route' => 'admin.products', 'label' => 'Kelola Katalog Barang'],
         ['route' => 'admin.rentals', 'label' => 'Kelola Data Sewa'],
         ['route' => 'admin.reports', 'label' => 'Lihat Laporan'],

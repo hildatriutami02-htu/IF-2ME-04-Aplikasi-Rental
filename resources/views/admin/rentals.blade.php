@@ -147,6 +147,7 @@
                     <tr>
                         <th class="px-2 py-3">Kode</th>
                         <th class="px-2 py-3">Pelanggan</th>
+                        <th class="px-2 py-3">No WA</th>
                         <th class="px-2 py-3">Barang</th>
                         <th class="px-2 py-3 text-center">Qty</th>
                         <th class="px-2 py-3">Periode</th>
@@ -187,6 +188,10 @@
 
                             <td class="px-2 py-3 whitespace-nowrap">
                                 {{ $item['nama_pelanggan'] ?? '-' }}
+                            </td>
+
+                            <td class="px-2 py-3 whitespace-nowrap">
+                                {{ $item['no_wa'] ?? '-' }}
                             </td>
 
                             <td class="px-2 py-3">
@@ -331,7 +336,7 @@
 
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-6 text-center text-slate-500">
+                            <td colspan="10" class="px-4 py-6 text-center text-slate-500">
                                 Belum ada transaksi sewa.
                             </td>
                         </tr>

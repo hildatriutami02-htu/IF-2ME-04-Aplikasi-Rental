@@ -21,33 +21,40 @@ class RentalController extends Controller
     }
 
     public function index(Request $request)
-    {
-        $query = Rental::latest();
+{
+    $query = Rental::query()
+        ->leftJoin('data_users', 'rentals.user_id', '=', 'data_users.id')
+        ->select(
+            'rentals.*',
+            'data_users.no_wa as no_wa',
+            'data_users.alamat as alamat'
+        )
+        ->latest('rentals.id');
 
-        if ($request->status && $request->status !== 'semua') {
-            $query->where('status_transaksi', $request->status);
-        }
-
-        $rentals = $query->get();
-        $users = DataUser::latest()->get();
-        $products = Product::latest()->get();
-
-        $statusCounts = [
-            'Booking' => Rental::where('status_transaksi', 'Booking')->count(),
-            'Permintaan Perpanjangan' => Rental::where('status_transaksi', 'Permintaan Perpanjangan')->count(),
-            'Sedang Disewa' => Rental::where('status_transaksi', 'Sedang Disewa')->count(),
-            'Menunggu Denda' => Rental::where('status_transaksi', 'Menunggu Denda')->count(),
-            'Dikembalikan' => Rental::where('status_transaksi', 'Dikembalikan')->count(),
-            'Semua' => Rental::count(),
-        ];
-
-        return view('admin.rentals', compact(
-            'rentals',
-            'users',
-            'products',
-            'statusCounts'
-        ));
+    if ($request->status && $request->status !== 'semua') {
+        $query->where('rentals.status_transaksi', $request->status);
     }
+
+    $rentals = $query->get();
+    $users = DataUser::latest()->get();
+    $products = Product::latest()->get();
+
+    $statusCounts = [
+        'Booking' => Rental::where('status_transaksi', 'Booking')->count(),
+        'Permintaan Perpanjangan' => Rental::where('status_transaksi', 'Permintaan Perpanjangan')->count(),
+        'Sedang Disewa' => Rental::where('status_transaksi', 'Sedang Disewa')->count(),
+        'Menunggu Denda' => Rental::where('status_transaksi', 'Menunggu Denda')->count(),
+        'Dikembalikan' => Rental::where('status_transaksi', 'Dikembalikan')->count(),
+        'Semua' => Rental::count(),
+    ];
+
+    return view('admin.rentals', compact(
+        'rentals',
+        'users',
+        'products',
+        'statusCounts'
+    ));
+}
 
     public function store(Request $request)
     {
@@ -64,6 +71,13 @@ class RentalController extends Controller
 
         $user = DataUser::findOrFail($request->user_id);
         $product = Product::findOrFail($request->product_id);
+
+        if ($product->unit < $request->qty) {
+            return $this->backToRentals(
+                $request,
+                'Stok ' . $product->nama_barang . ' tidak mencukupi.'
+            );
+        }
 
         $hari = Carbon::parse($request->tanggal_pinjam)
             ->diffInDays(Carbon::parse($request->tanggal_kembali)) + 1;
@@ -92,7 +106,7 @@ class RentalController extends Controller
             'kode_transaksi' => $rental->kode_transaksi,
             'nama_pelanggan' => $rental->nama_pelanggan,
             'nominal' => $rental->total_harga,
-            'metode' => 'Cash',
+            'metode' => 'QRIS Dana',
             'status' => $request->status_pembayaran === 'Lunas' ? 'Lunas' : 'Menunggu Verifikasi',
         ]);
 
@@ -102,22 +116,32 @@ class RentalController extends Controller
             'status' => 'Belum Dibaca',
         ]);
 
+        $product->decrement('unit', $request->qty);
+
+        if ($product->fresh()->unit <= 0) {
+            $product->update([
+                'status' => 'Tidak Tersedia',
+            ]);
+        }
+
         return $this->backToRentals($request, 'Transaksi sewa berhasil ditambahkan.');
     }
 
-    public function show($id)
-    {
-        $rental = Rental::findOrFail($id);
-        return view('admin.rental-detail', compact('rental'));
-    }
+    public function show(int $id)
+{
+    $rental = Rental::leftJoin('data_users', 'rentals.user_id', '=', 'data_users.id')
+        ->select(
+            'rentals.*',
+            'data_users.no_wa as no_wa',
+            'data_users.alamat as alamat'
+        )
+        ->where('rentals.id', $id)
+        ->firstOrFail();
 
-    public function edit($id)
-    {
-        $rental = Rental::findOrFail($id);
-        return view('admin.rental-edit', compact('rental'));
-    }
+    return view('admin.rental-detail', compact('rental'));
+}
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $rental = Rental::findOrFail($id);
 
@@ -157,13 +181,14 @@ class RentalController extends Controller
         return $this->backToRentals($request, 'Transaksi berhasil diupdate.');
     }
 
-    public function extend($id)
+    public function extend(int $id)
     {
         $rental = Rental::findOrFail($id);
+
         return view('admin.rental-extend', compact('rental'));
     }
 
-    public function extendProses(Request $request, $id)
+    public function extendProses(Request $request, int $id)
     {
         $request->validate([
             'tanggal_kembali' => 'required|date',
@@ -196,7 +221,7 @@ class RentalController extends Controller
         return $this->backToRentals($request, 'Sewa berhasil diperpanjang.');
     }
 
-    public function verify(Request $request, $id)
+    public function verify(Request $request, int $id)
     {
         $rental = Rental::findOrFail($id);
 
@@ -239,103 +264,126 @@ class RentalController extends Controller
         return $this->backToRentals($request, 'Transaksi berhasil diverifikasi.');
     }
 
-    public function returnItem(Request $request, $id)
-{
-    $rental = Rental::findOrFail($id);
+    public function returnItem(Request $request, int $id)
+    {
+        $rental = Rental::findOrFail($id);
 
-    $today = now();
-    $denda = 0;
+        $today = now();
+        $denda = 0;
 
-    if ($today->gt(Carbon::parse($rental->tanggal_kembali))) {
-        $hariTerlambat = Carbon::parse($rental->tanggal_kembali)
-            ->diffInDays($today);
+        if ($today->gt(Carbon::parse($rental->tanggal_kembali))) {
+            $hariTerlambat = Carbon::parse($rental->tanggal_kembali)
+                ->diffInDays($today);
 
-        $dendaPerHari = $rental->denda_per_hari ?? 25000;
-        $denda = $hariTerlambat * $dendaPerHari;
-    }
+            $dendaPerHari = $rental->denda_per_hari ?? 25000;
+            $denda = $hariTerlambat * $dendaPerHari;
+        }
 
-    if ($denda > 0) {
+        if ($denda > 0) {
+            $rental->update([
+                'tanggal_kembali_real' => $today->toDateString(),
+                'total_denda' => $denda,
+                'status_transaksi' => 'Menunggu Denda',
+                'status_pembayaran' => 'Belum Bayar',
+            ]);
+
+            Payment::create([
+                'rental_id' => $rental->id,
+                'kode_transaksi' => $rental->kode_transaksi . '-DENDA',
+                'nama_pelanggan' => $rental->nama_pelanggan,
+                'nominal' => $denda,
+                'metode' => 'QRIS Dana',
+                'status' => 'Menunggu Verifikasi',
+                'catatan' => 'Denda keterlambatan pengembalian barang',
+            ]);
+
+            Notification::create([
+                'judul' => 'Denda Rental',
+                'pesan' => 'Transaksi ' . $rental->kode_transaksi . ' terkena denda Rp ' . number_format($denda, 0, ',', '.'),
+                'status' => 'Belum Dibaca',
+            ]);
+
+            return $this->backToRentals($request, 'Barang terlambat. Menunggu pembayaran denda.');
+        }
+
         $rental->update([
             'tanggal_kembali_real' => $today->toDateString(),
-            'total_denda' => $denda,
-            'status_transaksi' => 'Menunggu Denda',
-            'status_pembayaran' => 'Belum Bayar',
+            'status_transaksi' => 'Dikembalikan',
         ]);
 
-        Payment::create([
-            'rental_id' => $rental->id,
-            'kode_transaksi' => $rental->kode_transaksi . '-DENDA',
-            'nama_pelanggan' => $rental->nama_pelanggan,
-            'nominal' => $denda,
-            'metode' => 'Cash',
-            'status' => 'Menunggu Verifikasi',
-            'catatan' => 'Denda keterlambatan pengembalian barang',
-        ]);
+        $product = Product::find($rental->product_id);
+
+        if ($product) {
+            $product->increment('unit', $rental->qty ?? 1);
+
+            $product->update([
+                'status' => 'Tersedia',
+            ]);
+        }
 
         Notification::create([
-            'judul' => 'Denda Rental',
-            'pesan' => 'Transaksi ' . $rental->kode_transaksi . ' terkena denda Rp ' . number_format($denda, 0, ',', '.'),
+            'judul' => 'Barang Dikembalikan',
+            'pesan' => 'Barang pada transaksi ' . $rental->kode_transaksi . ' sudah dikembalikan.',
             'status' => 'Belum Dibaca',
         ]);
 
-        return $this->backToRentals($request, 'Barang terlambat. Menunggu pembayaran denda.');
+        return $this->backToRentals($request, 'Barang berhasil dikembalikan dan stok sudah diperbarui.');
     }
 
-    $rental->update([
-        'tanggal_kembali_real' => $today->toDateString(),
-        'status_transaksi' => 'Dikembalikan',
-    ]);
+    public function verifyDenda(Request $request, int $id)
+    {
+        $rental = Rental::findOrFail($id);
 
-    $product = Product::find($rental->product_id);
-
-    if ($product) {
-        $product->increment('unit', $rental->qty ?? 1);
-
-        $product->update([
-            'status' => 'Tersedia',
+        $rental->update([
+            'status_pembayaran' => 'Lunas',
+            'status_transaksi' => 'Dikembalikan',
         ]);
+
+        Payment::where('rental_id', $rental->id)
+            ->where('kode_transaksi', 'like', '%DENDA%')
+            ->update([
+                'status' => 'Lunas',
+            ]);
+
+        $product = Product::find($rental->product_id);
+
+        if ($product) {
+            $product->increment('unit', $rental->qty ?? 1);
+
+            $product->update([
+                'status' => 'Tersedia',
+            ]);
+        }
+
+        Notification::create([
+            'judul' => 'Denda Diverifikasi',
+            'pesan' => 'Denda transaksi ' . $rental->kode_transaksi . ' sudah lunas dan stok barang sudah dikembalikan.',
+            'status' => 'Belum Dibaca',
+        ]);
+
+        return $this->backToRentals($request, 'Pembayaran denda berhasil diverifikasi dan stok barang sudah diperbarui.');
     }
 
-    Notification::create([
-        'judul' => 'Barang Dikembalikan',
-        'pesan' => 'Barang pada transaksi ' . $rental->kode_transaksi . ' sudah dikembalikan.',
-        'status' => 'Belum Dibaca',
-    ]);
+    public function destroy(Request $request, int $id)
+    {
+        $rental = Rental::findOrFail($id);
 
-    return $this->backToRentals($request, 'Barang berhasil dikembalikan dan stok sudah diperbarui.');
-}
+        $status = $request->status_filter
+            ?? $rental->status_transaksi
+            ?? 'semua';
 
-   public function verifyDenda(Request $request, $id)
-{
-    $rental = Rental::findOrFail($id);
+        $rental->delete();
 
-    $rental->update([
-        'status_pembayaran' => 'Lunas',
-        'status_transaksi' => 'Dikembalikan',
-    ]);
-
-    Payment::where('rental_id', $rental->id)
-        ->where('kode_transaksi', 'like', '%DENDA%')
-        ->update([
-            'status' => 'Lunas',
+        Notification::create([
+            'judul' => 'Transaksi Dihapus',
+            'pesan' => 'Transaksi ' . $rental->kode_transaksi . ' telah dihapus admin.',
+            'status' => 'Belum Dibaca',
         ]);
 
-    $product = Product::find($rental->product_id);
-
-    if ($product) {
-        $product->increment('unit', $rental->qty ?? 1);
-
-        $product->update([
-            'status' => 'Tersedia',
-        ]);
+        return redirect()
+            ->route('admin.rentals', [
+                'status' => $status
+            ])
+            ->with('success', 'Transaksi berhasil dihapus.');
     }
-
-    Notification::create([
-        'judul' => 'Denda Diverifikasi',
-        'pesan' => 'Denda transaksi ' . $rental->kode_transaksi . ' sudah lunas dan stok barang sudah dikembalikan.',
-        'status' => 'Belum Dibaca',
-    ]);
-
-    return $this->backToRentals($request, 'Pembayaran denda berhasil diverifikasi dan stok barang sudah diperbarui.');
-}
 }

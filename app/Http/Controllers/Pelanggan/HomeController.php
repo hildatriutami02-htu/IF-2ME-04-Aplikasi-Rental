@@ -8,28 +8,62 @@ use App\Models\Rental;
 
 class HomeController extends Controller
 {
-    public function public()
-    {
-        $isPelanggan = false;
-        $isAdmin = false;
+  public function public()
+{
+    $isPelanggan = false;
+    $isAdmin = false;
 
-        $products = Product::latest()->get();
+    $search = request('search');
+    $kategoriAktif = request('kategori');
+    $urutkan = request('urutkan', 'terbaru');
 
-        $settings = session('website_settings', [
-            'nama_website' => 'LensCamp',
-            'email_admin' => 'admin.lenscamp@gmail.com',
-            'no_whatsapp' => '081291516627',
-            'alamat' => 'Batam, Indonesia',
-        ]);
+    $kategoriProduk = Product::select('jenis_barang')
+        ->whereNotNull('jenis_barang')
+        ->distinct()
+        ->pluck('jenis_barang');
 
-        return view('home', compact(
-            'isPelanggan',
-            'isAdmin',
-            'products',
-            'settings'
-        ));
-    }
+    $produkFavorit = Product::withCount('rentals')
+        ->orderByDesc('rentals_count')
+        ->take(3)
+        ->get();
 
+   $productsQuery = Product::query()
+    ->when($search, function ($query) use ($search) {
+        $query->where('nama_barang', 'like', '%' . $search . '%');
+    })
+    ->when($kategoriAktif, function ($query) use ($kategoriAktif) {
+        $query->where('jenis_barang', $kategoriAktif);
+    });
+
+if ($urutkan === 'termurah') {
+    $productsQuery->reorder('harga', 'asc');
+} elseif ($urutkan === 'termahal') {
+    $productsQuery->reorder('harga', 'desc');
+} else {
+    $productsQuery->reorder('id', 'desc');
+}
+
+$products = $productsQuery->get();
+
+    $settings = session('website_settings', [
+        'nama_website' => 'LensCamp',
+        'email_admin' => 'admin.lenscamp@gmail.com',
+        'no_whatsapp' => '081291516627',
+        'alamat' => 'Batam, Indonesia',
+    ]);
+
+    return view('home', compact(
+        'isPelanggan',
+        'isAdmin',
+        'products',
+        'settings',
+        'kategoriProduk',
+        'kategoriAktif',
+        'produkFavorit',
+        'search',
+        'urutkan'
+    ));
+}
     public function index()
     {
         $isPelanggan = true;

@@ -341,54 +341,215 @@
         @endif
 
         <section id="produk" class="space-y-5">
-            <div>
-                <h3 class="text-2xl font-bold text-slate-800">
-                    {{ $isPelanggan ? 'Pesan Produk Sekarang' : 'Produk Populer' }}
-                </h3>
+        @if(!$isPelanggan && isset($produkFavorit) && $produkFavorit->count())
+<div class="space-y-4">
 
-                <p class="mt-1 text-sm text-slate-500">
-                    {{ $isPelanggan ? 'Pilih produk dan tambahkan ke keranjang sebelum checkout.' : 'Jelajahi perlengkapan terbaik yang tersedia.' }}
+   <div>
+    <p class="text-sm font-semibold uppercase tracking-wide text-[#437057]">
+        Rekomendasi Populer
+    </p>
+
+    <h3 class="mt-1 text-3xl font-extrabold text-slate-900">
+        Produk Best Seller
+    </h3>
+
+    <p class="mt-2 text-sm text-slate-500">
+        Produk yang paling sering disewa pelanggan LensCamp.
+    </p>
+</div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+       @foreach($produkFavorit as $item)
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+
+        @if(!empty($item->gambar))
+            <img
+                src="{{ asset('images/' . $item->gambar) }}"
+                alt="{{ $item->nama_barang }}"
+                class="h-52 w-full bg-white object-contain p-3"
+            >
+        @else
+            <div class="flex h-44 items-center justify-center rounded-2xl bg-slate-100 text-4xl font-bold text-slate-400">
+                {{ strtoupper(substr($item->nama_barang, 0, 1)) }}
+            </div>
+        @endif
+
+        <div class="mt-4">
+            <div class="flex items-start justify-between">
+            <div>
+                <h4 class="text-lg font-bold text-slate-800">
+                    {{ $item->nama_barang }}
+                </h4>
+
+                <p class="text-sm text-slate-500">
+                    {{ $item->jenis_barang }}
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-                @foreach($products as $item)
-                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-                        @if(!empty($item['gambar']))
-    <img src="{{ asset('images/' . $item['gambar']) }}"
-         alt="{{ $item['nama_barang'] }}"
-         class="w-full h-44 object-contain bg-white p-3 rounded-2xl">
-@else
-    <div class="flex h-44 items-center justify-center rounded-2xl bg-slate-100 text-4xl font-bold text-slate-400">
-        {{ strtoupper(substr($item['nama_barang'], 0, 1)) }}
+            <span class="inline-flex items-center rounded-full bg-[#eef3ee] px-3 py-1 text-xs font-semibold text-[#2F5249]">
+                Best Seller
+            </span>
+
+        </div>
+
+            <p class="mt-3 text-sm text-slate-500">
+                {{ $item->deskripsi }}
+            </p>
+
+            <p class="mt-4 text-base font-bold text-[#2F5249]">
+                Rp {{ number_format($item->harga, 0, ',', '.') }} / hari
+            </p>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-3">
+            <a href="{{ route('login') }}"
+               class="rounded-xl bg-[#2F5249] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#437057]">
+                Sewa Sekarang
+            </a>
+
+            <a href="#hubungi-kami"
+               class="rounded-xl bg-[#2F5249] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#437057]">
+                Tanya Admin
+            </a>
+        </div>
     </div>
+
+@endforeach
+
+    </div>
+
+</div>
 @endif
+    <div>
+        <div>
+    <p class="text-sm font-semibold uppercase tracking-wide text-[#437057]">
+        Jelajahi Produk
+    </p>
 
-                        <div class="mt-4">
-                            <div class="flex items-start justify-between gap-4">
-                                <div>
-                                    <h4 class="text-lg font-bold text-slate-800">
-                                        {{ $item['nama_barang'] }}
-                                    </h4>
+    <h3 class="mt-1 text-3xl font-extrabold text-slate-900">
+        Produk Populer
+    </h3>
 
-                                    <p class="mt-1 text-sm text-slate-500">
-                                        {{ $item['jenis_barang'] }}
-                                    </p>
-                                </div>
+    <p class="mt-2 text-sm text-slate-500">
+        Temukan perlengkapan terbaik sesuai kebutuhan sewa kamu.
+    </p>
+</div>
 
-                                <span class="rounded-full bg-[#eef3ee] px-3 py-1 text-xs font-semibold text-[#2F5249]">
-                                    Stok {{ $item['unit'] }}
-                                </span>
+        <p class="mt-1 text-sm text-slate-500">
+            {{ $isPelanggan ? 'Pilih produk dan tambahkan ke keranjang sebelum checkout.' : 'Jelajahi perlengkapan terbaik yang tersedia.' }}
+        </p>
+    </div>
+
+    @if(!$isPelanggan)
+        <form action="{{ route('home') }}#produk" method="GET"
+              class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Cari Produk
+                    </label>
+                    <input type="text"
+                           name="search"
+                           value="{{ $search ?? '' }}"
+                           placeholder="Cari produk..."
+                           class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]">
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Kategori
+                    </label>
+                    <select name="kategori"
+                            class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]">
+                        <option value="">Semua Kategori</option>
+                        @foreach($kategoriProduk ?? [] as $kategori)
+                            <option value="{{ $kategori }}" {{ ($kategoriAktif ?? '') == $kategori ? 'selected' : '' }}>
+                                {{ $kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Urutkan
+                    </label>
+                    <select name="urutkan"
+                        class="w-full rounded-2xl border border-slate-300 px-4 py-3">
+
+                    <option value="terbaru"
+                        {{ request('urutkan', 'terbaru') == 'terbaru' ? 'selected' : '' }}>
+                        Terbaru
+                    </option>
+
+                    <option value="termurah"
+                        {{ request('urutkan') == 'termurah' ? 'selected' : '' }}>
+                        Harga Termurah
+                    </option>
+
+                    <option value="termahal"
+                        {{ request('urutkan') == 'termahal' ? 'selected' : '' }}>
+                        Harga Termahal
+                    </option>
+
+                </select>
+                </div>
+
+                <div class="flex items-end gap-3">
+                    <button type="submit"
+                            class="flex-1 rounded-2xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white hover:bg-[#437057]">
+                        Filter
+                    </button>
+
+                    <a href="{{ route('home') }}#produk"
+                       class="rounded-2xl bg-[#eef3ee] px-5 py-3 text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df]">
+                        Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    @endif
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+
+                @foreach($products as $item)
+                   <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+                    
+                        @if(!empty($item['gambar']))
+                            <div class="flex h-56 items-center justify-center rounded-2xl bg-white">
+                                <img
+                                    src="{{ asset('images/' . $item['gambar']) }}"
+                                    alt="{{ $item['nama_barang'] }}"
+                                    class="max-h-48 max-w-full object-contain"
+                                >
                             </div>
+                        @else
+                            <div class="flex h-56 items-center justify-center rounded-2xl bg-slate-100 text-4xl font-bold text-slate-400">
+                                {{ strtoupper(substr($item['nama_barang'], 0, 1)) }}
+                            </div>
+                        @endif
 
-                            <p class="mt-3 text-sm text-slate-500">
-                                {{ $item['deskripsi'] }}
-                            </p>
+                      <div class="mt-4 px-4 pb-4">
+                        <h4 class="text-lg font-bold text-slate-800">
+                            {{ $item['nama_barang'] }}
+                        </h4>
 
-                            <p class="mt-4 text-base font-bold text-[#2F5249]">
-                                Rp {{ number_format($item['harga'], 0, ',', '.') }} / hari
-                            </p>
-                        </div>
+                        <p class="mt-1 text-sm text-slate-500">
+                            {{ $item['jenis_barang'] }}
+                        </p>
+
+                        <p class="mt-3 text-sm text-slate-500 line-clamp-2">
+                            {{ $item['deskripsi'] }}
+                        </p>
+
+                        <p class="mt-4 text-lg font-bold text-[#2F5249]">
+                            Rp {{ number_format($item['harga'], 0, ',', '.') }} / hari
+                        </p>
+
+                    </div>
 
                         @if($isPelanggan)
                             <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST" class="mt-5 space-y-3">

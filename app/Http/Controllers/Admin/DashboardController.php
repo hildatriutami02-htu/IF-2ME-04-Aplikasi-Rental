@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DataUser;
 use App\Models\Product;
 use App\Models\Rental;
+
 class DashboardController extends Controller
 {
     public function index()

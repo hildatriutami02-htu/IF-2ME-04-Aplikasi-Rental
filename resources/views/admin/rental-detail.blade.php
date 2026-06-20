@@ -16,14 +16,24 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
 
         <div class="rounded-2xl bg-[#F8FAF7] p-4">
-            <p class="text-slate-500">Pelanggan</p>
-            <p class="font-semibold text-slate-800">{{ $rental['nama_pelanggan'] ?? '-' }}</p>
-        </div>
+    <p class="text-slate-500">Pelanggan</p>
+    <p class="font-semibold text-slate-800">{{ $rental['nama_pelanggan'] ?? '-' }}</p>
+    </div>
 
-        <div class="rounded-2xl bg-[#F8FAF7] p-4">
-            <p class="text-slate-500">Barang</p>
-            <p class="font-semibold text-slate-800">{{ $rental['nama_barang'] ?? '-' }}</p>
-        </div>
+    <div class="rounded-2xl bg-[#F8FAF7] p-4">
+        <p class="text-slate-500">No WA</p>
+        <p class="font-semibold text-slate-800">{{ $rental['no_wa'] ?? '-' }}</p>
+    </div>
+
+    <div class="md:col-span-2 rounded-2xl bg-[#F8FAF7] p-4">
+        <p class="text-slate-500">Alamat</p>
+        <p class="font-semibold text-slate-800">{{ $rental['alamat'] ?? '-' }}</p>
+    </div>
+
+    <div class="rounded-2xl bg-[#F8FAF7] p-4">
+        <p class="text-slate-500">Barang</p>
+        <p class="font-semibold text-slate-800">{{ $rental['nama_barang'] ?? '-' }}</p>
+    </div>
 
         <div class="rounded-2xl bg-[#F8FAF7] p-4">
             <p class="text-slate-500">Qty</p>

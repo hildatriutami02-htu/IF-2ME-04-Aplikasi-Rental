@@ -45,15 +45,18 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard-admin', [AdminDashboardController::class, 'index'])->name('dashboard.admin');
+Route::get('/dashboard-admin', [AdminDashboardController::class, 'index'])->middleware('admin')->name('dashboard.admin');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{id}/read', [AdminNotificationController::class, 'read'])->name('notifications.read');
     Route::delete('/notifications/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/calendar', [AdminDashboardController::class, 'calendar'])->name('calendar');
     Route::get('/payments', [AdminPaymentController::class, 'index']) ->name('payments');
+    Route::post('/payments/{id}/verify', [AdminPaymentController::class, 'verify'])->name('payments.verify');
+
+    Route::post('/payments/{id}/reject', [AdminPaymentController::class, 'reject'])->name('payments.reject');
 
     Route::get('/products', [AdminProductController::class, 'index'])->name('products');
     Route::post('/products/store', [AdminProductController::class, 'store'])->name('products.store');

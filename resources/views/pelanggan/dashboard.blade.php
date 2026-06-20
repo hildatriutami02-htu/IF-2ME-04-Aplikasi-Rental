@@ -46,12 +46,6 @@
                 Pilih produk langsung dari beranda dan tambahkan ke keranjang.
             </p>
 
-            <div class="mt-7">
-                <a href="{{ route('pelanggan.produk') }}"
-                   class="inline-flex rounded-2xl bg-white px-6 py-3 text-sm font-bold text-[#2F5249] transition hover:bg-[#eef3ee]">
-                    Lihat Semua Produk
-                </a>
-            </div>
         </div>
     </section>
 
