@@ -9,45 +9,35 @@
     $totalBarang = count($products);
     $totalUnit = collect($products)->sum('unit');
     $totalReady = collect($products)->where('status', 'Ready')->count();
-    $totalDisewa = collect($products)->where('status', 'Disewa')->count();
 
     $inputClass = 'bg-[#F8FAF7] border border-[#dfe7df] text-sm rounded-xl block w-full p-2.5 focus:ring-4 focus:ring-[#DDE8DF] focus:border-[#2F5249] transition-all duration-200';
     $cardClass = 'bg-white rounded-2xl border border-[#dfe7df] shadow-sm p-3 flex items-center gap-3 hover:bg-[#F8FAF7] hover:-translate-y-0.5 hover:shadow-md transition-all duration-300';
-
-    $summaryCards = [
-        [
-            'href' => null,
-            'icon' => '📦',
-            'iconClass' => 'bg-[#2F5249] text-white',
-            'label' => 'Total Barang',
-            'value' => $totalBarang,
-            'clickable' => false,
-        ],
-        [
-            'href' => null,
-            'icon' => '👥',
-            'iconClass' => 'bg-amber-400 text-slate-900',
-            'label' => 'Total Unit',
-            'value' => $totalUnit,
-            'clickable' => false,
-        ],
-        [
-            'href' => null,
-            'icon' => '✅',
-            'iconClass' => 'bg-[#437057] text-white',
-            'label' => 'Barang Ready',
-            'value' => $totalReady,
-            'clickable' => false,
-        ],
-        [
-            'href' => null,
-            'icon' => '📸',
-            'iconClass' => 'bg-[#25443C] text-white',
-            'label' => 'Barang Disewa',
-            'value' => $totalDisewa,
-            'clickable' => false,
-        ],
-    ];
+$summaryCards = [
+    [
+        'href' => null,
+        'icon' => 'package',
+        'iconClass' => 'bg-[#2F5249] text-white',
+        'label' => 'Total Barang',
+        'value' => $totalBarang,
+        'clickable' => false,
+    ],
+    [
+        'href' => null,
+        'icon' => 'layers',
+        'iconClass' => 'bg-[#DDE8DF] text-[#2F5249]',
+        'label' => 'Total Unit',
+        'value' => $totalUnit,
+        'clickable' => false,
+    ],
+    [
+        'href' => null,
+        'icon' => 'check-circle',
+        'iconClass' => 'bg-[#437057] text-white',
+        'label' => 'Barang Ready',
+        'value' => $totalReady,
+        'clickable' => false,
+    ],
+];
 @endphp
 
 <div class="max-w-7xl mx-auto space-y-4 animate-fade-up">
@@ -68,7 +58,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         @foreach($summaryCards as $card)
             @if($card['clickable'])
                 <a href="{{ $card['href'] }}" class="{{ $cardClass }}">
@@ -82,9 +72,10 @@
                 </a>
             @else
                 <div class="{{ $cardClass }}">
-                    <div class="w-11 h-11 rounded-xl {{ $card['iconClass'] }} flex items-center justify-center text-lg font-bold shadow-sm">
-                        {{ $card['icon'] }}
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl {{ $card['iconClass'] }}">
+                        <i data-feather="{{ $card['icon'] }}" class="w-5 h-5"></i>
                     </div>
+
                     <div>
                         <p class="text-xs text-slate-500">{{ $card['label'] }}</p>
                         <h3 class="text-xl font-bold text-slate-800">{{ $card['value'] }}</h3>

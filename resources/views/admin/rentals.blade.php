@@ -119,7 +119,6 @@
             ['label'=>'Booking','value'=>'Booking'],
             ['label'=>'Permintaan Perpanjangan','value'=>'Permintaan Perpanjangan'],
             ['label'=>'Sedang Disewa','value'=>'Sedang Disewa'],
-            ['label'=>'Menunggu Denda','value'=>'Menunggu Denda'],
             ['label'=>'Dikembalikan','value'=>'Dikembalikan'],
             ['label'=>'Semua','value'=>'semua'],
         ] as $filter)
@@ -153,6 +152,7 @@
                         <th class="px-2 py-3">Periode</th>
                         <th class="px-2 py-3">Biaya</th>
                         <th class="px-2 py-3">Bayar</th>
+                        <th class="px-2 py-3">Bukti</th>
                         <th class="px-2 py-3">Status</th>
                         <th class="px-2 py-3 text-center">Aksi</th>
                     </tr>
@@ -204,10 +204,28 @@
                                 {{ $item['qty'] ?? 1 }}
                             </td>
 
+                           <td class="px-2 py-3 whitespace-nowrap">
                             <td class="px-2 py-3 whitespace-nowrap">
                                 @php
+                                    $dendaPerHari = 25000;
+
                                     $tanggalPinjam = $item['tanggal_pinjam_raw'] ?? $item['tanggal_pinjam'] ?? null;
                                     $tanggalKembali = $item['tanggal_kembali_raw'] ?? $item['tanggal_kembali'] ?? null;
+
+                                    $isTelat = false;
+                                    $hariTelat = 0;
+                                    $totalDendaTelat = 0;
+
+                                    if ($tanggalKembali && ($item['status_transaksi'] ?? '') == 'Sedang Disewa') {
+                                        $batas = \Carbon\Carbon::parse($tanggalKembali)->startOfDay();
+                                        $hariIni = now()->startOfDay();
+
+                                        if ($hariIni->gt($batas)) {
+                                            $isTelat = true;
+                                            $hariTelat = $batas->diffInDays($hariIni);
+                                            $totalDendaTelat = $hariTelat * $dendaPerHari;
+                                        }
+                                    }
                                 @endphp
 
                                 @if($tanggalPinjam && $tanggalKembali)
@@ -216,6 +234,16 @@
                                         -
                                         {{ \Carbon\Carbon::parse($tanggalKembali)->format('d/m') }}
                                     </div>
+
+                                    @if($isTelat)
+                                        <div class="mt-1 text-[10px] text-red-600 font-semibold">
+                                            🔴 Terlambat {{ $hariTelat }} Hari
+                                        </div>
+
+                                        <div class="text-[10px] text-red-600">
+                                            Denda: <b>Rp {{ number_format($totalDendaTelat, 0, ',', '.') }}</b>
+                                        </div>
+                                    @endif
                                 @else
                                     <div>-</div>
                                 @endif
@@ -232,18 +260,33 @@
                                     </div>
                                 @endif
                             </td>
+                                <td class="px-2 py-3">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-medium {{ $payClass }}">
+                                        {{ $item['status_pembayaran'] ?? '-' }}
+                                    </span>
+                                </td>
 
-                            <td class="px-2 py-3">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium {{ $payClass }}">
-                                    {{ $item['status_pembayaran'] ?? '-' }}
-                                </span>
-                            </td>
+                                <td class="px-2 py-3">
+                                    @if(!empty($item['bukti_bayar']))
+                                        <button
+                                            type="button"
+                                            data-image="{{ asset('storage/' . $item['bukti_bayar']) }}"
+                                            onclick="openImage(this)"
+                                            class="px-3 py-1 rounded-full bg-[#eef3ee] text-[#2F5249] text-[10px] font-semibold hover:bg-[#dfe7df]">
+                                            Lihat Bukti
+                                        </button>
+                                    @else
+                                        <span class="text-[10px] text-slate-400">
+                                            Belum Upload
+                                        </span>
+                                    @endif
+                                </td>
 
-                            <td class="px-2 py-3">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium {{ $badgeClass }}">
-                                    {{ $status }}
-                                </span>
-                            </td>
+                                <td class="px-2 py-3">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-medium {{ $badgeClass }}">
+                                        {{ $status }}
+                                    </span>
+                                </td>
 
                             <td class="px-2 py-3 text-center">
                                 <div x-data="{ open: false }" class="relative inline-block text-left">
@@ -301,23 +344,6 @@
                                             </form>
                                         @endif
 
-                                        @if(($item['status_transaksi'] ?? '') === 'Menunggu Denda')
-
-                                            <form action="{{ route('admin.rentals.verify-denda', $item['id']) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Konfirmasi pembayaran denda ini?')">
-                                                @csrf
-                                                <input type="hidden" name="status_filter" value="{{ request('status', 'semua') }}">
-
-                                                <button type="submit"
-                                                    class="block w-full text-left px-4 py-2.5 text-sm text-green-600 hover:bg-[#eef3ee]">
-                                                    Konfirmasi Denda
-                                                </button>
-
-                                            </form>
-
-                                            @endif
-
                                         <form action="{{ route('admin.rentals.destroy', $item['id']) }}"
                                               method="POST"
                                               onsubmit="return confirm('Yakin hapus transaksi ini?')">
@@ -336,7 +362,7 @@
 
                     @empty
                         <tr>
-                            <td colspan="10" class="px-4 py-6 text-center text-slate-500">
+                            <td colspan="11" class="px-4 py-6 text-center text-slate-500">
                                 Belum ada transaksi sewa.
                             </td>
                         </tr>
@@ -348,4 +374,27 @@
     </div>
 
 </div>
+
+<div id="imageModal"
+     class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50"
+     onclick="closeImage(event)">
+
+    <img id="previewImage"
+         class="max-w-[90%] max-h-[90%] rounded-lg shadow-xl">
+</div>
+
+<script>
+function openImage(button){
+    document.getElementById('previewImage').src = button.dataset.image;
+    document.getElementById('imageModal').classList.remove('hidden');
+    document.getElementById('imageModal').classList.add('flex');
+}
+
+function closeImage(e){
+    if(e.target.id === 'imageModal'){
+        document.getElementById('imageModal').classList.remove('flex');
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+}
+</script>
 @endsection

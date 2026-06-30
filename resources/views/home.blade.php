@@ -15,11 +15,15 @@
 
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: 110px;
         }
     </style>
 </head>
 
 @php
+
+    $setting = \App\Models\Setting::first();
+
     $publicNav = [
         ['href' => '#beranda', 'label' => 'Beranda'],
         ['href' => '#tentang', 'label' => 'Tentang'],
@@ -27,25 +31,18 @@
         ['href' => '#hubungi-kami', 'label' => 'Hubungi Kami'],
     ];
 
-    $aboutStats = [
-        ['label' => 'Produk Tersedia', 'value' => '50+'],
-        ['label' => 'Pelanggan', 'value' => '100+'],
-        ['label' => 'Transaksi', 'value' => '300+'],
-        ['label' => 'Layanan', 'value' => 'Cepat'],
-    ];
-
-     $contactItems = [
+    $contactItems = [
     [
         'label' => 'Email',
-        'value' => $settings['email_admin'] ?? 'admin.lenscamp@gmail.com'
+        'value' => $setting->email_admin ?? 'admin.lenscamp@gmail.com',
     ],
     [
         'label' => 'WhatsApp',
-        'value' => $settings['no_whatsapp'] ?? '081291516627'
+        'value' => $setting->no_whatsapp ?? '081291516627',
     ],
     [
         'label' => 'Jam Operasional',
-        'value' => '08:00 - 20:00 WIB'
+        'value' => '08:00 - 20:00 WIB',
     ],
     ];
 
@@ -254,9 +251,13 @@
 @if($pickupReminder)
 
 <section
-    class="relative overflow-hidden rounded-[28px] p-8 sm:p-10 text-white shadow-xl bg-cover bg-center"
-    style="background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}')"
->
+    id="beranda"
+    class="relative min-h-[600px] overflow-hidden rounded-[28px] p-6 sm:p-10 text-white shadow-xl bg-cover flex items-center"
+    style="
+        background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}');
+        background-position: center 25%;
+    "
+    >
                     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
                             <p class="text-sm font-semibold text-[#437057]">Reminder Pesanan</p>
@@ -284,10 +285,13 @@
     @endphp
 
     <section
-        id="beranda"
-        class="relative overflow-hidden rounded-[28px] p-6 text-white shadow-xl sm:p-10 bg-cover bg-center"
-        style="background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}')"
-    >
+    id="beranda"
+    class="relative min-h-[550px] overflow-hidden rounded-[28px] p-6 text-white shadow-xl sm:p-10 bg-cover flex items-center"
+    style="
+        background-image: linear-gradient(rgba(30,46,36,.75), rgba(30,46,36,.75)), url('{{ $heroBg }}');
+        background-position: center 30%;
+    "
+>
                 <div class="max-w-3xl">
                     <p class="text-sm font-medium text-[#DDE8DF]">Outdoor & Visual Rental</p>
 
@@ -299,21 +303,10 @@
                         Login untuk langsung memesan produk, pilih tanggal sewa, dan pantau pembayaran dari satu beranda aplikasi.
                     </p>
 
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{{ route('login') }}"
-                           class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-[#437057] transition hover:bg-slate-100">
-                            Masuk Sekarang
-                        </a>
-
-                        <a href="{{ route('daftar') }}"
-                           class="rounded-2xl bg-[#437057]/40 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-[#437057]/60">
-                            Daftar Sekarang
-                        </a>
-                    </div>
                 </div>
             </section>
 
-            <section id="tentang" class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
+            <section id="tentang" class="max-w-4xl scroll-mt-32">
                 <div>
                     <p class="text-sm font-semibold text-[#2F5249]">Tentang LensCamp</p>
 
@@ -322,20 +315,10 @@
                     </h3>
 
                     <p class="mt-4 leading-7 text-slate-600">
-                        LensCamp membantu pelanggan menyewa perlengkapan outdoor dan perlengkapan visual dengan proses yang lebih mudah.
-                        Mulai dari pilih produk, tentukan tanggal sewa, hingga pembayaran, semua dilakukan dalam satu alur yang sederhana.
+                        LensCamp membantu pelanggan menyewa perlengkapan outdoor dan perlengkapan visual dengan proses yang mudah. 
+                        Mulai dari memilih produk, menentukan tanggal sewa, hingga melakukan pembayaran, 
+                        semua dapat dilakukan dalam satu alur yang sederhana.
                     </p>
-                </div>
-
-                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <div class="grid grid-cols-2 gap-4">
-                        @foreach($aboutStats as $stat)
-                            <div class="rounded-2xl bg-slate-50 p-5">
-                                <p class="text-sm text-slate-500">{{ $stat['label'] }}</p>
-                                <p class="mt-2 text-2xl font-bold text-slate-800">{{ $stat['value'] }}</p>
-                            </div>
-                        @endforeach
-                    </div>
                 </div>
             </section>
         @endif
@@ -625,7 +608,7 @@
 
         @if(!$isPelanggan)
             <section id="hubungi-kami" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
+                <div class="max-w-4xl">
                     <div>
                         <p class="text-sm font-semibold text-[#2F5249]">Hubungi Kami</p>
 

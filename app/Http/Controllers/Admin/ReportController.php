@@ -14,9 +14,9 @@ class ReportController extends Controller
 
         $rentals = Rental::latest()->get();
 
-        $totalPendapatan = $rentals
-            ->where('status_pembayaran', 'Lunas')
-            ->sum('total_harga');
+       $lunasRentals = $rentals->where('status_pembayaran', 'Lunas');
+
+       $totalPendapatan = $lunasRentals->sum('total_harga') + $lunasRentals->sum('total_denda');
 
         $transaksiBulanIni = Rental::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
@@ -29,9 +29,11 @@ class ReportController extends Controller
                 return Carbon::parse($rental->created_at)->locale('id')->translatedFormat('F Y');
             })
             ->map(function ($items, $bulan) {
+                $lunas = $items->where('status_pembayaran', 'Lunas');
+
                 return [
                     'bulan' => $bulan,
-                    'pendapatan' => $items->where('status_pembayaran', 'Lunas')->sum('total_harga'),
+                    'pendapatan' => $lunas->sum('total_harga') + $lunas->sum('total_denda'),
                     'transaksi' => $items->count(),
                     'produk' => $items->sum('qty'),
                 ];
@@ -45,7 +47,10 @@ class ReportController extends Controller
                     'nama_barang' => $namaBarang ?: '-',
                     'qty' => $items->sum('qty'),
                     'transaksi' => $items->count(),
-                    'pendapatan' => $items->where('status_pembayaran', 'Lunas')->sum('total_harga'),
+                    'pendapatan' =>
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_harga')
+                    +
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_denda'),
                 ];
             })
             ->sortByDesc('pendapatan')
@@ -59,10 +64,18 @@ class ReportController extends Controller
                 ->locale('id')
                 ->translatedFormat('M Y');
 
-            $chartData[] = Rental::whereYear('created_at', $tahun)
+            $chartData[] =
+             Rental::whereYear('created_at', $tahun)
                 ->whereMonth('created_at', $bulan)
                 ->where('status_pembayaran', 'Lunas')
-                ->sum('total_harga');
+                ->sum('total_harga')
+
+    +
+
+    Rental::whereYear('created_at', $tahun)
+        ->whereMonth('created_at', $bulan)
+        ->where('status_pembayaran', 'Lunas')
+        ->sum('total_denda');
         }
 
         return view('admin.reports', compact(
@@ -81,9 +94,10 @@ class ReportController extends Controller
     {
         $rentals = Rental::latest()->get();
 
-        $totalPendapatan = $rentals
-            ->where('status_pembayaran', 'Lunas')
-            ->sum('total_harga');
+        $lunasRentals = $rentals->where('status_pembayaran', 'Lunas');
+
+        $totalPendapatan = $lunasRentals->sum('total_harga')
+            + $lunasRentals->sum('total_denda');
 
         $reportRows = $rentals
             ->groupBy(function ($rental) {
@@ -92,7 +106,10 @@ class ReportController extends Controller
             ->map(function ($items, $bulan) {
                 return [
                     'bulan' => $bulan,
-                    'pendapatan' => $items->where('status_pembayaran', 'Lunas')->sum('total_harga'),
+                    'pendapatan' =>
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_harga')
+                    +
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_denda'),
                     'transaksi' => $items->count(),
                     'produk' => $items->sum('qty'),
                 ];
@@ -106,7 +123,10 @@ class ReportController extends Controller
                     'nama_barang' => $namaBarang ?: '-',
                     'qty' => $items->sum('qty'),
                     'transaksi' => $items->count(),
-                    'pendapatan' => $items->where('status_pembayaran', 'Lunas')->sum('total_harga'),
+                    'pendapatan' =>
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_harga')
+                    +
+                    $items->where('status_pembayaran', 'Lunas')->sum('total_denda'),
                 ];
             })
             ->sortByDesc('pendapatan')

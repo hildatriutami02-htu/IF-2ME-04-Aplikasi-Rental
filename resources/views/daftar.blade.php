@@ -61,7 +61,7 @@
 
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 @foreach($features as $item)
-                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur">
+                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur-[2px]">
                         <p class="text-sm text-[#DDE8DF]">{{ $item['small'] }}</p>
                         <p class="mt-2 text-2xl font-bold">{{ $item['big'] }}</p>
                     </div>

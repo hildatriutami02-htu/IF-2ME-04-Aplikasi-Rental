@@ -30,7 +30,7 @@
                     <select name="kategori" class="{{ $inputClass }}">
                         <option value="">Semua Kategori</option>
                         <option value="Kamera" {{ request('kategori') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
-                        <option value="Camping" {{ request('kategori') == 'Camping' ? 'selected' : '' }}>Camping</option>
+                        <option value="Camping" {{ request('kategori') == 'Camping' ? 'selected' : '' }}>Alat Camping</option>
                     </select>
                 </div>
 
@@ -112,30 +112,34 @@
                     </div>
 
                     <div class="mt-5 grid grid-cols-2 gap-3">
-                        <a href="{{ route('products.detail', $item->id) }}"
-                           class="rounded-2xl bg-[#eef3ee] px-3 py-3 text-center text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df] transition">
-                            Detail
-                        </a>
 
-                        @if($item->unit > 0)
+                    <a href="{{ route('products.detail', $item->id) }}"
+                    class="rounded-2xl bg-[#eef3ee] px-3 py-3 text-center text-sm font-semibold text-[#2F5249] hover:bg-[#dfe7df] transition">
+                        Detail
+                    </a>
+
+                    @if($item->unit > 0)
                         <form action="{{ route('pelanggan.keranjang.tambah') }}" method="POST">
                             @csrf
 
                             <input type="hidden" name="product_id" value="{{ $item->id }}">
 
-                            <button type="submit"
+                            <button
+                                type="submit"
                                 class="w-full rounded-2xl bg-[#2F5249] px-3 py-3 text-center text-sm font-semibold text-white hover:bg-[#437057] transition">
                                 Keranjang
                             </button>
                         </form>
                     @else
-                        <button type="button"
+                        <button
+                            type="button"
                             onclick="alert('Maaf, stok {{ $item->nama_barang }} sedang habis.')"
                             class="w-full cursor-not-allowed rounded-2xl bg-slate-300 px-3 py-3 text-center text-sm font-semibold text-slate-600">
                             Stok Habis
                         </button>
                     @endif
-                    </div>
+
+                </div>
                 </div>
 
             </div>

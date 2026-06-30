@@ -138,11 +138,13 @@
     </div>
 
     <div class="flex justify-end mt-6">
-        <a href="{{ route('admin.reports.pdf') }}"
-           class="inline-flex rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 transition">
-            Download PDF
-        </a>
-    </div>
+    <a href="{{ route('admin.reports.pdf') }}"
+       class="inline-flex items-center gap-2 rounded-xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#437057] hover:-translate-y-0.5 hover:shadow-md">
+
+        <i class="fa-solid fa-file-pdf"></i>
+        Download PDF
+    </a>
+</div>
 
 </div>
 

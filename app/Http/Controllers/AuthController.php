@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function login()
-    {
-        return view('auth.login');
-    }
+{
+    return view('auth.login');
+}
 
     public function loginProses(Request $request)
     {
@@ -86,14 +86,8 @@ class AuthController extends Controller
             'role' => 'pelanggan',
         ]);
 
-        session([
-            'user' => $request->email,
-            'nama' => $request->nama_lengkap,
-            'role' => 'pelanggan',
-        ]);
-
-        return redirect()->route('pelanggan.dashboard')
-            ->with('success', 'Pendaftaran berhasil.');
+        return redirect()->route('login')
+            ->with('success', 'Pendaftaran berhasil. Silakan login menggunakan email dan password yang sudah didaftarkan.');
     }
 
     public function logout()

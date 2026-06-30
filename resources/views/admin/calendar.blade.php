@@ -46,9 +46,9 @@
 
     $legendItems = [
         ['color' => 'bg-amber-400', 'label' => 'Booking'],
-        ['color' => 'bg-[#2F5249]', 'label' => 'Sedang Disewa'],
+        ['color' => 'bg-blue-500', 'label' => 'Disewa'],
         ['color' => 'bg-[#437057]', 'label' => 'Sudah Dikembalikan'],
-        ['color' => 'bg-red-500', 'label' => 'Jatuh Tempo Return'],
+        ['color' => 'bg-red-500', 'label' => 'Jatuh Tempo'],
     ];
 
     $agendaToday = $rentals->filter(function ($r) use ($today) {
@@ -72,7 +72,7 @@
         <div class="{{ $summaryCardClass }}">
             <p class="text-sm text-slate-500">Sedang Disewa</p>
             <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $sedangDisewa }}</h3>
-            <span class="{{ $badgeBaseClass }} bg-[#DDE8DF] text-[#2F5249]">Rental aktif</span>
+            <span class="{{ $badgeBaseClass }} bg-blue-100 text-blue-700">Rental aktif</span>
         </div>
 
         <div class="{{ $summaryCardClass }}">
@@ -126,39 +126,44 @@
                 <div class="grid grid-cols-7 gap-3">
                     @for ($date = $calendarStart->copy(); $date->lte($calendarEnd); $date->addDay())
                         @php
-                            $isCurrentMonth = $date->month === $currentMonth->month;
-                            $isToday = $date->isSameDay($today);
+    $isCurrentMonth = $date->month === $currentMonth->month;
+    $isToday = $date->isSameDay($today);
 
-                            $dayRentals = $rentals->filter(function ($r) use ($date) {
-                                $pinjam = $r->tanggal_pinjam ? Carbon::parse($r->tanggal_pinjam)->isSameDay($date) : false;
-                                $kembali = $r->tanggal_kembali ? Carbon::parse($r->tanggal_kembali)->isSameDay($date) : false;
-                                $real = $r->tanggal_kembali_real ? Carbon::parse($r->tanggal_kembali_real)->isSameDay($date) : false;
+    $bookingCount = $rentals->filter(function ($r) use ($date) {
+        return $r->tanggal_pinjam
+            && Carbon::parse($r->tanggal_pinjam)->isSameDay($date)
+            && in_array($r->status_transaksi, ['Booking', 'Menunggu Verifikasi']);
+    })->count();
 
-                                return $pinjam || $kembali || $real;
-                            });
+    $rentCount = $rentals->filter(function ($r) use ($date) {
+        if (!$r->tanggal_pinjam || !$r->tanggal_kembali) {
+            return false;
+        }
 
-                            $bookingCount = $dayRentals->filter(fn($r) =>
-                                $r->tanggal_pinjam
-                                && Carbon::parse($r->tanggal_pinjam)->isSameDay($date)
-                            )->count();
+        return Carbon::parse($date)->between(
+            Carbon::parse($r->tanggal_pinjam),
+            Carbon::parse($r->tanggal_kembali)
+        ) && in_array($r->status_transaksi, ['Sedang Disewa', 'Diambil']);
+    })->count();
 
-                            $returnCount = $dayRentals->filter(fn($r) =>
-                                $r->tanggal_kembali
-                                && Carbon::parse($r->tanggal_kembali)->isSameDay($date)
-                                && $r->status_transaksi !== 'Dikembalikan'
-                            )->count();
+    $returnCount = $rentals->filter(function ($r) use ($date) {
+        return $r->tanggal_kembali
+            && Carbon::parse($r->tanggal_kembali)->isSameDay($date)
+            && !in_array($r->status_transaksi, ['Dikembalikan']);
+    })->count();
 
-                            $doneCount = $dayRentals->filter(fn($r) =>
-                                $r->tanggal_kembali_real
-                                && Carbon::parse($r->tanggal_kembali_real)->isSameDay($date)
-                            )->count();
+    $doneCount = $rentals->filter(function ($r) use ($date) {
+        return $r->tanggal_kembali_real
+            && Carbon::parse($r->tanggal_kembali_real)->isSameDay($date)
+            && $r->status_transaksi === 'Dikembalikan';
+    })->count();
 
-                            $dayClass = $isCurrentMonth ? $calendarDayClass : $calendarMutedDayClass;
+    $dayClass = $isCurrentMonth ? $calendarDayClass : $calendarMutedDayClass;
 
-                            if ($isToday) {
-                                $dayClass = 'min-h-24 rounded-2xl bg-[#DDE8DF] border border-[#437057] p-2 shadow-sm';
-                            }
-                        @endphp
+    if ($isToday) {
+        $dayClass = 'min-h-24 rounded-2xl bg-[#DDE8DF] border border-[#437057] p-2 shadow-sm';
+    }
+@endphp
 
                         <div class="{{ $dayClass }}">
                             <div class="text-sm font-semibold {{ $isToday ? 'text-[#2F5249]' : 'text-slate-700' }}">
@@ -171,9 +176,15 @@
                                 </div>
                             @endif
 
+                            @if ($rentCount > 0)
+                                <div class="{{ $miniBadgeClass }} bg-blue-100 text-blue-700">
+                                    {{ $rentCount }} Disewa
+                                </div>
+                            @endif
+
                             @if ($returnCount > 0)
                                 <div class="{{ $miniBadgeClass }} bg-red-100 text-red-700">
-                                    {{ $returnCount }} Return
+                                    {{ $returnCount }} Jatuh Tempo
                                 </div>
                             @endif
 
@@ -208,7 +219,7 @@
                 <div class="space-y-4">
                     @forelse ($agendaToday as $agenda)
                         @php
-                            $badgeClass = 'bg-[#DDE8DF] text-[#2F5249]';
+                            $badgeClass = 'bg-blue-100 text-blue-700';
                             $badgeText = $agenda->status_transaksi ?? '-';
 
                             if (($agenda->status_transaksi ?? '') === 'Booking') {
@@ -217,7 +228,7 @@
                                 $badgeClass = 'bg-[#DDE8DF] text-[#437057]';
                             } elseif ($agenda->tanggal_kembali && Carbon::parse($agenda->tanggal_kembali)->isSameDay($today)) {
                                 $badgeClass = 'bg-red-100 text-red-700';
-                                $badgeText = 'Return';
+                                $badgeText = 'Jatuh Tempo';
                             }
                         @endphp
 

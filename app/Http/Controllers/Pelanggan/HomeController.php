@@ -17,15 +17,21 @@ class HomeController extends Controller
     $kategoriAktif = request('kategori');
     $urutkan = request('urutkan', 'terbaru');
 
-    $kategoriProduk = Product::select('jenis_barang')
-        ->whereNotNull('jenis_barang')
-        ->distinct()
-        ->pluck('jenis_barang');
+    $kategoriProduk = Product::whereIn('jenis_barang', ['Kamera', 'Alat Camping'])
+    ->select('jenis_barang')
+    ->distinct()
+    ->pluck('jenis_barang');
 
     $produkFavorit = Product::withCount('rentals')
         ->orderByDesc('rentals_count')
         ->take(3)
         ->get();
+
+    $totalProduk = Product::count();
+
+    $totalPelanggan = \App\Models\AkunUser::where('role', 'pelanggan')->count();
+
+    $totalTransaksi = Rental::count();
 
    $productsQuery = Product::query()
     ->when($search, function ($query) use ($search) {
@@ -53,16 +59,19 @@ $products = $productsQuery->get();
     ]);
 
     return view('home', compact(
-        'isPelanggan',
-        'isAdmin',
-        'products',
-        'settings',
-        'kategoriProduk',
-        'kategoriAktif',
-        'produkFavorit',
-        'search',
-        'urutkan'
-    ));
+    'isPelanggan',
+    'isAdmin',
+    'products',
+    'settings',
+    'kategoriProduk',
+    'kategoriAktif',
+    'produkFavorit',
+    'search',
+    'urutkan',
+    'totalProduk',
+    'totalPelanggan',
+    'totalTransaksi'
+));
 }
     public function index()
     {
@@ -87,10 +96,9 @@ $products = $productsQuery->get();
         )->whereIn('status_transaksi', [
             'Booking',
             'Sedang Disewa',
-            'Permintaan Perpanjangan',
-            'Menunggu Denda',
+            'Diperpanjang',
+            'Menunggu Verifikasi',
         ])->count();
-
         // Total tagihan belum dibayar
         $tagihan = Rental::where(
             'email',

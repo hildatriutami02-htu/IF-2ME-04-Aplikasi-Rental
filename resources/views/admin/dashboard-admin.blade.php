@@ -6,9 +6,11 @@
     <title>@yield('title', 'Dashboard Admin - LensCamp')</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -55,8 +57,8 @@
                          class="w-full h-full object-contain">
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold">LensCamp</h1>
-                    <p class="text-xs text-[#DDE8DF]">Ruang Admin</p>
+                <h1 class="text-lg font-bold">LensCamp</h1>
+                <p class="text-xs text-[#DDE8DF]">Ruang Admin</p>
                 </div>
             </div>
         </div>
@@ -73,10 +75,9 @@
                     ['route' => 'dashboard.admin', 'label' => 'Dashboard'],
                     ['route' => 'admin.products', 'label' => 'Katalog Barang'],
                     ['route' => 'admin.rentals', 'label' => 'Data Sewa'],
-                    ['route' => 'admin.payments', 'label' => 'Pembayaran'],
                     ['route' => 'admin.calendar', 'label' => 'Kalender Rental'],
                     ['route' => 'admin.reports', 'label' => 'Laporan'],
-                    ['route' => 'admin.settings', 'label' => 'Pengaturan Sistem'],
+                    ['route' => 'admin.settings', 'label' => 'Informasi Website'],
                 ];
             @endphp
 
@@ -98,13 +99,6 @@
             @endforeach
 
         </nav>
-
-        <div class="p-3 border-t border-white/10">
-            <a href="{{ route('logout') }}"
-               class="block w-full text-center px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition hover:-translate-y-0.5 hover:shadow-lg">
-                Keluar
-            </a>
-        </div>
     </aside>
 
     <div class="flex-1 flex flex-col">
@@ -115,16 +109,40 @@
                 <p class="text-sm text-slate-500">@yield('page_desc')</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-[#2F5249]">Admin</p>
-                    <p class="text-xs text-slate-500">{{ session('user') }}</p>
-                </div>
+            <div x-data="{ open: false }" class="relative">
+    <button
+        type="button"
+        @click="open = !open"
+        class="flex items-center gap-3 rounded-2xl px-3 py-2 hover:bg-[#eef3ee] transition"
+    >
+        <p class="text-sm font-semibold text-[#2F5249]">Admin</p>
 
-                <div class="w-10 h-10 rounded-full bg-[#2F5249] text-white flex items-center justify-center font-bold shadow-sm ring-4 ring-[#eef3ee] hover:scale-105 transition">
-                    A
-                </div>
-            </div>
+        <div class="w-10 h-10 rounded-full bg-[#2F5249] text-white flex items-center justify-center font-bold shadow-sm ring-4 ring-[#eef3ee]">
+            A
+        </div>
+    </button>
+
+    <div
+    x-show="open"
+    @click.away="open = false"
+    x-transition
+    class="absolute right-0 mt-3 w-52 rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden z-50"
+    style="display: none;"
+>
+    <a href="{{ route('admin.password.edit') }}"
+       class="block px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-[#F8FAF7]">
+         Ganti Password
+    </a>
+
+    <div class="border-t border-slate-100"></div>
+
+    <a href="{{ route('logout') }}"
+       class="block px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50">
+         Keluar
+    </a>
+</div>
+
+</div>
         </header>
 
         <main class="p-5">
@@ -135,6 +153,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+<script>
+    feather.replace();
+</script>
 
 </body>
 </html>

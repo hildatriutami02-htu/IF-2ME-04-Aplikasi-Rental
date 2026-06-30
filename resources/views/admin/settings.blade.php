@@ -1,8 +1,8 @@
 @extends('admin.dashboard-admin')
 
-@section('title', 'Pengaturan Sistem - LensCamp')
-@section('page_title', 'Pengaturan Sistem')
-@section('page_desc', 'Atur informasi dasar sistem')
+@section('title', 'Informasi Website - LensCamp')
+@section('page_title', 'Informasi Website')
+@section('page_desc', 'Kelola informasi website yang ditampilkan kepada pelanggan')
 
 @section('content')
 @php
@@ -10,12 +10,14 @@
     $labelClass = 'block mb-2 text-sm font-medium text-slate-800';
 @endphp
 
-<div class="max-w-4xl mx-auto animate-fade-up">
+<div class="max-w-3xl mx-auto animate-fade-up">
     <div class="bg-white rounded-2xl border border-[#dfe7df] shadow-sm transition-all duration-300 hover:shadow-md">
 
         <div class="px-5 py-4 border-b border-[#dfe7df]">
-            <h3 class="text-xl font-bold text-[#2F5249]">Form Pengaturan</h3>
-            <p class="text-sm text-slate-500">Perbarui informasi dasar website LensCamp</p>
+            <h3 class="text-xl font-bold text-[#2F5249]">Form Informasi Website</h3>
+            <p class="mt-1 text-sm text-slate-500">
+                Perbarui nama website, email admin, nomor WhatsApp, dan alamat yang tampil pada website.
+            </p>
         </div>
 
         <form action="{{ route('admin.settings.update') }}" method="POST" class="p-5 space-y-5">
@@ -42,7 +44,7 @@
                 <input
                     type="text"
                     name="nama_website"
-                    value="{{ old('nama_website', $settings->nama_website) }}"
+                    value="{{ old('nama_website', $settings->nama_website ?? 'LensCamp') }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -53,7 +55,7 @@
                 <input
                     type="email"
                     name="email_admin"
-                    value="{{ old('email_admin', $settings->email_admin) }}"
+                    value="{{ old('email_admin', $settings->email_admin ?? '') }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -64,7 +66,7 @@
                 <input
                     type="text"
                     name="no_whatsapp"
-                    value="{{ old('no_whatsapp', $settings->no_whatsapp) }}"
+                    value="{{ old('no_whatsapp', $settings->no_whatsapp ?? '') }}"
                     class="{{ $inputClass }}"
                     required
                 >
@@ -77,15 +79,15 @@
                     rows="4"
                     class="{{ $inputClass }}"
                     required
-                >{{ old('alamat', $settings->alamat) }}</textarea>
+                >{{ old('alamat', $settings->alamat ?? '') }}</textarea>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end pt-2">
                 <button
                     type="submit"
-                    class="px-6 py-2.5 text-sm font-medium text-white bg-[#2F5249] rounded-xl hover:bg-[#437057] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                    class="px-6 py-2.5 text-sm font-semibold text-white bg-[#2F5249] rounded-xl hover:bg-[#437057] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
-                    Simpan Pengaturan
+                    Simpan Perubahan
                 </button>
             </div>
         </form>

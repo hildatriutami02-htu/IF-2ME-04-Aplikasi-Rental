@@ -14,9 +14,12 @@ class DashboardController extends Controller
         $totalProduk = Product::count();
         $totalUser = DataUser::count();
         $totalRental = Rental::count();
-        $totalPendapatan = Rental::sum('total_harga');
+        $totalPendapatan = Rental::where('status_pembayaran', 'Lunas')
+        ->sum('total_harga')
+        + Rental::where('status_pembayaran', 'Lunas')
+        ->sum('total_denda');
 
-        $totalMenungguVerifikasi = Rental::where('status_transaksi', 'Menunggu Verifikasi')->count();
+        $totalBooking = Rental::where('status_transaksi', 'Booking')->count();
         $totalSedangDisewa = Rental::where('status_transaksi', 'Sedang Disewa')->count();
         $totalDikembalikan = Rental::where('status_transaksi', 'Dikembalikan')->count();
         $totalUserAktif = DataUser::count();
@@ -42,7 +45,7 @@ class DashboardController extends Controller
             'totalUser',
             'totalRental',
             'totalPendapatan',
-            'totalMenungguVerifikasi',
+            'totalBooking',
             'totalSedangDisewa',
             'totalDikembalikan',
             'totalUserAktif',

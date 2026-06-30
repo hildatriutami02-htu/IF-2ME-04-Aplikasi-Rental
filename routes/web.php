@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Admin\AdminPasswordController;
 
 use App\Http\Controllers\Pelanggan\HomeController;
 use App\Http\Controllers\Pelanggan\ProductController;
@@ -52,6 +53,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::post('/notifications/{id}/read', [AdminNotificationController::class, 'read'])->name('notifications.read');
     Route::delete('/notifications/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    
+    Route::get('/ganti-password', [AdminPasswordController::class, 'edit'])->name('password.edit');
+    Route::post('/ganti-password', [AdminPasswordController::class, 'update'])->name('password.update');
     Route::get('/calendar', [AdminDashboardController::class, 'calendar'])->name('calendar');
     Route::get('/payments', [AdminPaymentController::class, 'index']) ->name('payments');
     Route::post('/payments/{id}/verify', [AdminPaymentController::class, 'verify'])->name('payments.verify');

@@ -46,12 +46,25 @@ class CartController extends Controller
 
     public function update(Request $request, $index)
     {
-        $request->validate([
-            'tanggal_pinjam' => 'required|date',
-            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
-            'qty' => 'required|integer|min:1',
-            'catatan' => 'nullable|string',
-        ]);
+       $request->validate([
+        'tanggal_pinjam' => 'required|date|after_or_equal:today',
+        'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+        'qty' => 'required|integer|min:1',
+        'catatan' => 'nullable|string',
+    ], [
+        'tanggal_pinjam.after_or_equal' => 'Tanggal pinjam tidak boleh sebelum hari ini.',
+        'tanggal_kembali.after_or_equal' => 'Tanggal kembali tidak boleh sebelum tanggal pinjam.',
+    ]);
+
+    $today = Carbon::today('Asia/Jakarta');
+
+    if (Carbon::parse($request->tanggal_pinjam)->lt($today)) {
+        return back()->withErrors('Tanggal pinjam tidak boleh sebelum hari ini.');
+    }
+
+    if (Carbon::parse($request->tanggal_kembali)->lt(Carbon::parse($request->tanggal_pinjam))) {
+        return back()->withErrors('Tanggal kembali tidak boleh sebelum tanggal pinjam.');
+    }
 
         $keranjang = session('keranjang', []);
 
@@ -106,6 +119,19 @@ class CartController extends Controller
     }
 
     foreach ($keranjang as $item) {
+
+    if (Carbon::parse($item['tanggal_pinjam'])->lt(Carbon::today())) {
+        return redirect()->route('pelanggan.keranjang')
+            ->withErrors('Tanggal pinjam tidak boleh sebelum hari ini.');
+    }
+
+    if (Carbon::parse($item['tanggal_kembali'])->lt(Carbon::parse($item['tanggal_pinjam']))) {
+        return redirect()->route('pelanggan.keranjang')
+            ->withErrors('Tanggal kembali tidak boleh sebelum tanggal pinjam.');
+    }
+}
+
+    foreach ($keranjang as $item) {
         $product = Product::find($item['product_id']);
 
         if (!$product) {
@@ -136,6 +162,7 @@ class CartController extends Controller
 
         $rental = Rental::create([
             'kode_transaksi' => 'TRX-' . time() . rand(10, 99),
+            'user_id' => optional(\App\Models\DataUser::where('nama_lengkap', session('nama'))->first())->id,
             'product_id' => $item['product_id'],
             'nama_pelanggan' => session('nama') ?? session('user') ?? 'Pelanggan',
             'email' => session('user') ?? null,
@@ -156,7 +183,7 @@ class CartController extends Controller
             'kode_transaksi' => $rental->kode_transaksi,
             'nama_pelanggan' => $rental->nama_pelanggan,
             'nominal' => $rental->total_harga,
-            'metode' => 'QRIS Dana',
+            'metode' => 'QRIS',
             'status' => 'Menunggu Verifikasi',
         ]);
 

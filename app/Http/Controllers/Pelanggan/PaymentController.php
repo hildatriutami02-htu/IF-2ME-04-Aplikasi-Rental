@@ -37,7 +37,7 @@ class PaymentController extends Controller
     $payment->update([
         'bukti_bayar' => $path,
         'status' => 'Menunggu Verifikasi',
-        'metode' => 'QRIS Dana',
+        'metode' => 'QRIS',
         'catatan' => 'Pelanggan sudah mengupload bukti pembayaran.',
     ]);
 

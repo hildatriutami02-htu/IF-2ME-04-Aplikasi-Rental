@@ -50,42 +50,69 @@
                                     </p>
                                 </td>
 
-                                <form action="{{ route('pelanggan.keranjang.update', $index) }}" method="POST">
-                                    @csrf
+                                <td class="p-4 text-center">
+                                    <form action="{{ route('pelanggan.keranjang.update', $index) }}" method="POST" class="contents">
+                                        @csrf
 
-                                    <td class="p-4 text-center">
-                                        <input type="date" name="tanggal_pinjam" value="{{ $item['tanggal_pinjam'] ?? '' }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm" required>
-                                    </td>
+                                        <input
+                                            type="date"
+                                            name="tanggal_pinjam"
+                                            value="{{ $item['tanggal_pinjam'] ?? '' }}"
+                                            min="{{ \Carbon\Carbon::today('Asia/Jakarta')->toDateString() }}"
+                                            class="tanggal-pinjam rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                                            required
+                                        >
+                                </td>
 
-                                    <td class="p-4 text-center">
-                                        <input type="date" name="tanggal_kembali" value="{{ $item['tanggal_kembali'] ?? '' }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm" required>
-                                    </td>
+                                <td class="p-4 text-center">
+                                        <input
+                                            type="date"
+                                            name="tanggal_kembali"
+                                            value="{{ $item['tanggal_kembali'] ?? '' }}"
+                                            min="{{ \Carbon\Carbon::today('Asia/Jakarta')->toDateString() }}"
+                                            class="tanggal-kembali rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                                            required
+                                        >
+                                </td>
 
-                                    <td class="p-4 text-center">
-                                        <input type="number" name="qty" min="1" value="{{ $item['qty'] ?? 1 }}" class="w-20 rounded-xl border border-slate-300 px-3 py-2 text-center text-sm" required>
-                                    </td>
+                                <td class="p-4 text-center">
+                                        <input
+                                            type="number"
+                                            name="qty"
+                                            min="1"
+                                            value="{{ $item['qty'] ?? 1 }}"
+                                            class="w-20 rounded-xl border border-slate-300 px-3 py-2 text-center text-sm"
+                                            required
+                                        >
+                                </td>
 
-                                    <td class="p-4 text-center">
-                                        <input type="text" name="catatan" value="{{ $item['catatan'] ?? '' }}" placeholder="Opsional" class="rounded-xl border border-slate-300 px-3 py-2 text-sm">
-                                    </td>
+                                <td class="p-4 text-center">
+                                        <input
+                                            type="text"
+                                            name="catatan"
+                                            value="{{ $item['catatan'] ?? '' }}"
+                                            placeholder="Opsional"
+                                            class="rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                                        >
+                                </td>
 
-                                    <td class="p-4 text-center">
-                                        <div class="flex justify-center gap-2">
-                                            <button type="submit" class="rounded-xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white">
-                                                Simpan
-                                            </button>
-                                </form>
+                                <td class="p-4 text-center">
+                                    <div class="flex justify-center gap-2">
+                                        <button type="submit" class="rounded-xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white">
+                                            Simpan
+                                        </button>
+                                    </form>
 
-                                            <form action="{{ route('pelanggan.keranjang.hapus', $index) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
+                                    <form action="{{ route('pelanggan.keranjang.hapus', $index) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
 
-                                                <button type="submit" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white">
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                        <button type="submit" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -105,7 +132,13 @@
             <div class="mt-5">
                 <label class="mb-2 block text-sm font-semibold text-slate-700">Foto KTP</label>
 
-                <input type="file" name="foto_ktp" accept="image/*" required class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]">
+                <input
+                    type="file"
+                    name="foto_ktp"
+                    accept="image/*"
+                    required
+                    class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-[#2F5249] focus:ring-[#2F5249]"
+                >
 
                 <p class="mt-2 text-xs text-slate-500">
                     Format yang diperbolehkan: JPG, JPEG, PNG. Maksimal 2MB.
@@ -137,4 +170,39 @@
     @endif
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date().toISOString().split('T')[0];
+
+    document.querySelectorAll('.tanggal-pinjam').forEach(function (pinjamInput) {
+        const row = pinjamInput.closest('tr');
+        const kembaliInput = row.querySelector('.tanggal-kembali');
+
+        pinjamInput.min = today;
+
+        if (pinjamInput.value && pinjamInput.value < today) {
+            pinjamInput.value = today;
+        }
+
+        if (kembaliInput) {
+            kembaliInput.min = pinjamInput.value || today;
+
+            if (kembaliInput.value && kembaliInput.value < kembaliInput.min) {
+                kembaliInput.value = kembaliInput.min;
+            }
+        }
+
+        pinjamInput.addEventListener('change', function () {
+            if (kembaliInput) {
+                kembaliInput.min = this.value || today;
+
+                if (kembaliInput.value && kembaliInput.value < kembaliInput.min) {
+                    kembaliInput.value = kembaliInput.min;
+                }
+            }
+        });
+    });
+});
+</script>
 @endsection

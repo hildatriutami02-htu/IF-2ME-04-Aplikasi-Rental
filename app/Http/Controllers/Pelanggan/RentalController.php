@@ -5,34 +5,50 @@ namespace App\Http\Controllers\Pelanggan;
 use App\Http\Controllers\Controller;
 use App\Models\Rental;
 use Illuminate\Http\Request;
+use App\Models\Payment;
 use Carbon\Carbon;
 
 class RentalController extends Controller
 {
-    public function index()
-    {
-        $rentals = Rental::where('email', session('user'))
-            ->latest()
-            ->get()
-            ->map(function ($rental) {
-                return [
-                    'id' => $rental->id,
-                    'invoice' => $rental->kode_transaksi,
-                    'produk' => $rental->nama_barang,
-                    'tanggal_pinjam' => $rental->tanggal_pinjam,
-                    'tanggal_kembali' => $rental->tanggal_kembali,
-                    'tanggal_kembali_real' => $rental->tanggal_kembali_real,
-                    'qty' => $rental->qty,
-                    'harga' => $rental->total_harga,
-                    'denda' => $rental->total_denda ?? 0,
-                    'status' => $rental->status_transaksi,
-                    'status_pembayaran' => $rental->status_pembayaran,
-                    'warna' => $rental->status_transaksi === 'Dikembalikan' ? 'slate' : 'green',
-                ];
-            });
+   public function index()
+{
+    $rentals = Rental::where('email', session('user'))
+        ->whereIn('status_transaksi', [
+            'Booking',
+            'Sedang Disewa',
+            'Diperpanjang',
+            'Permintaan Perpanjangan',
+            'Menunggu Verifikasi',
+            'Menunggu Denda',
+        ])
+        ->latest()
+        ->get()
+        ->map(function ($rental) {
 
-        return view('pelanggan.sewa', compact('rentals'));
-    }
+            $payment = Payment::where('rental_id', $rental->id)->first();
+
+            return [
+                'id' => $rental->id,
+                'invoice' => $rental->kode_transaksi,
+                'produk' => $rental->nama_barang,
+                'tanggal_pinjam' => $rental->tanggal_pinjam,
+                'tanggal_kembali' => $rental->tanggal_kembali,
+                'tanggal_kembali_real' => $rental->tanggal_kembali_real,
+                'qty' => $rental->qty,
+                'harga' => $rental->total_harga,
+                'denda' => $rental->total_denda ?? 0,
+                'status' => $rental->status_transaksi,
+                'status_pembayaran' => $rental->status_pembayaran,
+                'warna' => 'green',
+
+                'payment_id' => $payment->id ?? null,
+                'payment_status' => $payment->status ?? null,
+                'bukti_bayar' => $payment->bukti_bayar ?? null,
+            ];
+        });
+
+    return view('pelanggan.sewa', compact('rentals'));
+}
 
     public function extend($id)
     {
@@ -73,20 +89,21 @@ class RentalController extends Controller
             ->with('success', 'Sewa berhasil diperpanjang.');
     }
 
-    public function riwayat()
-    {
-        $histories = Rental::where('email', session('user'))
-            ->latest()
-            ->get()
-            ->map(function ($rental) {
-                return [
-                    'produk' => $rental->nama_barang,
-                    'tanggal' => $rental->tanggal_pinjam . ' - ' . $rental->tanggal_kembali,
-                    'harga' => $rental->total_harga,
-                    'status' => $rental->status_transaksi,
-                ];
-            });
+   public function riwayat()
+{
+    $histories = Rental::where('email', session('user'))
+        ->where('status_transaksi', 'Dikembalikan')
+        ->latest()
+        ->get()
+        ->map(function ($rental) {
+            return [
+                'produk' => $rental->nama_barang,
+                'tanggal' => $rental->tanggal_pinjam . ' - ' . $rental->tanggal_kembali,
+                'harga' => $rental->total_harga,
+                'status' => 'Selesai',
+            ];
+        });
 
-        return view('pelanggan.riwayat', compact('histories'));
-    }
+    return view('pelanggan.riwayat', compact('histories'));
+}
 }

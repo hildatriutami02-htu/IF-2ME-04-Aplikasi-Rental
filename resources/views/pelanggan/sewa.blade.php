@@ -108,6 +108,8 @@
 
                     $isBooking = ($item['status'] ?? '') === 'Booking';
                     $denda = (int) ($item['denda'] ?? 0);
+                    $buktiBayar = $item['bukti_bayar'] ?? null;
+                    $paymentId = $item['payment_id'] ?? null;
                 @endphp
 
                 <div class="rounded-2xl border border-slate-200 p-5 hover:shadow-sm transition">
@@ -195,4 +197,42 @@
     </section>
 
 </div>
+
+<div
+    id="buktiModal"
+    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/60 p-4"
+    onclick="closeBuktiModal()"
+>
+    <div
+        class="max-w-2xl rounded-3xl bg-white p-5 shadow-2xl"
+        onclick="event.stopPropagation()"
+    >
+        <img
+            id="buktiImage"
+            src=""
+            alt="Bukti Pembayaran"
+            class="max-h-[80vh] w-auto rounded-2xl"
+        >
+    </div>
+</div>
+
+<script>
+    function openBuktiModal(src) {
+        const modal = document.getElementById('buktiModal');
+        const image = document.getElementById('buktiImage');
+
+        image.src = src;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeBuktiModal() {
+        const modal = document.getElementById('buktiModal');
+        const image = document.getElementById('buktiImage');
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        image.src = '';
+    }
+</script>
 @endsection

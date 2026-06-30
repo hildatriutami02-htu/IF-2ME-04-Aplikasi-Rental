@@ -34,11 +34,12 @@
         ],
     ];
 
-    $menus = [
-        ['route' => 'admin.products', 'label' => 'Kelola Katalog Barang'],
-        ['route' => 'admin.rentals', 'label' => 'Kelola Data Sewa'],
-        ['route' => 'admin.reports', 'label' => 'Lihat Laporan'],
-    ];
+   $menus = [
+    ['route' => 'admin.products', 'label' => 'Kelola Katalog Barang'],
+    ['route' => 'admin.rentals', 'label' => 'Kelola Data Sewa'],
+    ['route' => 'admin.calendar', 'label' => 'Lihat Kalender Rental'],
+    ['route' => 'admin.reports', 'label' => 'Lihat Laporan'],
+];
 @endphp
 
 <div class="max-w-6xl mx-auto space-y-5">
@@ -46,13 +47,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         @foreach ($stats as $i => $item)
         <div class="bg-white rounded-2xl border border-[#dfe7df] shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-[#437057] animate-fade-up{{ $i ? '-delay-'.$i : '' }}">
-            <div class="flex justify-between">
+            <div>
                 <div>
                     <p class="text-sm text-slate-500">{{ $item['title'] }}</p>
                     <h3 class="text-2xl font-bold mt-2 text-slate-800">{{ $item['value'] }}</h3>
                 </div>
-                <div class="w-11 h-11 rounded-xl bg-[#eef3ee] border border-[#dfe7df] flex items-center justify-center text-[#2F5249]">
-                </div>
+        
             </div>
 
             <div class="mt-4 flex items-center gap-2">
@@ -91,20 +91,24 @@
             </div>
 
             @foreach ([
-                ['Menunggu Verifikasi', $totalMenungguVerifikasi, 'Perlu Dicek'],
+                ['Booking', $totalBooking, 'Jadwal Masuk'],
                 ['Sedang Disewa', $totalSedangDisewa, 'Aktif'],
                 ['Sudah Dikembalikan', $totalDikembalikan, 'Selesai'],
-                ['User Aktif', $totalUserAktif, 'Online']
+                ['Total Pelanggan', $totalUserAktif, 'Terdaftar']
             ] as $item)
 
                 <div class="rounded-2xl bg-[#F8FAF7] border border-[#dfe7df] p-5 hover:-translate-y-1 transition mb-3">
                     <div class="flex justify-between">
                         <p class="text-sm text-slate-500">{{ $item[0] }}</p>
+
                         <span class="text-[11px] bg-white text-[#2F5249] border border-[#dfe7df] px-2 py-1 rounded-full">
                             {{ $item[2] }}
                         </span>
                     </div>
-                    <h4 class="text-2xl font-bold mt-3 text-slate-800">{{ $item[1] }}</h4>
+
+                    <h4 class="text-2xl font-bold mt-3 text-slate-800">
+                        {{ $item[1] }}
+                    </h4>
                 </div>
 
             @endforeach
@@ -114,7 +118,7 @@
     <div class="grid xl:grid-cols-2 gap-5">
 
         <div class="bg-white rounded-2xl border border-[#dfe7df] p-5">
-            <h3 class="text-xl font-bold mb-4 text-[#2F5249]">User Terbaru</h3>
+            <h3 class="text-xl font-bold mb-4 text-[#2F5249]">Pelanggan Terbaru</h3>
 
             @foreach ($latestUsers as $user)
             <div class="flex justify-between px-3 py-3 hover:bg-[#F8FAF7] rounded-xl">
@@ -127,9 +131,6 @@
                         <p class="text-sm text-slate-500">{{ $user['waktu'] }}</p>
                     </div>
                 </div>
-                <span class="text-xs px-3 py-1 rounded-full bg-[#eef3ee] text-[#2F5249]">
-                    {{ $user['status'] }}
-                </span>
             </div>
             @endforeach
         </div>

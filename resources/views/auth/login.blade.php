@@ -6,6 +6,7 @@
     <title>Login - LensCamp</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -19,9 +20,21 @@
     $heroBg = asset('images/background-camping-camera.jpeg');
 
     $stats = [
-        ['label'=>'Produk','value'=>'50+'],
-        ['label'=>'Pelanggan','value'=>'100+'],
-        ['label'=>'Transaksi','value'=>'300+'],
+        [
+            'label' => 'Produk',
+            'value' => 'Kamera & Alat Camping',
+            'icon' => 'camera',
+        ],
+        [
+            'label' => 'Penyewaan',
+            'value' => 'Mudah & Praktis',
+            'icon' => 'calendar',
+        ],
+        [
+            'label' => 'Pembayaran',
+            'value' => 'QRIS',
+            'icon' => 'credit-card',
+        ],
     ];
 
     $formFields = [
@@ -63,23 +76,48 @@
             </a>
         </div>
 
-        <div class="max-w-xl">
+        <div class="max-w-3xl">
             <p class="text-sm font-semibold text-[#DDE8DF]">Selamat datang kembali</p>
 
-            <h2 class="mt-3 text-4xl font-extrabold leading-tight">
+            <h2 class="mt-3 text-[42px] font-extrabold leading-tight">
                 Login untuk mulai menyewa lebih cepat dan praktis.
             </h2>
 
-            <p class="mt-5 text-base text-[#F1F6F2] leading-7">
+            <p class="mt-6 text-[15px] text-[#F1F6F2] leading-7">
                 Akses produk, atur jadwal sewa, lihat pembayaran, dan pantau pesanan kamu dalam satu aplikasi.
             </p>
 
-            <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach($stats as $item)
-                    <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur">
-                        <p class="text-sm text-[#DDE8DF]">{{ $item['label'] }}</p>
-                        <p class="mt-2 text-2xl font-bold">{{ $item['value'] }}</p>
-                    </div>
+            <div class="mt-6 flex items-center gap-5">
+               @foreach($stats as $item)
+
+               <div
+                class="w-48 h-32
+                    rounded-2xl
+                    border border-white/20
+                    bg-white/10
+                    backdrop-blur-[2px]
+                    flex flex-col items-center justify-center
+                    text-center
+                    transition-all duration-300
+                    hover:scale-105
+                    hover:bg-white/15
+                    hover:border-white/30">
+
+                <i data-feather="{{ $item['icon'] }}"
+                class="w-8 h-8 text-white mb-3">
+                </i>
+
+                <h3 class="text-base font-semibold text-white">
+                    {{ $item['label'] }}
+                </h3>
+
+                <div class="w-7 h-0.5 rounded-full bg-[#69A84F] my-2"></div>
+
+                <p class="text-sm text-[#F1F6F2] leading-5 px-4">
+                    {{ $item['value'] }}
+                </p>
+
+            </div>
                 @endforeach
             </div>
         </div>
@@ -112,8 +150,8 @@
                 </div>
 
                 <div class="mb-5 rounded-2xl bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
-                Belum memiliki akun? Silakan daftar terlebih dahulu untuk melakukan penyewaan.
-            </div>
+                    Belum memiliki akun? Silakan daftar terlebih dahulu untuk melakukan penyewaan.
+                </div>
 
                 @if($errors->any())
                     <div class="mb-5 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
@@ -159,6 +197,12 @@
                         class="w-full rounded-2xl bg-[#2F5249] px-5 py-3 text-sm font-semibold text-white hover:bg-[#437057] transition">
                         Masuk Sekarang
                     </button>
+
+                    <p class="mt-4 text-center text-xs text-slate-500">
+                        Lupa password?
+                        <br>
+                        Silakan hubungi admin untuk melakukan reset password.
+                    </p>
                 </form>
 
                 <div class="mt-6 text-center text-sm text-slate-500">
@@ -179,5 +223,10 @@
     </div>
 
 </div>
+
+<script>
+    feather.replace();
+</script>
+
 </body>
 </html>

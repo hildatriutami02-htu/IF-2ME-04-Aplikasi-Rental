@@ -29,7 +29,7 @@
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-sm text-slate-500">Total Tagihan</p>
             <h3 class="mt-2 text-3xl font-bold text-slate-800">
-            Rp {{ number_format($payments->where('status', 'Menunggu Verifikasi')->sum('nominal'), 0, ',', '.') }}
+                Rp {{ number_format($payments->where('status', 'Menunggu Verifikasi')->sum('nominal'), 0, ',', '.') }}
             </h3>
         </div>
 
@@ -79,12 +79,10 @@
                             </td>
 
                             <td class="px-4 py-5 text-sm">
-                                <button
-                                    type="button"
-                                    onclick="openQrisModal()"
-                                    class="font-semibold text-[#2F5249] hover:underline"
-                                >
-                                    {{ $payment->metode ?? 'QRIS Dana' }}
+                                <button type="button"
+                                        onclick="openQrisModal()"
+                                        class="font-semibold text-[#2F5249] hover:underline">
+                                    {{ $payment->metode ?? 'QRIS' }}
                                 </button>
                             </td>
 
@@ -106,15 +104,14 @@
 
                             <td class="px-4 py-5">
                                 @if($payment->bukti_bayar)
-                                    <a href="{{ asset('storage/' . $payment->bukti_bayar) }}"
-                                       target="_blank"
-                                       class="text-sm font-semibold text-[#2F5249] hover:underline">
+                                    <button type="button"
+                                            data-src="{{ asset('storage/' . $payment->bukti_bayar) }}"
+                                            onclick="openBuktiModal(this.dataset.src)"
+                                            class="text-sm font-semibold text-[#2F5249] hover:underline">
                                         Lihat Bukti
-                                    </a>
+                                    </button>
                                 @else
-                                    <span class="text-sm text-slate-400">
-                                        Belum upload
-                                    </span>
+                                    <span class="text-sm text-slate-400">Belum upload</span>
                                 @endif
                             </td>
 
@@ -126,18 +123,14 @@
                                           class="space-y-2">
                                         @csrf
 
-                                        <input
-                                            type="file"
-                                            name="bukti_bayar"
-                                            accept="image/*"
-                                            required
-                                            class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-xl file:border-0 file:bg-[#eef3ee] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#2F5249]"
-                                        >
+                                        <input type="file"
+                                               name="bukti_bayar"
+                                               accept="image/*"
+                                               required
+                                               class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-xl file:border-0 file:bg-[#eef3ee] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#2F5249]">
 
-                                        <button
-                                            type="submit"
-                                            class="rounded-2xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#437057]"
-                                        >
+                                        <button type="submit"
+                                                class="rounded-2xl bg-[#2F5249] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#437057]">
                                             Upload Bukti
                                         </button>
                                     </form>
@@ -159,51 +152,70 @@
             </table>
         </div>
     </section>
+</div>
 
-    <div
-        id="qrisModal"
-        class="fixed inset-0 z-[9999] hidden items-center justify-center p-4"
-    >
-        <div
-            onclick="closeQrisModal()"
-            class="absolute inset-0 bg-black/40"
-        ></div>
+<div id="qrisModal"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div onclick="closeQrisModal()"
+         class="absolute inset-0 bg-black/40"></div>
 
-        <div class="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
-            <div class="border-b border-slate-200 px-5 py-4">
-                <h3 class="text-lg font-bold text-[#2F5249]">
-                    QRIS Dana
-                </h3>
-                <p class="mt-1 text-xs text-slate-500">
-                    Scan QRIS lalu upload bukti pembayaran.
-                </p>
-            </div>
+    <div class="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-lg font-bold text-[#2F5249]">QRIS LensCamp</h3>
+            <p class="mt-1 text-xs text-slate-500">
+                Scan QRIS lalu upload bukti pembayaran.
+            </p>
+        </div>
 
-            <div class="bg-[#F8FAF7] p-5">
-                <img
-                    src="{{ asset('images/qris-dana.jpeg') }}"
-                    alt="QRIS Dana"
-                    class="mx-auto max-h-[70vh] w-auto rounded-2xl"
-                >
-            </div>
+        <div class="bg-[#F8FAF7] p-5">
+            <img src="{{ asset('images/qris-lenscamp.jpeg') }}"
+                 alt="QRIS LensCamp"
+                class="mx-auto max-h-[70vh] w-auto rounded-2xl">
         </div>
     </div>
+</div>
 
+<div id="buktiModal"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/60 p-4"
+     onclick="closeBuktiModal()">
+    <div class="max-w-2xl rounded-3xl bg-white p-5 shadow-2xl"
+         onclick="event.stopPropagation()">
+        <img id="buktiImage"
+             src=""
+             alt="Bukti Pembayaran"
+             class="max-h-[80vh] w-auto rounded-2xl">
+    </div>
 </div>
 
 <script>
     function openQrisModal() {
         const modal = document.getElementById('qrisModal');
-
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
 
     function closeQrisModal() {
         const modal = document.getElementById('qrisModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function openBuktiModal(src) {
+        const modal = document.getElementById('buktiModal');
+        const image = document.getElementById('buktiImage');
+
+        image.src = src;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeBuktiModal() {
+        const modal = document.getElementById('buktiModal');
+        const image = document.getElementById('buktiImage');
 
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        image.src = '';
     }
 </script>
 @endsection

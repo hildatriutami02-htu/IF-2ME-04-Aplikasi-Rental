@@ -92,14 +92,21 @@
         }
 
         .print-btn {
-            margin-bottom: 20px;
-            padding: 10px 16px;
-            background: #2F5249;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    background: #2F5249;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+    }
+
+    .print-btn:hover {
+        background: #437057;
+    }
 
         @media print {
             .print-btn {
